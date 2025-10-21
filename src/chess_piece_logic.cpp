@@ -1,24 +1,49 @@
 #include "chess_piece_logic.h"
 
-ChessPiece::ChessPiece(PieceType type, PieceColor color, int rank, int file) 
-    : type(type), color(color), rank(rank), file(file) {}
+ChessPiece::ChessPiece() {
+    type = PieceType::NONE; // Default type
+    color = PieceColor::WHITE_PIECE; // Default color
+}
+
+ChessPiece::ChessPiece(PieceType type, PieceColor color) 
+    : type(type), color(color) {}
 
 ChessPiece::~ChessPiece() {}
+
+// Copy constructor
+ChessPiece::ChessPiece(const ChessPiece& other) 
+    : type(other.type), color(other.color) {}
+
+// Copy assignment operator
+ChessPiece& ChessPiece::operator=(const ChessPiece& other) {
+    if (this != &other) { // Self-assignment check
+        type = other.type;
+        color = other.color;
+    }
+    return *this;
+}
+
+// Move constructor
+ChessPiece::ChessPiece(ChessPiece&& other) noexcept 
+    : type(other.type), color(other.color) {
+    // Reset the moved-from object to a valid state
+    other.type = PieceType::NONE;
+    other.color = PieceColor::WHITE_PIECE;
+}
+
+// Move assignment operator
+ChessPiece& ChessPiece::operator=(ChessPiece&& other) noexcept {
+    if (this != &other) { // Self-assignment check
+        type = other.type;
+        color = other.color;
+        
+        // Reset the moved-from object to a valid state
+        other.type = PieceType::NONE;
+        other.color = PieceColor::WHITE_PIECE;
+    }
+    return *this;
+}
 
 ChessPiece::PieceType ChessPiece::getType() const { return type; }
 
 ChessPiece::PieceColor ChessPiece::getColor() const { return color; }
-
-int ChessPiece::getRank() const { return rank; }
-
-int ChessPiece::getFile() const { return file; }
-
-void ChessPiece::setPosition(int newRank, int newFile) {
-    this->rank = newRank;
-    this->file = newFile;
-}
-
-bool ChessPiece::isValidMove(int toRank, int toFile) const {
-    // Basic bounds checking - extend with piece-specific logic later
-    return (toRank >= 0 && toRank < 8 && toFile >= 0 && toFile < 8);
-}

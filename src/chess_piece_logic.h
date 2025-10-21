@@ -5,23 +5,25 @@
 // Pure logic class - no GUI dependencies
 class ChessPiece {
 public:
-    enum class PieceType { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN };
+    enum class PieceType { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, NONE };
     enum class PieceColor { WHITE_PIECE, BLACK_PIECE };
 
-    ChessPiece(PieceType, PieceColor, int, int); 
-    ~ChessPiece();
+    ChessPiece(); // Default constructor (empty piece)
+    ChessPiece(PieceType, PieceColor);  // Actual piece constructor
+    ~ChessPiece(); // Destructor
     
-    PieceType getType() const;
-    PieceColor getColor() const;
-    int getRank() const;
-    int getFile() const;
-
-    // Logic operations
-    void setPosition(int newRank, int newFile);
-    bool isValidMove(int toRank, int toFile) const;
-
+    // Copy semantics
+    ChessPiece(const ChessPiece& other); // Copy constructor
+    ChessPiece& operator=(const ChessPiece& other); // Copy assignment
+    
+    // Move semantics
+    ChessPiece(ChessPiece&& other) noexcept; // Move constructor
+    ChessPiece& operator=(ChessPiece&& other) noexcept; // Move assignment
+    
+    PieceType getType() const; // Get the type of the piece
+    PieceColor getColor() const; // Get the color of the piece
+    
 private:
-    PieceType type;
-    PieceColor color;
-    int rank, file; // Board coordinates (0-7)
+    PieceType type; // Type of the piece
+    PieceColor color; // Color of the piece
 };
