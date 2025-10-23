@@ -49,18 +49,18 @@ void ChessLogic::initPieces(ChessPiece::PieceColor color) {
     }
 }
 
-ChessPiece ChessLogic::getPieceAt(int rank, int file) const {
+ChessPiece ChessLogic::getPieceAt(const int rank, const int file) const {
     if (rank < 0 || rank >= 8 || file < 0 || file >= 8) {
         return ChessPiece(); // Out of bounds
     }
     return board[rank][file]; // Return the piece in the array
 }
 
-void ChessLogic::makeMove(int fromRank, int fromFile, int toRank, int toFile) {
+void ChessLogic::makeMove(const int fromRank, const int fromFile,
+    const int toRank, const int toFile) {
     // Validate move in board boundaries
-    if (fromRank < 0 || fromRank >= 8 || fromFile < 0 || fromFile >= 8 ||
-        toRank < 0 || toRank >= 8 || toFile < 0 || toFile >= 8) {
-        return; // Invalid move
+    if (!isValidMove(fromRank, fromFile, toRank, toFile)) {
+        return; // Move not valid 
     }
 
     // Check if there's a piece to move
@@ -77,4 +77,24 @@ void ChessLogic::makeMove(int fromRank, int fromFile, int toRank, int toFile) {
     // Move the piece efficiently using move semantics
     board[toRank][toFile] = std::move(board[fromRank][fromFile]);
 
+    // Explicitly set from position to default ChessPiece
+    board[fromRank][fromFile] = ChessPiece();
+}
+
+bool ChessLogic::isValidMove(const int fromRank, const int fromFile, const int toRank, const int toFile) const{
+    // Check if ranks and files are within board bounds
+    if (fromRank < 0 || fromRank > 7 || 
+        fromFile < 0 || fromFile > 7 ||
+        toRank < 0 || toRank > 7 || 
+        toFile < 0 || toFile > 7) {
+        
+        return false;
+    }
+
+    // Check if attempting to move to the same square
+    if (fromRank == toRank && fromFile == toFile) {
+        return false;
+    }
+
+    return true;
 }

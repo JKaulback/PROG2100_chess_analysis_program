@@ -1,13 +1,14 @@
 #include "chess_piece_logic.h"
 
-ChessPiece::ChessPiece() {
-    type = PieceType::NONE; // Default type
-    color = PieceColor::WHITE_PIECE; // Default color
-}
+// Default constructor
+ChessPiece::ChessPiece() 
+    : type(PieceType::NONE), color(PieceColor::WHITE_PIECE) {}
 
+// Unique piece constructor
 ChessPiece::ChessPiece(PieceType type, PieceColor color) 
     : type(type), color(color) {}
 
+// Destructor
 ChessPiece::~ChessPiece() {}
 
 // Copy constructor
@@ -63,6 +64,5 @@ std::string ChessPiece::pieceToString() const {
 }
 
 bool ChessPiece::isPlayable() const {
-    if ( this->type != PieceType::NONE ) return true;
-    return false;
+    return type != PieceType::NONE;
 }

@@ -1,14 +1,8 @@
 #include "chess_analysis_program.h"
 
-ChessAnalysisProgram::ChessAnalysisProgram(ChessGUI& gui, ChessLogic& logic) : gui(gui), logic(logic) {
+ChessAnalysisProgram::ChessAnalysisProgram(ChessGUI& gui) : gui(gui) {}
 
-
-
-}
-
-ChessAnalysisProgram::~ChessAnalysisProgram() {
-    // Cleanup if needed
-}
+ChessAnalysisProgram::~ChessAnalysisProgram() {}
 
 void ChessAnalysisProgram::run() {
 
