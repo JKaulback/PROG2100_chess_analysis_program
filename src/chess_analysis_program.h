@@ -1,19 +1,18 @@
-#ifndef CHESS_ANALYSIS_PROGRAM_H
-#define CHESS_ANALYSIS_PROGRAM_H
+#pragma once
 
-#include <raylib.h>
+#include "chess_gui.h"
+#include "chess_logic.h"
 
+// This class manages the overall chess analysis program
 class ChessAnalysisProgram {
+
 public:
-    ChessAnalysisProgram();
-    ~ChessAnalysisProgram();
+    ChessAnalysisProgram(ChessGUI& gui, ChessLogic& logic); // Constructor
+    ~ChessAnalysisProgram(); // Destructor
 
-    void run();
+    void run(); // Main loop
+
 private:
-    Texture2D boardTexture;
-    void UpdateGame();
-    void RenderGame();
-    
+    ChessGUI& gui; // Reference to the GUI
+    ChessLogic& logic; // Reference to the game logic
 };
-
-#endif // CHESS_ANALYSIS_PROGRAM_H

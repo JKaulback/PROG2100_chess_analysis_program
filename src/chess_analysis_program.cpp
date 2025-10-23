@@ -1,45 +1,22 @@
-#include <raylib.h>
 #include "chess_analysis_program.h"
 
-ChessAnalysisProgram::ChessAnalysisProgram() {
-    // Initialization
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
+ChessAnalysisProgram::ChessAnalysisProgram(ChessGUI& gui, ChessLogic& logic) : gui(gui), logic(logic) {
 
-    InitWindow(screenWidth, screenHeight, "Chess Analysis Program");
 
-    SetTargetFPS(60); // Set the desired frame rate
-
-    // Load assets
-    boardTexture = LoadTexture("src/assets/board.png");
 
 }
 
 ChessAnalysisProgram::~ChessAnalysisProgram() {
-    UnloadTexture(boardTexture);
-    CloseWindow(); // Close window and OpenGL context
-}
-
-void ChessAnalysisProgram::UpdateGame(){
-    // Update game state logic here
-}
-
-void ChessAnalysisProgram::RenderGame(){
-        BeginDrawing();
-
-        ClearBackground(RAYWHITE);
-
-        DrawTextureEx(this->boardTexture, {0, 0}, 0.0f, 0.65f, WHITE);
-
-        EndDrawing();
+    // Cleanup if needed
 }
 
 void ChessAnalysisProgram::run() {
 
-    // Main program loop
+    // Main loop
     while (!WindowShouldClose()) { // Detect window close button or ESC key
-        UpdateGame();
-        RenderGame();
+        
+        gui.update();
+        gui.draw();
     }
 
     // De-initialization

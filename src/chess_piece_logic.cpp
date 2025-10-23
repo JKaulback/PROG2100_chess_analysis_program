@@ -44,6 +44,25 @@ ChessPiece& ChessPiece::operator=(ChessPiece&& other) noexcept {
     return *this;
 }
 
-ChessPiece::PieceType ChessPiece::getType() const { return type; }
+ChessPiece::PieceType ChessPiece::getType() const { return this->type; }
 
-ChessPiece::PieceColor ChessPiece::getColor() const { return color; }
+ChessPiece::PieceColor ChessPiece::getColor() const { return this->color; }
+
+std::string ChessPiece::pieceToString() const {
+    std::string pieceString = this->color == ChessPiece::PieceColor::WHITE_PIECE ? "w" : "b";
+    switch (this->type) {
+        case ChessPiece::PieceType::KING: return pieceString + "k";
+        case ChessPiece::PieceType::QUEEN: return pieceString + "q";
+        case ChessPiece::PieceType::ROOK: return pieceString + "r";
+        case ChessPiece::PieceType::BISHOP: return pieceString + "b";
+        case ChessPiece::PieceType::KNIGHT: return pieceString + "n";
+        case ChessPiece::PieceType::PAWN: return pieceString + "p";
+        case ChessPiece::PieceType::NONE: return "None";
+        default: return "Unknown";
+    }
+}
+
+bool ChessPiece::isPlayable() const {
+    if ( this->type != PieceType::NONE ) return true;
+    return false;
+}

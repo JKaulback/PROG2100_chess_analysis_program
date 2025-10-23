@@ -9,18 +9,24 @@ ChessLogic::~ChessLogic() {
 }
 
 void ChessLogic::initializeBoard() {
-    // Place pieces on the board
-    int pieceIndex = 0;
+    // Clear the board
+    for ( int rank = 0; rank < board.size(); rank++ ) {
+        for ( int file = 0; file < board[rank].size(); file++ ) {
+            board[rank][file] = ChessPiece();
+        }
+    }
 
-    // Add white pieces
-    addPieces(ChessPiece::PieceColor::WHITE_PIECE);
+    // Initialize white pieces
+    initPieces(ChessPiece::PieceColor::WHITE_PIECE);
 
-    // Add black pieces
-    addPieces(ChessPiece::PieceColor::BLACK_PIECE);
+    // Init black pieces
+    initPieces(ChessPiece::PieceColor::BLACK_PIECE);
 
 }
 
-void ChessLogic::addPieces(ChessPiece::PieceColor color) {
+void ChessLogic::initPieces(ChessPiece::PieceColor color) {
+
+
     // Determine ranks for this color
     int pawnRank = (color == ChessPiece::PieceColor::WHITE_PIECE) ? 1 : 6;
     int backRank = (color == ChessPiece::PieceColor::WHITE_PIECE) ? 0 : 7;
@@ -70,5 +76,5 @@ void ChessLogic::makeMove(int fromRank, int fromFile, int toRank, int toFile) {
 
     // Move the piece efficiently using move semantics
     board[toRank][toFile] = std::move(board[fromRank][fromFile]);
-    
+
 }
