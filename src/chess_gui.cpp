@@ -2,16 +2,12 @@
 
 
 ChessGUI::ChessGUI(ChessLogic& logic) : chessLogic(logic) {
-    // Initialization
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis Program");
 
-    InitWindow(screenWidth, screenHeight, "Chess Analysis Program");
-
-    SetTargetFPS(60); // Set the desired frame rate
+    SetTargetFPS(TARGET_FPS); // Set the desired frame rate
 
     // Load assets
-    boardTexture = LoadTexture("src/assets/board.png"); // The chess board is initially 1600x1600 px
+    boardTexture = LoadTexture(BOARD_TEXTURE_PATH); // The chess board is initially 1600x1600 px
 
     // Initialize pieces from the logic board
     initPieceTextures();
@@ -26,7 +22,7 @@ ChessGUI::ChessGUI(ChessLogic& logic) : chessLogic(logic) {
 
 ChessGUI::~ChessGUI() {
     // Unload all the piece textures
-    for (const std::pair<std::string, Texture2D> pieceTexture : pieceTextures) {
+    for (const std::pair<std::string, Texture2D>& pieceTexture : pieceTextures) {
         UnloadTexture(pieceTexture.second);
     }
     UnloadTexture(boardTexture);
@@ -35,8 +31,8 @@ ChessGUI::~ChessGUI() {
 
 void ChessGUI::initPieceTextures() {
     // Loop through the logical board
-    for (int rank = minRank; rank <= maxRank ; rank++) {
-        for (int file = minFile; file <= maxFile; file++) {
+    for (int rank = MIN_RANK; rank <= MAX_RANK ; rank++) {
+        for (int file = MIN_FILE; file <= MAX_FILE; file++) {
             // Check the playable pieces
             ChessPiece currentPiece = chessLogic.getPieceAt(rank, file);
             if (currentPiece.isPlayable()) {
@@ -51,22 +47,19 @@ void ChessGUI::initPieceTextures() {
     }
 }
 
-void ChessGUI::loadPieceTexture(const std::string pieceString) {
-    std::string path = "src/assets/chess_pieces/";
-    path.append(pieceString);
-    path.append(".png");
+void ChessGUI::loadPieceTexture(const std::string& pieceString) {
+    std::string path = PIECES_TEXTURE_PATH + pieceString + ".png";
 
-    Texture2D pieceTexture = LoadTexture(path.c_str());
-    pieceTextures[pieceString] = pieceTexture;
+    pieceTextures[pieceString] = LoadTexture(path.c_str());
 }
 
-void ChessGUI::draw() {
+void ChessGUI::draw() const {
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
     // Draw the chess board
-    DrawTextureEx(this->boardTexture, {0, 0}, 0.0f, this->boardScale, WHITE);
+    DrawTextureEx(boardTexture, {0, 0}, 0.0f, BOARD_SCALE, WHITE);
 
     // Draw all chess pieces in play
     drawChessPieces();
@@ -75,95 +68,100 @@ void ChessGUI::draw() {
 }
 
 void ChessGUI::update() {
-    Vector2 mousePos = GetMousePosition();
+    const Vector2 mousePos = GetMousePosition();
+    
     // Check for drag start
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         // Check if dragging a piece
-        Vector2 draggedPiecePos = screenPosToBoardPos(mousePos);
-        ChessPiece selectedPiece = chessLogic.getPieceAt(draggedPiecePos.y, draggedPiecePos.x);
+        const Vector2 boardPos = screenPosToBoardPos(mousePos);
+        const ChessPiece selectedPiece = chessLogic.getPieceAt(static_cast<int>(boardPos.y), static_cast<int>(boardPos.x));
+        
         if (selectedPiece.isPlayable()) {
             // Set state variables for dragging
             isDragging = true;
-            draggedPieceRank = draggedPiecePos.y;
-            draggedPieceFile = draggedPiecePos.x;
+            draggedPieceRank = static_cast<int>(boardPos.y);
+            draggedPieceFile = static_cast<int>(boardPos.x);
             draggedPiece = selectedPiece;
+            
             // Calculate the offset for the piece center to the mouse
-            Vector2 pieceScreenPos = boardPosToScreenPos(draggedPiecePos);
-            Vector2 pieceCenterPos = {
-                pieceScreenPos.x + pieceSize / 2.0f,
-                pieceScreenPos.y + pieceSize / 2.0f
+            const Vector2 pieceScreenPos = boardPosToScreenPos(boardPos);
+            const Vector2 pieceCenterPos = {
+                pieceScreenPos.x + PIECE_SIZE / 2.0f,
+                pieceScreenPos.y + PIECE_SIZE / 2.0f
             };
             dragOffset = {
                 mousePos.x - pieceCenterPos.x,
                 mousePos.y - pieceCenterPos.y
             };
-
         }
     }
     // Check for piece drop
     if (isDragging && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
         // Get the position of the dropped piece
-        Vector2 boardDropPos = screenPosToBoardPos(mousePos);
-        int dropFile = static_cast<int>(boardDropPos.x);
-        int dropRank = static_cast<int>(boardDropPos.y);
+        const Vector2 boardDropPos = screenPosToBoardPos(mousePos);
+        const int dropFile = static_cast<int>(boardDropPos.x);
+        const int dropRank = static_cast<int>(boardDropPos.y);
 
         // Attempt to make a move (move validation is handled in logic)
         chessLogic.makeMove(draggedPieceRank, draggedPieceFile, dropRank, dropFile);
 
         // Stop dragging regardless of move success
-        isDragging = false;
-        draggedPieceRank = -1;
-        draggedPieceFile = -1;
-        draggedPiece = ChessPiece();
+        resetDragState();
     }
 
 }
 
 Vector2 ChessGUI::screenPosToBoardPos(Vector2 screenPos) const {
-    int file = static_cast<int>((screenPos.x - boardOffsetX) / squareSize);
-    int rank = maxRank - static_cast<int>((screenPos.y - boardOffsetY) / squareSize);
+    int file = static_cast<int>((screenPos.x - BOARD_OFFSET_X) / SQUARE_SIZE);
+    int rank = MAX_RANK - static_cast<int>((screenPos.y - BOARD_OFFSET_Y) / SQUARE_SIZE);
 
     return {static_cast<float>(file), static_cast<float>(rank)};
 }
 
 Vector2 ChessGUI::boardPosToScreenPos(Vector2 boardPos) const {
     return Vector2{
-        boardOffsetX + (boardPos.x * squareSize) + centeredValue,
-        boardOffsetY + ((maxRank - boardPos.y) * squareSize) + centeredValue,
+        BOARD_OFFSET_X + (boardPos.x * SQUARE_SIZE) + CENTERED_VALUE,
+        BOARD_OFFSET_Y + ((MAX_RANK - boardPos.y) * SQUARE_SIZE) + CENTERED_VALUE,
 
     };
 }
 
-void ChessGUI::drawChessPieces() {
+void ChessGUI::drawChessPieces() const {
     // Draw all playable pieces not being dragged
-    for (int rank = minRank; rank <= maxRank; rank++) {
-        for (int file = minFile; file <= maxFile; file++) {
+    for (int rank = MIN_RANK; rank <= MAX_RANK; rank++) {
+        for (int file = MIN_FILE; file <= MAX_FILE; file++) {
             // Skip piece if being dragged
             if (isDragging && draggedPieceRank == rank && draggedPieceFile == file) {
                 continue;
             }
             // Draw playable pieces
             ChessPiece currentPiece = chessLogic.getPieceAt(rank, file);
-            std::string pieceString = currentPiece.pieceToString();
             if (currentPiece.isPlayable()) {
-                Vector2 screenPos = boardPosToScreenPos({static_cast<float>(file), static_cast<float>(rank)});
-                DrawTextureEx(pieceTextures[pieceString], screenPos, 0.0f, pieceScale, WHITE);
+                std::string pieceString = currentPiece.pieceToString();
+                const Vector2 screenPos = boardPosToScreenPos({static_cast<float>(file), static_cast<float>(rank)});
+                DrawTextureEx(pieceTextures.at(pieceString), screenPos, 0.0f, PIECE_SCALE, WHITE);
             }
         }
     }
     // Draw the dragged piece at mouse position
     if (isDragging) {
-        Vector2 mousePos = GetMousePosition();
+        const Vector2 mousePos = GetMousePosition();
         std::string pieceString = draggedPiece.pieceToString();
 
         // Calculate draw position
-        Vector2 drawPos = {
-            mousePos.x - dragOffset.x - pieceSize / 2.0f,
-            mousePos.y - dragOffset.y - pieceSize / 2.0f
+        const Vector2 drawPos = {
+            mousePos.x - dragOffset.x - PIECE_SIZE / 2.0f,
+            mousePos.y - dragOffset.y - PIECE_SIZE / 2.0f
         };
 
         // Draw the piece being dragged
-        DrawTextureEx(pieceTextures[pieceString], drawPos, 0.0f, pieceScale, WHITE);
+        DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f, PIECE_SCALE, WHITE);
     }
 }
 
+void ChessGUI::resetDragState() {
+    isDragging = false;
+    draggedPieceRank = -1;
+    draggedPieceFile = -1;
+    draggedPiece = ChessPiece();
+}
