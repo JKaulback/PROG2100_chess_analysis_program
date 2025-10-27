@@ -12,6 +12,9 @@ ChessGUI::ChessGUI(ChessLogic& logic) : chessLogic(logic) {
     // Initialize pieces from the logic board
     initPieceTextures();
 
+    // Toggle full screen
+    ToggleFullscreen();
+
     // Initialize drag state
     isDragging = false;
     draggedPieceRank = -1; // Invalid rank

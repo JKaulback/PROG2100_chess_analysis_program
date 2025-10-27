@@ -20,7 +20,7 @@ private:
     std::vector<ChessPiece> capturedPieces; // Captured pieces
 
     // Helpers
-    void initPieces(ChessPiece::PieceColor color); // Helper to add pieces to the board
+    void initPieces(); // Helper to add pieces to the board
     bool isValidMove(const int fromRank, const int fromFile, const int toRank, const int toFile) const;
 
 };

@@ -27,7 +27,7 @@ private:
 
     // Board texture data
     const char* BOARD_TEXTURE_PATH = "src/assets/board.png";
-    const float BOARD_SCALE = 0.65f; // The scale to draw the board
+    const float BOARD_SCALE = 0.675f; // The scale to draw the board
     const float ACTUAL_BOARD_SIZE = 1600.0f * BOARD_SCALE; // Actual size of the board in px
     const float SQUARE_SIZE = ACTUAL_BOARD_SIZE / 8.0f; // Size of the squares of the board
     const float BOARD_OFFSET_X = 0.0f;

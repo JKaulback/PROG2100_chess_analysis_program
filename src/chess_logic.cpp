@@ -16,36 +16,45 @@ void ChessLogic::initializeBoard() {
         }
     }
 
-    // Initialize white pieces
-    initPieces(ChessPiece::PieceColor::WHITE_PIECE);
-
-    // Init black pieces
-    initPieces(ChessPiece::PieceColor::BLACK_PIECE);
+    // Initialize chess pieces pieces
+    initPieces();
 
 }
 
-void ChessLogic::initPieces(ChessPiece::PieceColor color) {
+void ChessLogic::initPieces() {
 
 
     // Determine ranks for this color
-    int pawnRank = (color == ChessPiece::PieceColor::WHITE_PIECE) ? 1 : 6;
-    int backRank = (color == ChessPiece::PieceColor::WHITE_PIECE) ? 0 : 7;
+    int whitePawnRank = 1;
+    int whiteBackRank = 0;
+    int blackPawnRank = 6;
+    int blackBackRank = 7;
     
     // Add pawns using move semantics for efficiency
     for (int file = 0; file < 8; ++file) {
-        board[pawnRank][file] = ChessPiece(ChessPiece::PieceType::PAWN, color);
+        board[whitePawnRank][file] = ChessPiece(ChessPiece::PieceType::WHITE_PAWN);
+        board[blackPawnRank][file] = ChessPiece(ChessPiece::PieceType::BLACK_PAWN);
     }
 
-    // Add back rank pieces using move semantics
-    ChessPiece::PieceType backPieces[] = {
-        ChessPiece::PieceType::ROOK, ChessPiece::PieceType::KNIGHT,
-        ChessPiece::PieceType::BISHOP, ChessPiece::PieceType::QUEEN,
-        ChessPiece::PieceType::KING, ChessPiece::PieceType::BISHOP,
-        ChessPiece::PieceType::KNIGHT, ChessPiece::PieceType::ROOK
+    // Add back rank white pieces using move semantics
+    ChessPiece::PieceType whiteBackPieces[] = {
+        ChessPiece::PieceType::WHITE_ROOK, ChessPiece::PieceType::WHITE_KNIGHT,
+        ChessPiece::PieceType::WHITE_BISHOP, ChessPiece::PieceType::WHITE_QUEEN,
+        ChessPiece::PieceType::WHITE_KING, ChessPiece::PieceType::WHITE_BISHOP,
+        ChessPiece::PieceType::WHITE_KNIGHT, ChessPiece::PieceType::WHITE_ROOK
     };
     
+    // Add back rank black pieces using move semantics
+    ChessPiece::PieceType blackBackPieces[] = {
+        ChessPiece::PieceType::BLACK_ROOK, ChessPiece::PieceType::BLACK_KNIGHT,
+        ChessPiece::PieceType::BLACK_BISHOP, ChessPiece::PieceType::BLACK_QUEEN,
+        ChessPiece::PieceType::BLACK_KING, ChessPiece::PieceType::BLACK_BISHOP,
+        ChessPiece::PieceType::BLACK_KNIGHT, ChessPiece::PieceType::BLACK_ROOK
+    };
+
     for (int file = 0; file < 8; ++file) {
-        board[backRank][file] = ChessPiece(backPieces[file], color);
+        board[whiteBackRank][file] = ChessPiece(whiteBackPieces[file]);
+        board[blackBackRank][file] = ChessPiece(blackBackPieces[file]);
     }
 }
 
@@ -64,12 +73,12 @@ void ChessLogic::makeMove(const int fromRank, const int fromFile,
     }
 
     // Check if there's a piece to move
-    if (board[fromRank][fromFile].getType() == ChessPiece::PieceType::NONE) {
+    if (board[fromRank][fromFile].getType() == ChessPiece::PieceType::EMPTY) {
         return; // No piece to move
     }
 
     // Check if there's a piece to capture
-    if (board[toRank][toFile].getType() != ChessPiece::PieceType::NONE) {
+    if (board[toRank][toFile].getType() != ChessPiece::PieceType::EMPTY) {
         // Move the captured piece to captured pieces vector (efficient move)
         capturedPieces.push_back(std::move(board[toRank][toFile]));
     }
