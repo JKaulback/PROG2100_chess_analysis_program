@@ -1,8 +1,10 @@
 #pragma once
 
 #include <raylib.h>
-#include "chess_logic.h"
-#include "chess_gui.h"
+#include "../core/chess_logic.h"
+
+// Forward declaration to avoid circular dependency
+class ChessGUI;
 
 // This class handles all user input for the chess program
 class ChessInputHandler {

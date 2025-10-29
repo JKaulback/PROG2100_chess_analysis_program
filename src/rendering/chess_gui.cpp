@@ -1,5 +1,5 @@
 #include "chess_gui.h"
-#include "chess_analysis_program.h"
+#include "../application/chess_analysis_program.h"
 
 
 ChessGUI::ChessGUI(const ChessAnalysisProgram& ctrl) : controller(ctrl) {

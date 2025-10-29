@@ -1,4 +1,4 @@
-#include "chess_analysis_program.h"
+#include "application/chess_analysis_program.h"
 
 int main() {
 

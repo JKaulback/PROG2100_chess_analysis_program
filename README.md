@@ -1,10 +1,10 @@
 # Chess Analysis Program
 
-A sophisticated chess application built with C++ and Raylib, featuring an interactive graphical interface and comprehensive chess game logic.
+A sophisticated chess application built with C++ and Raylib, featuring an interactive graphical interface, comprehensive chess game logic, and a clean modular architecture implementing the Controller design pattern.
 
 ## 🎯 Overview
 
-This chess analysis program demonstrates advanced C++ programming concepts including object-oriented design, memory management, and graphical programming. The application provides a fully functional chess board with piece movement, drag-and-drop interaction, and a clean, intuitive user interface.
+This chess analysis program demonstrates advanced C++ programming concepts including object-oriented design, design patterns, memory management, and graphical programming. The application provides a fully functional chess board with piece movement, drag-and-drop interaction, and a professional modular codebase that follows software engineering best practices.
 
 ## ✨ Features
 
@@ -12,49 +12,78 @@ This chess analysis program demonstrates advanced C++ programming concepts inclu
 - **Drag & Drop Gameplay**: Intuitive piece movement with mouse interaction
 - **Complete Chess Logic**: Full implementation of chess rules and piece behavior
 - **Professional GUI**: Clean, responsive interface built with Raylib
-- **Modular Architecture**: Well-structured codebase with clear separation of concerns
+- **Controller Architecture**: Implements Controller design pattern for clean separation of concerns
+- **Modular Structure**: Organized folder structure with logical component separation
+- **Input Handling**: Dedicated input processing system independent of rendering
+- **Clean Dependencies**: No circular dependencies, clear component relationships
 
 ## 🛠 Technical Stack
 
 - **Language**: C++17
 - **Graphics Library**: Raylib
 - **Build System**: MinGW-w64 GCC
-- **Architecture**: Object-Oriented Programming (OOP)
-- **Design Patterns**: Model-View separation
+- **Architecture**: Object-Oriented Programming (OOP) with Controller Pattern
+- **Design Patterns**: Model-View-Controller (MVC), Separation of Concerns
 
 ## 📁 Project Structure
 
 ```
 src/
-├── main.cpp                    # Application entry point
-├── chess_analysis_program.h/.cpp  # Main program controller
-├── chess_gui.h/.cpp           # User interface and rendering
-├── chess_logic.h/.cpp         # Game logic and rules
-├── chess_piece_logic.h/.cpp   # Chess piece definitions and behavior
-└── assets/
-    ├── board.png              # Chess board texture
-    └── chess_pieces/          # Individual piece sprites
+├── main.cpp                         # Application entry point
+├── application/                     # Main application coordination layer
+│   ├── chess_analysis_program.h     # Main program controller (MVC Controller)
+│   └── chess_analysis_program.cpp
+├── core/                           # Game logic and core functionality
+│   ├── chess_logic.h              # Game rules and state management (Model)
+│   └── chess_logic.cpp
+├── rendering/                      # User interface and rendering layer
+│   ├── chess_gui.h                # Graphics and visual presentation (View)
+│   └── chess_gui.cpp
+├── input/                          # Input handling and processing
+│   ├── chess_input_handler.h      # User input processing system
+│   └── chess_input_handler.cpp
+└── assets/                         # Game resources and textures
+    ├── board.png                   # Chess board texture
+    └── chess_pieces/               # Individual piece sprites
         ├── wb.png, wk.png, wn.png, wp.png, wq.png, wr.png  # White pieces
         └── bb.png, bk.png, bn.png, bp.png, bq.png, br.png  # Black pieces
 ```
 
 ## 🏗 Architecture
 
-The application follows a clean architectural pattern with distinct layers:
+The application implements a **Model-View-Controller (MVC)** architecture with clear separation of concerns:
 
 ### Core Components
 
-1. **ChessAnalysisProgram**: Main application controller managing the game loop
-2. **ChessGUI**: Handles all rendering, user input, and visual feedback
-3. **ChessLogic**: Implements chess rules, move validation, and game state
-4. **ChessPiece**: Represents individual chess pieces with type safety
+1. **ChessAnalysisProgram** (Controller): Orchestrates all components and manages application flow
+2. **ChessGUI** (View): Pure rendering and visual presentation layer
+3. **ChessLogic** (Model): Game rules, state management, and chess logic
+4. **ChessInputHandler**: Dedicated input processing system
+
+### Architectural Benefits
+
+- **No Circular Dependencies**: Clean, one-way dependency flow
+- **Single Responsibility**: Each component has one clear purpose
+- **Loose Coupling**: Components can be modified independently
+- **High Cohesion**: Related functionality grouped logically
+- **Easy Testing**: Each layer can be unit tested in isolation
+
+### Data Flow
+
+```
+User Input → InputHandler → Controller → Model (ChessLogic)
+                ↓              ↓
+           Controller → View (ChessGUI) → Screen Output
+```
 
 ### Key Design Features
 
+- **Controller Pattern**: Central coordinator managing component interactions
 - **RAII**: Proper resource management with constructors/destructors
 - **Reference Semantics**: Efficient object passing without unnecessary copies
 - **Template Usage**: Type-safe containers (std::array, std::map)
 - **Modern C++**: Move semantics and smart memory management
+- **Modular Design**: Organized folder structure for maintainability
 
 ## 🚀 Getting Started
 
@@ -90,7 +119,7 @@ Ctrl+Shift+P → "Tasks: Run Build Task"
 
 Or via command line:
 ```bash
-g++ -fdiagnostics-color=always -g src/*.cpp -o main.exe -I C:/raylib/include -L C:/raylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
+g++ -fdiagnostics-color=always -g src/**/*.cpp src/*.cpp -o main.exe -I C:/raylib/include -L C:/raylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
 ```
 
 ### Running the Application
@@ -112,17 +141,22 @@ This project demonstrates proficiency in:
 
 ### C++ Programming Concepts
 - Object-Oriented Programming (OOP)
+- Design Patterns (Model-View-Controller)
 - Memory management and RAII
 - STL containers and algorithms
 - Move semantics and copy constructors
 - Template programming
 - Header/implementation file organization
+- Forward declarations and dependency management
 
 ### Software Engineering Practices
 - Modular design and separation of concerns
+- Clean architecture principles
+- Dependency inversion and loose coupling
+- Single Responsibility Principle (SRP)
 - Code documentation and commenting
 - Version control with Git
-- Build automation
+- Build automation and project structure organization
 - Cross-platform considerations
 
 ### Game Development Fundamentals
@@ -141,21 +175,34 @@ This project demonstrates proficiency in:
 
 ## 🔍 Code Quality Highlights
 
-- **Clean Architecture**: Clear separation between GUI, logic, and data layers
+- **MVC Architecture**: Proper Model-View-Controller implementation with clean separation
+- **No Circular Dependencies**: Well-designed component relationships
+- **Modular Structure**: Organized folder hierarchy for easy navigation and maintenance
 - **Type Safety**: Comprehensive use of enums and strong typing
-- **Resource Management**: Proper texture loading and cleanup
+- **Resource Management**: Proper texture loading and cleanup with RAII
 - **Error Handling**: Robust input validation and bounds checking
-- **Documentation**: Extensive inline comments explaining complex logic
+- **Controller Pattern**: Centralized coordination without tight coupling
+- **Single Responsibility**: Each class has one clear, well-defined purpose
+- **Documentation**: Extensive inline comments explaining complex logic and architecture decisions
 
 ## 🚧 Future Enhancements
 
-Potential areas for expansion:
+The modular architecture makes these enhancements straightforward to implement:
+
+### Gameplay Features
 - [ ] Chess move analysis and suggestions
-- [ ] Game state persistence (save/load)
-- [ ] Network multiplayer support
-- [ ] Advanced AI opponent
-- [ ] Move history and replay functionality
+- [ ] Move history and replay functionality  
+- [ ] Advanced AI opponent (new `src/ai/` module)
+- [ ] Game state persistence (save/load functionality)
 - [ ] Tournament bracket system
+
+### Technical Improvements
+- [ ] Configuration system (`src/config/` module)
+- [ ] Audio system (`src/audio/` module)
+- [ ] Network multiplayer (`src/network/` module)
+- [ ] Unit testing framework (`tests/` directory)
+- [ ] Performance profiling and optimization
+- [ ] Cross-platform build system (CMake)
 
 ## 📊 Technical Specifications
 

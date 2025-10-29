@@ -1,9 +1,9 @@
 #pragma once
 
 #include <raylib.h>
-#include "chess_logic.h"
-#include "chess_gui.h"
-#include "chess_input_handler.h"
+#include "../core/chess_logic.h"
+#include "../rendering/chess_gui.h"
+#include "../input/chess_input_handler.h"
 
 // This class manages the overall chess analysis program
 class ChessAnalysisProgram {

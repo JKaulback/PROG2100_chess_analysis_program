@@ -1,5 +1,5 @@
 #include "chess_input_handler.h"
-#include "chess_gui.h"
+#include "../rendering/chess_gui.h"
 
 ChessInputHandler::ChessInputHandler() {
     // Initialize drag state
