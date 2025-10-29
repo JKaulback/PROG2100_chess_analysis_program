@@ -1,7 +1,10 @@
 #include "chess_move_validator.h"
 #include "chess_logic.h"
 
+// Namespace and type aliases for cleaner code
 namespace BoardCfg = Config::Board;
+using Player = ChessLogic::Player;
+using Piece = ChessLogic::Piece;
 
 ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     const ChessLogic& logic,
@@ -20,7 +23,20 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
         return MoveResult::INVALID_SAME_POSITION;
     }
     
-    // If we get here, the move is valid (at least for basic boundary checking)
+    // 3. Check if there's a piece to move
+    Piece piece = logic.getPieceAt(fromRank, fromFile);
+    if (piece == Piece::EMPTY) {
+        return MoveResult::INVALID_OUT_OF_BOUNDS; // Reusing this for now, could add INVALID_NO_PIECE
+    }
+    
+    // 4. Check if it's the correct player's turn
+    Player currentPlayer = logic.getCurrentPlayer();
+    if ((currentPlayer == Player::WHITE_PLAYER && !logic.isWhitePiece(fromRank, fromFile)) ||
+        (currentPlayer == Player::BLACK_PLAYER && !logic.isBlackPiece(fromRank, fromFile))) {
+        return MoveResult::INVALID_WRONG_TURN;
+    }
+    
+    // If we get here, the move is valid (at least for basic validation)
     return MoveResult::VALID;
 }
 

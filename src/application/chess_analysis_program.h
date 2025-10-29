@@ -20,6 +20,7 @@ public:
     // Delegate methods to access logic (for GUI)
     ChessLogic::Piece getPieceAt(int rank, int file) const; // Delegate to logic
     std::string pieceToString(ChessLogic::Piece piece) const; // Delegate to logic
+    ChessLogic::Player getCurrentPlayer() const; // Delegate to logic for turn info
     
     // Delegate methods to access input handler (for GUI)
     bool getIsDragging() const; // Delegate to input handler

@@ -3,7 +3,7 @@
 // Namespace alias for cleaner code while maintaining clarity
 namespace BoardCfg = Config::Board;
 
-ChessLogic::ChessLogic() 
+ChessLogic::ChessLogic() : currentPlayer(Player::WHITE_PLAYER)
 {
     // Initialize pieces array and board representation
     initializeBoard();
@@ -124,14 +124,12 @@ bool ChessLogic::isSquareEmpty(const int rank, const int file) const
     return getPieceAt(rank, file) == Piece::EMPTY;
 }
 
-bool ChessLogic::isWhitePiece(const int rank, const int file) const 
-{
+bool ChessLogic::isWhitePiece(const int rank, const int file) const {
     Piece piece = getPieceAt(rank, file);
     return piece >= Piece::WHITE_KING && piece <= Piece::WHITE_PAWN;
 }
 
-bool ChessLogic::isBlackPiece(const int rank, const int file) const 
-{
+bool ChessLogic::isBlackPiece(const int rank, const int file) const {
     Piece piece = getPieceAt(rank, file);
     return piece >= Piece::BLACK_KING && piece <= Piece::BLACK_PAWN;
 }
@@ -151,4 +149,29 @@ bool ChessLogic::isValidSquare(const int rank, const int file) const
 {
     return rank >= BoardCfg::MIN_RANK && rank <= BoardCfg::MAX_RANK &&
            file >= BoardCfg::MIN_FILE && file <= BoardCfg::MAX_FILE;
+}
+
+// Turn management methods
+ChessLogic::Player ChessLogic::getCurrentPlayer() const 
+{
+    return currentPlayer;
+}
+
+bool ChessLogic::isPlayerTurn(Player player) const 
+{
+    return currentPlayer == player;
+}
+
+void ChessLogic::switchTurn() 
+{
+    currentPlayer = (currentPlayer == Player::WHITE_PLAYER) ? Player::BLACK_PLAYER : Player::WHITE_PLAYER;
+}
+
+ChessLogic::Player ChessLogic::getPieceOwner(Piece piece) const {
+    if (piece >= Piece::WHITE_KING && piece <= Piece::WHITE_PAWN) {
+        return Player::WHITE_PLAYER;
+    } else if (piece >= Piece::BLACK_KING && piece <= Piece::BLACK_PAWN) {
+        return Player::BLACK_PLAYER;
+    }
+    return Player::WHITE_PLAYER; // Default
 }

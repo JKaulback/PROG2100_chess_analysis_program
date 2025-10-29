@@ -31,6 +31,11 @@ std::string ChessAnalysisProgram::pieceToString(ChessLogic::Piece piece) const
     return logic.pieceToString(piece);
 }
 
+ChessLogic::Player ChessAnalysisProgram::getCurrentPlayer() const 
+{
+    return logic.getCurrentPlayer();
+}
+
 // Delegate methods to input handler
 bool ChessAnalysisProgram::getIsDragging() const 
 {
@@ -63,9 +68,10 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     // 1. Validate the move using the validator
     auto validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
     
-    // 2. If valid, execute the move through the logic
+    // 2. If valid, execute the move and switch turns
     if (validationResult == MoveResult::VALID) {
         logic.executeMove(srcRank, srcFile, destRank, destFile);
+        logic.switchTurn(); // Switch to the other player
         return true;
     }
     

@@ -13,7 +13,8 @@ public:
     enum class MoveResult {
         VALID,
         INVALID_OUT_OF_BOUNDS,
-        INVALID_SAME_POSITION
+        INVALID_SAME_POSITION,
+        INVALID_WRONG_TURN
     };
 
     ChessMoveValidator() = default;
@@ -34,10 +35,12 @@ public:
 private:
     // Helper function for boundary checking
     bool isValidSquare(int rank, int file) const;
-
+    
+    // Mapping of MoveResult to descriptive strings
     std::map<MoveResult, std::string> resultStrings = {
         {MoveResult::VALID, "Valid move"},
         {MoveResult::INVALID_OUT_OF_BOUNDS, "Move is out of bounds"},
-        {MoveResult::INVALID_SAME_POSITION, "Cannot move to the same position"}
+        {MoveResult::INVALID_SAME_POSITION, "Cannot move to the same position"},
+        {MoveResult::INVALID_WRONG_TURN, "Not your turn"}
     };
 };

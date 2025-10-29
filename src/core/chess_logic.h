@@ -26,6 +26,11 @@ public:
             BLACK_PAWN
         };
 
+    enum class Player {
+        WHITE_PLAYER,
+        BLACK_PLAYER
+    };
+
     ChessLogic();
     ~ChessLogic();
 
@@ -44,11 +49,18 @@ public:
     
     // Board state queries for advanced validation
     bool isValidSquare(const int rank, const int file) const;
+    
+    // Turn management
+    Player getCurrentPlayer() const;
+    bool isPlayerTurn(Player player) const;
+    void switchTurn();
 private:
     // Game state variables
     std::array<std::array<Piece, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board; // Board representation
     std::vector<Piece> capturedPieces; // Captured pieces
+    Player currentPlayer; // Whose turn it is (White goes first)
 
     // Helpers
     void initPieces(); // Helper to add pieces to the board
+    Player getPieceOwner(Piece piece) const; // Get which player owns a piece
 };
