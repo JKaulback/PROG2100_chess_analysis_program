@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <string>
 #include <map>
+#include "../config/config.h"
 
 // Forward declarations to avoid circular dependencies
 class ChessAnalysisProgram;
@@ -26,31 +27,6 @@ private:
     Texture2D boardTexture; // Texture for the chess board
     std::map<std::string, Texture2D> pieceTextures;
     const ChessAnalysisProgram& controller; // Reference to the controller (const for read-only access)
-    
-    // Program data
-    const int SCREEN_WIDTH = 1920;
-    const int SCREEN_HEIGHT = 1080;
-    const int TARGET_FPS = 60;
-
-    // Board texture data
-    const char* BOARD_TEXTURE_PATH = "src/assets/board.png";
-    const float BOARD_SCALE = 0.675f; // The scale to draw the board
-    const float ACTUAL_BOARD_SIZE = 1600.0f * BOARD_SCALE; // Actual size of the board in px
-    const float SQUARE_SIZE = ACTUAL_BOARD_SIZE / 8.0f; // Size of the squares of the board
-    const float BOARD_OFFSET_X = 0.0f;
-    const float BOARD_OFFSET_Y = 0.0f;
-    const int MIN_RANK = 0;
-    const int MIN_FILE = 0;
-    const int MAX_RANK = 7;
-    const int MAX_FILE = 7;
-
-    // Piece texture data
-    const char* PIECES_TEXTURE_PATH = "src/assets/chess_pieces/";
-    const float PIECE_SIZE_RATIO = 0.8f;
-    const float PIECE_SIZE = SQUARE_SIZE * PIECE_SIZE_RATIO; // Size of the pieces to draw
-    const float PIECE_TEXTURE_SIZE = 150.0f;
-    const float PIECE_SCALE = PIECE_SIZE / PIECE_TEXTURE_SIZE; // Scale of the pieces
-    const float CENTERED_VALUE = (SQUARE_SIZE / 2.0f) - (PIECE_SIZE / 2.0f); // Value to add to piece position for centering
     
     // Helper methods (drag state moved to controller)
     void initPieceTextures(); // Initialize all piece textures

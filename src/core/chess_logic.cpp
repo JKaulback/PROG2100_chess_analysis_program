@@ -1,5 +1,8 @@
 #include "chess_logic.h"
 
+// Namespace alias for cleaner code while maintaining clarity
+namespace BoardCfg = Config::Board;
+
 ChessLogic::ChessLogic() 
 {
     // Initialize pieces array and board representation
@@ -33,7 +36,7 @@ void ChessLogic::initPieces()
     int blackBackRank = 7;
     
     // Add pawns using move semantics for efficiency
-    for (int file = 0; file < 8; ++file) 
+    for (int file = 0; file < BoardCfg::BOARD_DIMENSION; ++file) 
     {
         board[whitePawnRank][file] = ChessLogic::Piece::WHITE_PAWN;
         board[blackPawnRank][file] = ChessLogic::Piece::BLACK_PAWN;
@@ -57,7 +60,7 @@ void ChessLogic::initPieces()
         ChessLogic::Piece::BLACK_KNIGHT, ChessLogic::Piece::BLACK_ROOK
     };
 
-    for (int file = 0; file < 8; ++file) 
+    for (int file = 0; file < BoardCfg::BOARD_DIMENSION; ++file) 
     {
         board[whiteBackRank][file] = whiteBackPieces[file];
         board[blackBackRank][file] = blackBackPieces[file];
@@ -66,7 +69,8 @@ void ChessLogic::initPieces()
 
 ChessLogic::Piece ChessLogic::getPieceAt(const int rank, const int file) const 
 {
-    if (rank < 0 || rank >= 8 || file < 0 || file >= 8) 
+    if (rank < BoardCfg::MIN_RANK || rank > BoardCfg::MAX_RANK || 
+        file < BoardCfg::MIN_FILE || file > BoardCfg::MAX_FILE) 
     {
         return ChessLogic::Piece::EMPTY; // Out of bounds
     }
@@ -112,10 +116,10 @@ bool ChessLogic::isValidMove(
     const int toFile) const
 {
     // Check if ranks and files are within board bounds
-    if (fromRank < 0 || fromRank > 7 || 
-        fromFile < 0 || fromFile > 7 ||
-        toRank < 0 || toRank > 7 || 
-        toFile < 0 || toFile > 7) 
+    if (fromRank < BoardCfg::MIN_RANK || fromRank > BoardCfg::MAX_RANK || 
+        fromFile < BoardCfg::MIN_FILE || fromFile > BoardCfg::MAX_FILE ||
+        toRank < BoardCfg::MIN_RANK || toRank > BoardCfg::MAX_RANK || 
+        toFile < BoardCfg::MIN_FILE || toFile > BoardCfg::MAX_FILE) 
     {
         
         return false;

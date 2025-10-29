@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <string>
+#include "../config/config.h"
 
 // This class is responsible for chess game logic
 class ChessLogic {
@@ -37,7 +38,7 @@ public:
     std::string pieceToString(Piece piece) const;
 private:
     // Game state variables
-    std::array<std::array<Piece, 8>, 8> board; // Board representation
+    std::array<std::array<Piece, Config::Board::BOARD_DIMENSION>, Config::Board::BOARD_DIMENSION> board; // Board representation
     std::vector<Piece> capturedPieces; // Captured pieces
 
     // Helpers

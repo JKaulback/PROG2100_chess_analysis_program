@@ -1,15 +1,20 @@
 #include "chess_gui.h"
 #include "../application/chess_analysis_program.h"
 
+// Namespace aliases for cleaner code while maintaining clarity
+namespace WinCfg = Config::Window;
+namespace BoardCfg = Config::Board;
+namespace PieceCfg = Config::Pieces;
+
 
 ChessGUI::ChessGUI(const ChessAnalysisProgram& ctrl) : controller(ctrl) 
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis Program");
+    InitWindow(WinCfg::WIDTH, WinCfg::HEIGHT, WinCfg::TITLE);
 
-    SetTargetFPS(TARGET_FPS); // Set the desired frame rate
+    SetTargetFPS(WinCfg::TARGET_FPS); // Set the desired frame rate
 
     // Load assets
-    boardTexture = LoadTexture(BOARD_TEXTURE_PATH); // The chess board is initially 1600x1600 px
+    boardTexture = LoadTexture(BoardCfg::TEXTURE_PATH); // The chess board is initially 1600x1600 px
 
     // Initialize pieces from the logic board
     initPieceTextures();
@@ -31,9 +36,9 @@ ChessGUI::~ChessGUI() {
 void ChessGUI::initPieceTextures() 
 {
     // Loop through the logical board
-    for (int rank = MIN_RANK; rank <= MAX_RANK ; rank++) 
+    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK ; rank++) 
     {
-        for (int file = MIN_FILE; file <= MAX_FILE; file++) 
+        for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) 
         {
             // Check the playable pieces
             ChessLogic::Piece currentPiece = controller.getPieceAt(rank, file);
@@ -52,7 +57,7 @@ void ChessGUI::initPieceTextures()
 
 void ChessGUI::loadPieceTexture(const std::string& pieceString) 
 {
-    std::string path = PIECES_TEXTURE_PATH + pieceString + ".png";
+    std::string path = PieceCfg::TEXTURE_PATH + pieceString + ".png";
 
     pieceTextures[pieceString] = LoadTexture(path.c_str());
 }
@@ -64,7 +69,7 @@ void ChessGUI::draw() const
     ClearBackground(RAYWHITE);
 
     // Draw the chess board
-    DrawTextureEx(boardTexture, {0, 0}, 0.0f, BOARD_SCALE, WHITE);
+    DrawTextureEx(boardTexture, {0, 0}, 0.0f, Config::Board::SCALE, WHITE);
 
     // Draw all chess pieces in play
     drawChessPieces();
@@ -76,8 +81,8 @@ void ChessGUI::draw() const
 
 Vector2 ChessGUI::screenPosToBoardPos(Vector2 screenPos) const 
 {
-    int file = static_cast<int>((screenPos.x - BOARD_OFFSET_X) / SQUARE_SIZE);
-    int rank = MAX_RANK - static_cast<int>((screenPos.y - BOARD_OFFSET_Y) / SQUARE_SIZE);
+    int file = static_cast<int>((screenPos.x - Config::Board::OFFSET_X) / Config::Board::SQUARE_SIZE);
+    int rank = Config::Board::MAX_RANK - static_cast<int>((screenPos.y - Config::Board::OFFSET_Y) / Config::Board::SQUARE_SIZE);
 
     return 
     {
@@ -89,8 +94,8 @@ Vector2 ChessGUI::boardPosToScreenPos(Vector2 boardPos) const
 {
     return Vector2
     {
-        BOARD_OFFSET_X + (boardPos.x * SQUARE_SIZE) + CENTERED_VALUE,
-        BOARD_OFFSET_Y + ((MAX_RANK - boardPos.y) * SQUARE_SIZE) + CENTERED_VALUE,
+        Config::Board::OFFSET_X + (boardPos.x * Config::Board::SQUARE_SIZE) + Config::Pieces::CENTER_OFFSET,
+        Config::Board::OFFSET_Y + ((Config::Board::MAX_RANK - boardPos.y) * Config::Board::SQUARE_SIZE) + Config::Pieces::CENTER_OFFSET,
 
     };
 }
@@ -98,9 +103,9 @@ Vector2 ChessGUI::boardPosToScreenPos(Vector2 boardPos) const
 void ChessGUI::drawChessPieces() const 
 {
     // Draw all playable pieces not being dragged
-    for (int rank = MIN_RANK; rank <= MAX_RANK; rank++) 
+    for (int rank = Config::Board::MIN_RANK; rank <= Config::Board::MAX_RANK; rank++) 
     {
-        for (int file = MIN_FILE; file <= MAX_FILE; file++) 
+        for (int file = Config::Board::MIN_FILE; file <= Config::Board::MAX_FILE; file++) 
         {
             // Skip piece if being dragged
             if (controller.getIsDragging() && 
@@ -115,7 +120,7 @@ void ChessGUI::drawChessPieces() const
             {
                 std::string pieceString = controller.pieceToString(currentPiece);
                 const Vector2 screenPos = boardPosToScreenPos({static_cast<float>(file), static_cast<float>(rank)});
-                DrawTextureEx(pieceTextures.at(pieceString), screenPos, 0.0f, PIECE_SCALE, WHITE);
+                DrawTextureEx(pieceTextures.at(pieceString), screenPos, 0.0f, Config::Pieces::SCALE, WHITE);
             }
         }
     }
@@ -129,21 +134,21 @@ void ChessGUI::drawChessPieces() const
         // Calculate draw position
         const Vector2 drawPos = 
         {
-            mousePos.x - dragOffset.x - PIECE_SIZE / 2.0f,
-            mousePos.y - dragOffset.y - PIECE_SIZE / 2.0f
+            mousePos.x - dragOffset.x - Config::Pieces::SIZE / 2.0f,
+            mousePos.y - dragOffset.y - Config::Pieces::SIZE / 2.0f
         };
 
         // Draw the piece being dragged
-        DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f, PIECE_SCALE, WHITE);
+        DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f, Config::Pieces::SCALE, WHITE);
     }
 }
 
 float ChessGUI::getSquareSize() const 
 {
-    return SQUARE_SIZE;
+    return Config::Board::SQUARE_SIZE;
 }
 
 float ChessGUI::getPieceSize() const 
 {
-    return PIECE_SIZE;
+    return Config::Pieces::SIZE;
 }
