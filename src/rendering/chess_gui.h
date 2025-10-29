@@ -9,13 +9,18 @@ class ChessAnalysisProgram;
 
 // This class is responsible for the graphical user interface of the chess program
 class ChessGUI {
-
 public:
     ChessGUI(const ChessAnalysisProgram& controller); // Constructor with controller reference
     ~ChessGUI(); // Destructor
 
     void draw() const; // Draw GUI elements - pure rendering
     
+    // Public methods for controller to access
+    Vector2 screenPosToBoardPos(Vector2) const; // Translate screen position to board position
+    Vector2 boardPosToScreenPos(Vector2) const; // Translate board position to screen position
+    float getSquareSize() const;
+    float getPieceSize() const;
+
 private:
     // Chess board and piece display
     Texture2D boardTexture; // Texture for the chess board
@@ -48,17 +53,7 @@ private:
     const float CENTERED_VALUE = (SQUARE_SIZE / 2.0f) - (PIECE_SIZE / 2.0f); // Value to add to piece position for centering
     
     // Helper methods (drag state moved to controller)
-    Vector2 screenPosToBoardPos(Vector2) const; // Translate screen position to board position
-    Vector2 boardPosToScreenPos(Vector2) const; // Translate board position to screen position
     void initPieceTextures(); // Initialize all piece textures
     void loadPieceTexture(const std::string& pieceString); // Load a single piece texture
     void drawChessPieces() const; // Draw the chess pieces based on their logical position
-
-public:
-    // Public methods for controller to access
-    Vector2 getScreenPosToBoardPos(Vector2 screenPos) const { return screenPosToBoardPos(screenPos); }
-    Vector2 getBoardPosToScreenPos(Vector2 boardPos) const { return boardPosToScreenPos(boardPos); }
-    float getSquareSize() const { return SQUARE_SIZE; }
-    float getPieceSize() const { return PIECE_SIZE; }
-    
 };

@@ -8,7 +8,6 @@ class ChessGUI;
 
 // This class handles all user input for the chess program
 class ChessInputHandler {
-
 public:
     ChessInputHandler(); // Constructor
     ~ChessInputHandler(); // Destructor
@@ -16,12 +15,11 @@ public:
     void handleInput(ChessLogic& logic, const ChessGUI& gui); // Process input and update game state
 
     // Getters for drag state (used by GUI for rendering)
-    bool getIsDragging() const { return isDragging; }
-    int getDraggedPieceRank() const { return draggedPieceRank; }
-    int getDraggedPieceFile() const { return draggedPieceFile; }
-    Vector2 getDragOffset() const { return dragOffset; }
-    ChessLogic::Piece getDraggedPiece() const { return draggedPiece; }
-
+    bool getIsDragging() const;
+    int getDraggedPieceRank() const;
+    int getDraggedPieceFile() const;
+    Vector2 getDragOffset() const;
+    ChessLogic::Piece getDraggedPiece() const;
 private:
     // Drag and drop state
     bool isDragging; // Whether a piece is being dragged

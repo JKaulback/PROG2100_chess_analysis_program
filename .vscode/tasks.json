@@ -8,8 +8,11 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "src/**/*.cpp",
-                "src/*.cpp",
+                "src/main.cpp",
+                "src/application/chess_analysis_program.cpp",
+                "src/core/chess_logic.cpp",
+                "src/rendering/chess_gui.cpp",
+                "src/input/chess_input_handler.cpp",
                 "-o",
                 "main.exe",
                 "-I",

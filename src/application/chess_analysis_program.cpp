@@ -1,15 +1,18 @@
 #include "chess_analysis_program.h"
 
-ChessAnalysisProgram::ChessAnalysisProgram() : logic{}, gui{*this}, inputHandler{} {
-    // Constructor now initializes logic, gui with controller reference, and input handler
-}
+ChessAnalysisProgram::ChessAnalysisProgram() : 
+    logic{}, gui{*this}, inputHandler{} 
+{}
 
-ChessAnalysisProgram::~ChessAnalysisProgram() {}
+ChessAnalysisProgram::~ChessAnalysisProgram() 
+{}
 
-void ChessAnalysisProgram::run() {
+void ChessAnalysisProgram::run() 
+{
 
     // Main loop
-    while (!WindowShouldClose()) { // Detect window close button or ESC key
+    while (!WindowShouldClose()) 
+    { // Detect window close button or ESC key
         
         inputHandler.handleInput(logic, gui); // Input handler processes input
         gui.draw(); // GUI only renders
@@ -18,31 +21,38 @@ void ChessAnalysisProgram::run() {
 }
 
 // Delegate methods to logic
-ChessLogic::Piece ChessAnalysisProgram::getPieceAt(int rank, int file) const {
+ChessLogic::Piece ChessAnalysisProgram::getPieceAt(int rank, int file) const 
+{
     return logic.getPieceAt(rank, file);
 }
 
-std::string ChessAnalysisProgram::pieceToString(ChessLogic::Piece piece) const {
+std::string ChessAnalysisProgram::pieceToString(ChessLogic::Piece piece) const 
+{
     return logic.pieceToString(piece);
 }
 
 // Delegate methods to input handler
-bool ChessAnalysisProgram::getIsDragging() const {
+bool ChessAnalysisProgram::getIsDragging() const 
+{
     return inputHandler.getIsDragging();
 }
 
-int ChessAnalysisProgram::getDraggedPieceRank() const {
+int ChessAnalysisProgram::getDraggedPieceRank() const 
+{
     return inputHandler.getDraggedPieceRank();
 }
 
-int ChessAnalysisProgram::getDraggedPieceFile() const {
+int ChessAnalysisProgram::getDraggedPieceFile() const 
+{
     return inputHandler.getDraggedPieceFile();
 }
 
-Vector2 ChessAnalysisProgram::getDragOffset() const {
+Vector2 ChessAnalysisProgram::getDragOffset() const 
+{
     return inputHandler.getDragOffset();
 }
 
-ChessLogic::Piece ChessAnalysisProgram::getDraggedPiece() const {
+ChessLogic::Piece ChessAnalysisProgram::getDraggedPiece() const 
+{
     return inputHandler.getDraggedPiece();
 }

@@ -27,10 +27,14 @@ public:
     ~ChessLogic();
 
     Piece getPieceAt(const int rank, const int file) const;
-    void makeMove(const int fromRank, const int fromFile, const int toRank, const int toFile);
+    void makeMove(
+        const int fromRank, 
+        const int fromFile, 
+        const int toRank, 
+        const int toFile
+    );
     void initializeBoard();
     std::string pieceToString(Piece piece) const;
-    
 private:
     // Game state variables
     std::array<std::array<Piece, 8>, 8> board; // Board representation
@@ -38,6 +42,10 @@ private:
 
     // Helpers
     void initPieces(); // Helper to add pieces to the board
-    bool isValidMove(const int fromRank, const int fromFile, const int toRank, const int toFile) const;
-
+    bool isValidMove(
+        const int fromRank, 
+        const int fromFile, 
+        const int toRank, 
+        const int toFile
+    ) const;
 };
