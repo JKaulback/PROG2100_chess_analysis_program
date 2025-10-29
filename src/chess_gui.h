@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <string>
 #include <map>
 #include "chess_logic.h"
 
@@ -50,7 +51,7 @@ private:
     int draggedPieceRank; // The original rank of a dragged piece
     int draggedPieceFile; // The original file of a dragged piece
     Vector2 dragOffset; // The offset from the mouse to prevent "jump"
-    ChessPiece draggedPiece; // The actual piece being dragged
+    ChessLogic::Piece draggedPiece; // The actual piece being dragged
 
     // Helper methods
     Vector2 screenPosToBoardPos(Vector2) const; // Translate screen position to board position

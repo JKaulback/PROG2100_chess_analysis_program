@@ -21,8 +21,6 @@ void ChessLogic::initializeBoard() {
 }
 
 void ChessLogic::initPieces() {
-
-
     // Determine ranks for this color
     int whitePawnRank = 1;
     int whiteBackRank = 0;
@@ -105,4 +103,23 @@ bool ChessLogic::isValidMove(const int fromRank, const int fromFile, const int t
     }
 
     return true;
+}
+
+std::string ChessLogic::pieceToString(Piece piece) const {
+    switch (piece) {
+        case Piece::EMPTY: return "empty";
+        case Piece::WHITE_KING: return "wk";
+        case Piece::WHITE_QUEEN: return "wq";
+        case Piece::WHITE_ROOK: return "wr";
+        case Piece::WHITE_BISHOP: return "wb";
+        case Piece::WHITE_KNIGHT: return "wn";
+        case Piece::WHITE_PAWN: return "wp";
+        case Piece::BLACK_KING: return "bk";
+        case Piece::BLACK_QUEEN: return "bq";
+        case Piece::BLACK_ROOK: return "br";
+        case Piece::BLACK_BISHOP: return "bb";
+        case Piece::BLACK_KNIGHT: return "bn";
+        case Piece::BLACK_PAWN: return "bp";
+        default: return "unknown";
+    }
 }

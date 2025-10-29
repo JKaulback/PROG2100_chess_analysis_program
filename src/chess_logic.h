@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <string>
 
 // This class is responsible for chess game logic
 class ChessLogic {
@@ -28,6 +29,7 @@ public:
     Piece getPieceAt(const int rank, const int file) const;
     void makeMove(const int fromRank, const int fromFile, const int toRank, const int toFile);
     void initializeBoard();
+    std::string pieceToString(Piece piece) const;
     
 private:
     // Game state variables
