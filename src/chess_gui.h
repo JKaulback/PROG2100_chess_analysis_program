@@ -3,23 +3,25 @@
 #include <raylib.h>
 #include <string>
 #include <map>
-#include "chess_logic.h"
+
+// Forward declaration to avoid circular dependency
+class ChessAnalysisProgram;
 
 // This class is responsible for the graphical user interface of the chess program
 class ChessGUI {
 
 public:
-    ChessGUI(ChessLogic& logic); // Constructor with logic reference
+    ChessGUI(ChessAnalysisProgram& controller); // Constructor with controller reference
     ~ChessGUI(); // Destructor
 
-    void draw() const; // Draw GUI elements
-    void update(); // Update GUI elements
+    void draw() const; // Draw GUI elements - pure rendering
+    // update() method removed - input handling moved to controller
     
 private:
     // Chess board and piece display
     Texture2D boardTexture; // Texture for the chess board
     std::map<std::string, Texture2D> pieceTextures;
-    ChessLogic& chessLogic; // Reference to the chess logic
+    ChessAnalysisProgram& controller; // Reference to the controller
     
     // Program data
     const int SCREEN_WIDTH = 1920;
@@ -46,19 +48,18 @@ private:
     const float PIECE_SCALE = PIECE_SIZE / PIECE_TEXTURE_SIZE; // Scale of the pieces
     const float CENTERED_VALUE = (SQUARE_SIZE / 2.0f) - (PIECE_SIZE / 2.0f); // Value to add to piece position for centering
     
-    // Drag and drop state
-    bool isDragging; // Whether a piece is being dragged
-    int draggedPieceRank; // The original rank of a dragged piece
-    int draggedPieceFile; // The original file of a dragged piece
-    Vector2 dragOffset; // The offset from the mouse to prevent "jump"
-    ChessLogic::Piece draggedPiece; // The actual piece being dragged
-
-    // Helper methods
+    // Helper methods (drag state moved to controller)
     Vector2 screenPosToBoardPos(Vector2) const; // Translate screen position to board position
     Vector2 boardPosToScreenPos(Vector2) const; // Translate board position to screen position
     void initPieceTextures(); // Initialize all piece textures
     void loadPieceTexture(const std::string& pieceString); // Load a single piece texture
     void drawChessPieces() const; // Draw the chess pieces based on their logical position
-    void resetDragState();
+
+public:
+    // Public methods for controller to access
+    Vector2 getScreenPosToBoardPos(Vector2 screenPos) const { return screenPosToBoardPos(screenPos); }
+    Vector2 getBoardPosToScreenPos(Vector2 boardPos) const { return boardPosToScreenPos(boardPos); }
+    float getSquareSize() const { return SQUARE_SIZE; }
+    float getPieceSize() const { return PIECE_SIZE; }
     
 };

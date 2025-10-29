@@ -2,9 +2,7 @@
 
 int main() {
 
-    ChessLogic logic{};
-    ChessGUI gui{logic}; // Pass logic reference to GUI
-    ChessAnalysisProgram app{gui};
+    ChessAnalysisProgram app{}; // Now creates its own logic and gui objects
 
     app.run();
     

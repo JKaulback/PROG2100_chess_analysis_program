@@ -1,7 +1,8 @@
 #include "chess_gui.h"
+#include "chess_analysis_program.h"
 
 
-ChessGUI::ChessGUI(ChessLogic& logic) : chessLogic(logic) {
+ChessGUI::ChessGUI(ChessAnalysisProgram& ctrl) : controller(ctrl) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis Program");
 
     SetTargetFPS(TARGET_FPS); // Set the desired frame rate
@@ -14,9 +15,6 @@ ChessGUI::ChessGUI(ChessLogic& logic) : chessLogic(logic) {
 
     // Toggle full screen
     ToggleFullscreen();
-
-    // Initialize drag state
-    resetDragState();
 }
 
 ChessGUI::~ChessGUI() {
@@ -33,10 +31,10 @@ void ChessGUI::initPieceTextures() {
     for (int rank = MIN_RANK; rank <= MAX_RANK ; rank++) {
         for (int file = MIN_FILE; file <= MAX_FILE; file++) {
             // Check the playable pieces
-            ChessLogic::Piece currentPiece = chessLogic.getPieceAt(rank, file);
+            ChessLogic::Piece currentPiece = controller.getPieceAt(rank, file);
             if (currentPiece != ChessLogic::Piece::EMPTY) {
                 // Ensure the texture hasn't been loaded yet
-                std::string pieceString = chessLogic.pieceToString(currentPiece);
+                std::string pieceString = controller.pieceToString(currentPiece);
                 if (!pieceTextures.count(pieceString)) {
                     // Load the texture
                     loadPieceTexture(pieceString);
@@ -66,49 +64,7 @@ void ChessGUI::draw() const {
     EndDrawing();
 }
 
-void ChessGUI::update() {
-    const Vector2 mousePos = GetMousePosition();
-    
-    // Check for drag start
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        // Check if dragging a piece
-        const Vector2 boardPos = screenPosToBoardPos(mousePos);
-        const ChessLogic::Piece selectedPiece = chessLogic.getPieceAt(static_cast<int>(boardPos.y), static_cast<int>(boardPos.x));
 
-        if (selectedPiece != ChessLogic::Piece::EMPTY) {
-            // Set state variables for dragging
-            isDragging = true;
-            draggedPieceRank = static_cast<int>(boardPos.y);
-            draggedPieceFile = static_cast<int>(boardPos.x);
-            draggedPiece = selectedPiece;
-            
-            // Calculate the offset for the piece center to the mouse
-            const Vector2 pieceScreenPos = boardPosToScreenPos(boardPos);
-            const Vector2 pieceCenterPos = {
-                pieceScreenPos.x + PIECE_SIZE / 2.0f,
-                pieceScreenPos.y + PIECE_SIZE / 2.0f
-            };
-            dragOffset = {
-                mousePos.x - pieceCenterPos.x,
-                mousePos.y - pieceCenterPos.y
-            };
-        }
-    }
-    // Check for piece drop
-    if (isDragging && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-        // Get the position of the dropped piece
-        const Vector2 boardDropPos = screenPosToBoardPos(mousePos);
-        const int dropFile = static_cast<int>(boardDropPos.x);
-        const int dropRank = static_cast<int>(boardDropPos.y);
-
-        // Attempt to make a move (move validation is handled in logic)
-        chessLogic.makeMove(draggedPieceRank, draggedPieceFile, dropRank, dropFile);
-
-        // Stop dragging regardless of move success
-        resetDragState();
-    }
-
-}
 
 Vector2 ChessGUI::screenPosToBoardPos(Vector2 screenPos) const {
     int file = static_cast<int>((screenPos.x - BOARD_OFFSET_X) / SQUARE_SIZE);
@@ -130,22 +86,23 @@ void ChessGUI::drawChessPieces() const {
     for (int rank = MIN_RANK; rank <= MAX_RANK; rank++) {
         for (int file = MIN_FILE; file <= MAX_FILE; file++) {
             // Skip piece if being dragged
-            if (isDragging && draggedPieceRank == rank && draggedPieceFile == file) {
+            if (controller.getIsDragging() && controller.getDraggedPieceRank() == rank && controller.getDraggedPieceFile() == file) {
                 continue;
             }
             // Draw playable pieces
-            ChessLogic::Piece currentPiece = chessLogic.getPieceAt(rank, file);
+            ChessLogic::Piece currentPiece = controller.getPieceAt(rank, file);
             if (currentPiece != ChessLogic::Piece::EMPTY) {
-                std::string pieceString = chessLogic.pieceToString(currentPiece);
+                std::string pieceString = controller.pieceToString(currentPiece);
                 const Vector2 screenPos = boardPosToScreenPos({static_cast<float>(file), static_cast<float>(rank)});
                 DrawTextureEx(pieceTextures.at(pieceString), screenPos, 0.0f, PIECE_SCALE, WHITE);
             }
         }
     }
     // Draw the dragged piece at mouse position
-    if (isDragging) {
+    if (controller.getIsDragging()) {
         const Vector2 mousePos = GetMousePosition();
-        std::string pieceString = chessLogic.pieceToString(draggedPiece);
+        std::string pieceString = controller.pieceToString(controller.getDraggedPiece());
+        Vector2 dragOffset = controller.getDragOffset();
 
         // Calculate draw position
         const Vector2 drawPos = {
@@ -156,12 +113,4 @@ void ChessGUI::drawChessPieces() const {
         // Draw the piece being dragged
         DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f, PIECE_SCALE, WHITE);
     }
-}
-
-void ChessGUI::resetDragState() {
-    isDragging = false;
-    draggedPieceRank = -1;
-    draggedPieceFile = -1;
-    dragOffset = {0, 0};
-    draggedPiece = ChessLogic::Piece::EMPTY;
 }
