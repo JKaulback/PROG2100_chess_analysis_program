@@ -2,7 +2,7 @@
 #include "chess_analysis_program.h"
 
 
-ChessGUI::ChessGUI(ChessAnalysisProgram& ctrl) : controller(ctrl) {
+ChessGUI::ChessGUI(const ChessAnalysisProgram& ctrl) : controller(ctrl) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis Program");
 
     SetTargetFPS(TARGET_FPS); // Set the desired frame rate

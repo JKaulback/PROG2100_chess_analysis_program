@@ -4,24 +4,23 @@
 #include <string>
 #include <map>
 
-// Forward declaration to avoid circular dependency
+// Forward declarations to avoid circular dependencies
 class ChessAnalysisProgram;
 
 // This class is responsible for the graphical user interface of the chess program
 class ChessGUI {
 
 public:
-    ChessGUI(ChessAnalysisProgram& controller); // Constructor with controller reference
+    ChessGUI(const ChessAnalysisProgram& controller); // Constructor with controller reference
     ~ChessGUI(); // Destructor
 
     void draw() const; // Draw GUI elements - pure rendering
-    // update() method removed - input handling moved to controller
     
 private:
     // Chess board and piece display
     Texture2D boardTexture; // Texture for the chess board
     std::map<std::string, Texture2D> pieceTextures;
-    ChessAnalysisProgram& controller; // Reference to the controller
+    const ChessAnalysisProgram& controller; // Reference to the controller (const for read-only access)
     
     // Program data
     const int SCREEN_WIDTH = 1920;
