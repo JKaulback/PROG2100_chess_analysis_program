@@ -1,5 +1,6 @@
 #include "chess_input_handler.h"
 #include "../rendering/chess_gui.h"
+#include "../application/chess_analysis_program.h"
 
 ChessInputHandler::ChessInputHandler() 
 {
@@ -10,7 +11,7 @@ ChessInputHandler::ChessInputHandler()
 ChessInputHandler::~ChessInputHandler() 
 {}
 
-void ChessInputHandler::handleInput(ChessLogic& logic, const ChessGUI& gui) 
+void ChessInputHandler::handleInput(ChessAnalysisProgram& controller, const ChessGUI& gui) 
 {
     const Vector2 mousePos = GetMousePosition();
     
@@ -19,7 +20,7 @@ void ChessInputHandler::handleInput(ChessLogic& logic, const ChessGUI& gui)
     {
         // Check if dragging a piece
         const Vector2 boardPos = gui.screenPosToBoardPos(mousePos);
-        const ChessLogic::Piece selectedPiece = logic.getPieceAt(static_cast<int>(boardPos.y), static_cast<int>(boardPos.x));
+        const ChessLogic::Piece selectedPiece = controller.getPieceAt(static_cast<int>(boardPos.y), static_cast<int>(boardPos.x));
 
         if (selectedPiece != ChessLogic::Piece::EMPTY) 
         {
@@ -51,8 +52,15 @@ void ChessInputHandler::handleInput(ChessLogic& logic, const ChessGUI& gui)
         const int dropFile = static_cast<int>(boardDropPos.x);
         const int dropRank = static_cast<int>(boardDropPos.y);
 
-        // Attempt to make a move (move validation is handled in logic)
-        logic.makeMove(draggedPieceRank, draggedPieceFile, dropRank, dropFile);
+        // Attempt move through controller (includes validation)
+        bool moveSuccessful = controller.attemptMove(draggedPieceRank, draggedPieceFile, dropRank, dropFile);
+        
+        // Optional: Handle failed moves with feedback
+        if (!moveSuccessful) {
+            // Future: Could add visual/audio feedback for invalid moves
+            // std::string errorMsg = controller.getMoveValidationMessage(draggedPieceRank, draggedPieceFile, dropRank, dropFile);
+            // std::cout << "Invalid move: " << errorMsg << std::endl;
+        }
 
         // Stop dragging regardless of move success
         resetDragState();

@@ -3,8 +3,9 @@
 #include <raylib.h>
 #include "../core/chess_logic.h"
 
-// Forward declaration to avoid circular dependency
+// Forward declarations to avoid circular dependency
 class ChessGUI;
+class ChessAnalysisProgram;
 
 // This class handles all user input for the chess program
 class ChessInputHandler {
@@ -12,7 +13,7 @@ public:
     ChessInputHandler(); // Constructor
     ~ChessInputHandler(); // Destructor
 
-    void handleInput(ChessLogic& logic, const ChessGUI& gui); // Process input and update game state
+    void handleInput(ChessAnalysisProgram& controller, const ChessGUI& gui); // Process input through controller
 
     // Getters for drag state (used by GUI for rendering)
     bool getIsDragging() const;

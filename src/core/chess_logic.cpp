@@ -77,61 +77,24 @@ ChessLogic::Piece ChessLogic::getPieceAt(const int rank, const int file) const
     return board[rank][file]; // Return the piece in the array
 }
 
-void ChessLogic::makeMove(
-    const int fromRank, 
-    const int fromFile,
-    const int toRank, 
-    const int toFile) 
+void ChessLogic::executeMove(
+    const int srcRank, 
+    const int srcFile,
+    const int destRank, 
+    const int destFile) 
 {
-    // Validate move in board boundaries
-    if (!isValidMove(fromRank, fromFile, toRank, toFile)) 
+    // Note: This method assumes the move has already been validated
+    // All validation will be handled by ChessMoveValidator
+    
+    // Capture piece if present
+    if (board[destRank][destFile] != ChessLogic::Piece::EMPTY) 
     {
-        return; // Move not valid 
+        capturedPieces.push_back(std::move(board[destRank][destFile]));
     }
 
-    // Check if there's a piece to move
-    if (board[fromRank][fromFile] == ChessLogic::Piece::EMPTY) 
-    {
-        return; // No piece to move
-    }
-
-    // Check if there's a piece to capture
-    if (board[toRank][toFile] != ChessLogic::Piece::EMPTY) 
-    {
-        // Move the captured piece to captured pieces vector (efficient move)
-        capturedPieces.push_back(std::move(board[toRank][toFile]));
-    }
-
-    // Move the piece efficiently using move semantics
-    board[toRank][toFile] = std::move(board[fromRank][fromFile]);
-
-    // Explicitly set from position to default ChessPiece
-    board[fromRank][fromFile] = ChessLogic::Piece::EMPTY;
-}
-
-bool ChessLogic::isValidMove(
-    const int fromRank, 
-    const int fromFile, 
-    const int toRank, 
-    const int toFile) const
-{
-    // Check if ranks and files are within board bounds
-    if (fromRank < BoardCfg::MIN_RANK || fromRank > BoardCfg::MAX_RANK || 
-        fromFile < BoardCfg::MIN_FILE || fromFile > BoardCfg::MAX_FILE ||
-        toRank < BoardCfg::MIN_RANK || toRank > BoardCfg::MAX_RANK || 
-        toFile < BoardCfg::MIN_FILE || toFile > BoardCfg::MAX_FILE) 
-    {
-        
-        return false;
-    }
-
-    // Check if attempting to move to the same square
-    if (fromRank == toRank && fromFile == toFile) 
-    {
-        return false;
-    }
-
-    return true;
+    // Execute the move using move semantics for efficiency
+    board[destRank][destFile] = std::move(board[srcRank][srcFile]);
+    board[srcRank][srcFile] = ChessLogic::Piece::EMPTY;
 }
 
 std::string ChessLogic::pieceToString(Piece piece) const 
@@ -153,4 +116,39 @@ std::string ChessLogic::pieceToString(Piece piece) const
         case Piece::BLACK_PAWN: return "bp";
         default: return "unknown";
     }
+}
+
+// Utility methods for move validation support
+bool ChessLogic::isSquareEmpty(const int rank, const int file) const 
+{
+    return getPieceAt(rank, file) == Piece::EMPTY;
+}
+
+bool ChessLogic::isWhitePiece(const int rank, const int file) const 
+{
+    Piece piece = getPieceAt(rank, file);
+    return piece >= Piece::WHITE_KING && piece <= Piece::WHITE_PAWN;
+}
+
+bool ChessLogic::isBlackPiece(const int rank, const int file) const 
+{
+    Piece piece = getPieceAt(rank, file);
+    return piece >= Piece::BLACK_KING && piece <= Piece::BLACK_PAWN;
+}
+
+bool ChessLogic::areSameColorPieces(const int srcRank, const int srcFile, const int destRank, const int destFile) const 
+{
+    return (isWhitePiece(srcRank, srcFile) && isWhitePiece(destRank, destFile)) ||
+           (isBlackPiece(srcRank, srcFile) && isBlackPiece(destRank, destFile));
+}
+
+const std::vector<ChessLogic::Piece>& ChessLogic::getCapturedPieces() const 
+{
+    return capturedPieces;
+}
+
+bool ChessLogic::isValidSquare(const int rank, const int file) const 
+{
+    return rank >= BoardCfg::MIN_RANK && rank <= BoardCfg::MAX_RANK &&
+           file >= BoardCfg::MIN_FILE && file <= BoardCfg::MAX_FILE;
 }

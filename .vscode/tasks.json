@@ -11,6 +11,7 @@
                 "src/main.cpp",
                 "src/application/chess_analysis_program.cpp",
                 "src/core/chess_logic.cpp",
+                "src/core/chess_move_validator.cpp",
                 "src/rendering/chess_gui.cpp",
                 "src/input/chess_input_handler.cpp",
                 "-o",

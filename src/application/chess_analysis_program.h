@@ -4,6 +4,7 @@
 #include "../core/chess_logic.h"
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
+#include "../core/chess_move_validator.h"
 
 // This class manages the overall chess analysis program
 class ChessAnalysisProgram {
@@ -23,8 +24,14 @@ public:
     int getDraggedPieceFile() const; // Delegate to input handler
     Vector2 getDragOffset() const; // Delegate to input handler
     ChessLogic::Piece getDraggedPiece() const; // Delegate to input handler
+    
+    // Move validation and execution methods (Controller orchestration)
+    bool attemptMove(int srcRank, int srcFile, int destRank, int destFile); // Validate and execute move
+    ChessMoveValidator::MoveResult validateMove(int srcRank, int srcFile, int destRank, int destFile) const; // Just validate
+    std::string getMoveValidationMessage(int srcRank, int srcFile, int destRank, int destFile) const; // Get validation message
 private:
     ChessLogic logic; // Own the logic object
     ChessGUI gui; // Own the GUI object
     ChessInputHandler inputHandler; // Own the input handler object
+    ChessMoveValidator moveValidator; // Own the move validator object
 };
