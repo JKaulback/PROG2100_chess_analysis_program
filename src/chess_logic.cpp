@@ -9,16 +9,15 @@ ChessLogic::~ChessLogic() {
 }
 
 void ChessLogic::initializeBoard() {
-    // Clear the board
+    // Set all squares to empty
     for ( int rank = 0; rank < board.size(); rank++ ) {
         for ( int file = 0; file < board[rank].size(); file++ ) {
-            board[rank][file] = ChessPiece();
+            board[rank][file] = ChessLogic::Piece::EMPTY;
         }
     }
 
     // Initialize chess pieces pieces
     initPieces();
-
 }
 
 void ChessLogic::initPieces() {
@@ -32,35 +31,35 @@ void ChessLogic::initPieces() {
     
     // Add pawns using move semantics for efficiency
     for (int file = 0; file < 8; ++file) {
-        board[whitePawnRank][file] = ChessPiece(ChessPiece::PieceType::WHITE_PAWN);
-        board[blackPawnRank][file] = ChessPiece(ChessPiece::PieceType::BLACK_PAWN);
+        board[whitePawnRank][file] = ChessLogic::Piece::WHITE_PAWN;
+        board[blackPawnRank][file] = ChessLogic::Piece::BLACK_PAWN;
     }
 
     // Add back rank white pieces using move semantics
-    ChessPiece::PieceType whiteBackPieces[] = {
-        ChessPiece::PieceType::WHITE_ROOK, ChessPiece::PieceType::WHITE_KNIGHT,
-        ChessPiece::PieceType::WHITE_BISHOP, ChessPiece::PieceType::WHITE_QUEEN,
-        ChessPiece::PieceType::WHITE_KING, ChessPiece::PieceType::WHITE_BISHOP,
-        ChessPiece::PieceType::WHITE_KNIGHT, ChessPiece::PieceType::WHITE_ROOK
+    ChessLogic::Piece whiteBackPieces[] = {
+        ChessLogic::Piece::WHITE_ROOK, ChessLogic::Piece::WHITE_KNIGHT,
+        ChessLogic::Piece::WHITE_BISHOP, ChessLogic::Piece::WHITE_QUEEN,
+        ChessLogic::Piece::WHITE_KING, ChessLogic::Piece::WHITE_BISHOP,
+        ChessLogic::Piece::WHITE_KNIGHT, ChessLogic::Piece::WHITE_ROOK
     };
     
     // Add back rank black pieces using move semantics
-    ChessPiece::PieceType blackBackPieces[] = {
-        ChessPiece::PieceType::BLACK_ROOK, ChessPiece::PieceType::BLACK_KNIGHT,
-        ChessPiece::PieceType::BLACK_BISHOP, ChessPiece::PieceType::BLACK_QUEEN,
-        ChessPiece::PieceType::BLACK_KING, ChessPiece::PieceType::BLACK_BISHOP,
-        ChessPiece::PieceType::BLACK_KNIGHT, ChessPiece::PieceType::BLACK_ROOK
+    ChessLogic::Piece blackBackPieces[] = {
+        ChessLogic::Piece::BLACK_ROOK, ChessLogic::Piece::BLACK_KNIGHT,
+        ChessLogic::Piece::BLACK_BISHOP, ChessLogic::Piece::BLACK_QUEEN,
+        ChessLogic::Piece::BLACK_KING, ChessLogic::Piece::BLACK_BISHOP,
+        ChessLogic::Piece::BLACK_KNIGHT, ChessLogic::Piece::BLACK_ROOK
     };
 
     for (int file = 0; file < 8; ++file) {
-        board[whiteBackRank][file] = ChessPiece(whiteBackPieces[file]);
-        board[blackBackRank][file] = ChessPiece(blackBackPieces[file]);
+        board[whiteBackRank][file] = whiteBackPieces[file];
+        board[blackBackRank][file] = blackBackPieces[file];
     }
 }
 
-ChessPiece ChessLogic::getPieceAt(const int rank, const int file) const {
+ChessLogic::Piece ChessLogic::getPieceAt(const int rank, const int file) const {
     if (rank < 0 || rank >= 8 || file < 0 || file >= 8) {
-        return ChessPiece(); // Out of bounds
+        return ChessLogic::Piece::EMPTY; // Out of bounds
     }
     return board[rank][file]; // Return the piece in the array
 }
@@ -73,12 +72,12 @@ void ChessLogic::makeMove(const int fromRank, const int fromFile,
     }
 
     // Check if there's a piece to move
-    if (board[fromRank][fromFile].getType() == ChessPiece::PieceType::EMPTY) {
+    if (board[fromRank][fromFile] == ChessLogic::Piece::EMPTY) {
         return; // No piece to move
     }
 
     // Check if there's a piece to capture
-    if (board[toRank][toFile].getType() != ChessPiece::PieceType::EMPTY) {
+    if (board[toRank][toFile] != ChessLogic::Piece::EMPTY) {
         // Move the captured piece to captured pieces vector (efficient move)
         capturedPieces.push_back(std::move(board[toRank][toFile]));
     }
@@ -87,7 +86,7 @@ void ChessLogic::makeMove(const int fromRank, const int fromFile,
     board[toRank][toFile] = std::move(board[fromRank][fromFile]);
 
     // Explicitly set from position to default ChessPiece
-    board[fromRank][fromFile] = ChessPiece();
+    board[fromRank][fromFile] = ChessLogic::Piece::EMPTY;
 }
 
 bool ChessLogic::isValidMove(const int fromRank, const int fromFile, const int toRank, const int toFile) const{
