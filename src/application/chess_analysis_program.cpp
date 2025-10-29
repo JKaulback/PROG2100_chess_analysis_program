@@ -64,7 +64,7 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     auto validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
     
     // 2. If valid, execute the move through the logic
-    if (validationResult == ChessMoveValidator::MoveResult::VALID) {
+    if (validationResult == MoveResult::VALID) {
         logic.executeMove(srcRank, srcFile, destRank, destFile);
         return true;
     }
@@ -73,7 +73,7 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     return false;
 }
 
-ChessMoveValidator::MoveResult ChessAnalysisProgram::validateMove(int srcRank, int srcFile, int destRank, int destFile) const 
+MoveResult ChessAnalysisProgram::validateMove(int srcRank, int srcFile, int destRank, int destFile) const 
 {
     return moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
 }

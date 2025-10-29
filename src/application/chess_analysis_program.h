@@ -6,6 +6,9 @@
 #include "../input/chess_input_handler.h"
 #include "../core/chess_move_validator.h"
 
+// Type alias for cleaner code
+using MoveResult = ChessMoveValidator::MoveResult;
+
 // This class manages the overall chess analysis program
 class ChessAnalysisProgram {
 public:
@@ -27,7 +30,7 @@ public:
     
     // Move validation and execution methods (Controller orchestration)
     bool attemptMove(int srcRank, int srcFile, int destRank, int destFile); // Validate and execute move
-    ChessMoveValidator::MoveResult validateMove(int srcRank, int srcFile, int destRank, int destFile) const; // Just validate
+    MoveResult validateMove(int srcRank, int srcFile, int destRank, int destFile) const; // Just validate
     std::string getMoveValidationMessage(int srcRank, int srcFile, int destRank, int destFile) const; // Get validation message
 private:
     ChessLogic logic; // Own the logic object

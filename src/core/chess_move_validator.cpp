@@ -26,16 +26,7 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
 
 std::string ChessMoveValidator::resultToString(MoveResult result) const 
 {
-    switch (result) {
-        case MoveResult::VALID:
-            return "Valid move";
-        case MoveResult::INVALID_OUT_OF_BOUNDS:
-            return "Move is out of bounds";
-        case MoveResult::INVALID_SAME_POSITION:
-            return "Cannot move to the same position";
-        default:
-            return "Unknown validation result";
-    }
+    return resultStrings.at(result);
 }
 
 bool ChessMoveValidator::isValidSquare(int rank, int file) const 

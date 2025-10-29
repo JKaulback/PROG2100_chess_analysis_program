@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include "../config/config.h"
 
 // Forward declaration to avoid circular dependencies
@@ -33,4 +34,10 @@ public:
 private:
     // Helper function for boundary checking
     bool isValidSquare(int rank, int file) const;
+
+    std::map<MoveResult, std::string> resultStrings = {
+        {MoveResult::VALID, "Valid move"},
+        {MoveResult::INVALID_OUT_OF_BOUNDS, "Move is out of bounds"},
+        {MoveResult::INVALID_SAME_POSITION, "Cannot move to the same position"}
+    };
 };
