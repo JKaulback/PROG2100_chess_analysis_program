@@ -39,7 +39,12 @@ public:
     void executeMove(const int fromRank, const int fromFile, const int toRank, const int toFile);
     void initializeBoard();
     std::string pieceToString(Piece piece) const;
+    std::pair<int, int> getKingPosition(Player player) const;
     
+    // Temporary move methods for validation
+    void makeTemporaryMove(int fromRank, int fromFile, int toRank, int toFile);
+    void undoTemporaryMove(int fromRank, int fromFile, int toRank, int toFile, Piece capturedPiece);
+
     // Utility methods for validator (read-only access to game state)
     bool isSquareEmpty(const int rank, const int file) const;
     bool isWhitePiece(const int rank, const int file) const;

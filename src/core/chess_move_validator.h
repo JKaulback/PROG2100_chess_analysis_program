@@ -3,9 +3,7 @@
 #include <string>
 #include <map>
 #include "../config/config.h"
-
-// Forward declaration to avoid circular dependencies
-class ChessLogic;
+#include "chess_logic.h"
 
 class ChessMoveValidator {
 public:
@@ -41,17 +39,17 @@ private:
     // Chess rule validation
     bool validatePieceMovement(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     bool checkDestinationSquare(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+    bool wouldLeaveKingInCheck(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 
     // Helper function for sliding pieces (rook, bishop, queen)
     bool isPathClearForSlidingPiece(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+    
+    // Helper functions for check detection
+    bool isSquareUnderAttack(const ChessLogic& logic, int rank, int file, ChessLogic::Player attackingPlayer) const;
+    bool validateBasicPieceMovement(const ChessLogic& logic, ChessLogic::Piece piece, int fromRank, int fromFile, int toRank, int toFile) const;
 
-    // Piece specific validation
+    // Piece specific validation (only pawn needs special handling)
     bool validatePawnMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-    bool validateRookMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-    bool validateKnightMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-    bool validateBishopMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-    bool validateKingMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-    bool validateQueenMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 
     // Mapping of MoveResult to descriptive strings
     std::map<MoveResult, std::string> resultStrings = {

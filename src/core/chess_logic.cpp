@@ -118,6 +118,24 @@ std::string ChessLogic::pieceToString(Piece piece) const
     }
 }
 
+std::pair<int, int> ChessLogic::getKingPosition(Player player) const 
+{
+    Piece kingPiece = (player == Player::WHITE_PLAYER) ? Piece::WHITE_KING : Piece::BLACK_KING;
+
+    for (int rank = 0; rank < BoardCfg::BOARD_DIMENSION; ++rank) 
+    {
+        for (int file = 0; file < BoardCfg::BOARD_DIMENSION; ++file) 
+        {
+            if (board[rank][file] == kingPiece) 
+            {
+                return {rank, file};
+            }
+        }
+    }
+
+    return {-1, -1}; // King not found (should not happen in a valid game)
+}
+
 // Utility methods for move validation support
 bool ChessLogic::isSquareEmpty(const int rank, const int file) const 
 {
@@ -174,4 +192,14 @@ ChessLogic::Player ChessLogic::getPieceOwner(Piece piece) const {
         return Player::BLACK_PLAYER;
     }
     return Player::WHITE_PLAYER; // Default
+}
+
+void ChessLogic::makeTemporaryMove(int fromRank, int fromFile, int toRank, int toFile) {
+    board[toRank][toFile] = board[fromRank][fromFile];
+    board[fromRank][fromFile] = Piece::EMPTY;
+}
+
+void ChessLogic::undoTemporaryMove(int fromRank, int fromFile, int toRank, int toFile, Piece capturedPiece) {
+    board[fromRank][fromFile] = board[toRank][toFile];
+    board[toRank][toFile] = capturedPiece;
 }

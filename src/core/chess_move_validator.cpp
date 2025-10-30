@@ -3,8 +3,6 @@
 
 // Namespace and type aliases for cleaner code
 namespace BoardCfg = Config::Board;
-using Player = ChessLogic::Player;
-using Piece = ChessLogic::Piece;
 
 ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     const ChessLogic& logic,
@@ -24,15 +22,15 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     }
     
     // 3. Check if there's a piece to move
-    Piece piece = logic.getPieceAt(fromRank, fromFile);
-    if (piece == Piece::EMPTY) {
+    ChessLogic::Piece piece = logic.getPieceAt(fromRank, fromFile);
+    if (piece == ChessLogic::Piece::EMPTY) {
         return MoveResult::INVALID_NO_PIECE;
     }
     
     // 4. Check if it's the correct player's turn
-    Player currentPlayer = logic.getCurrentPlayer();
-    if ((currentPlayer == Player::WHITE_PLAYER && !logic.isWhitePiece(fromRank, fromFile)) ||
-        (currentPlayer == Player::BLACK_PLAYER && !logic.isBlackPiece(fromRank, fromFile))) {
+    ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
+    if ((currentPlayer == ChessLogic::Player::WHITE_PLAYER && !logic.isWhitePiece(fromRank, fromFile)) ||
+        (currentPlayer == ChessLogic::Player::BLACK_PLAYER && !logic.isBlackPiece(fromRank, fromFile))) {
         return MoveResult::INVALID_WRONG_TURN;
     }
     
@@ -43,6 +41,11 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
 
     // 6. Validate piece-specific movement rules
     if (!validatePieceMovement(logic, fromRank, fromFile, toRank, toFile)) {
+        return MoveResult::INVALID_ILLEGAL_MOVE;
+    }
+
+    // 7. Validate the player's king is not left in check
+    if (wouldLeaveKingInCheck(logic, fromRank, fromFile, toRank, toFile)) {
         return MoveResult::INVALID_ILLEGAL_MOVE;
     }
 
@@ -68,31 +71,15 @@ bool ChessMoveValidator::validatePieceMovement(
     int toRank, 
     int toFile) const 
 {
-    Piece piece = logic.getPieceAt(fromRank, fromFile);
+    ChessLogic::Piece piece = logic.getPieceAt(fromRank, fromFile);
     
-    switch (piece) 
-    {
-        case Piece::WHITE_PAWN:
-        case Piece::BLACK_PAWN:
-            return validatePawnMove(logic, fromRank, fromFile, toRank, toFile);
-        case Piece::WHITE_ROOK:
-        case Piece::BLACK_ROOK:
-            return validateRookMove(logic, fromRank, fromFile, toRank, toFile);
-        case Piece::WHITE_KNIGHT:
-        case Piece::BLACK_KNIGHT:
-            return validateKnightMove(logic, fromRank, fromFile, toRank, toFile);
-        case Piece::WHITE_BISHOP:
-        case Piece::BLACK_BISHOP:
-            return validateBishopMove(logic, fromRank, fromFile, toRank, toFile);
-        case Piece::WHITE_KING:
-        case Piece::BLACK_KING:
-            return validateKingMove(logic, fromRank, fromFile, toRank, toFile);
-        case Piece::WHITE_QUEEN:
-        case Piece::BLACK_QUEEN:
-            return validateQueenMove(logic, fromRank, fromFile, toRank, toFile);
-        default:
-            return false; // Unknown piece type
+    // Special case for pawns - they have unique movement rules
+    if (piece == ChessLogic::Piece::WHITE_PAWN || piece == ChessLogic::Piece::BLACK_PAWN) {
+        return validatePawnMove(logic, fromRank, fromFile, toRank, toFile);
     }
+    
+    // For all other pieces, use the unified basic movement validation
+    return validateBasicPieceMovement(logic, piece, fromRank, fromFile, toRank, toFile);
 }
 
 bool ChessMoveValidator::checkDestinationSquare(
@@ -147,9 +134,9 @@ bool ChessMoveValidator::validatePawnMove(
     int toRank, 
     int toFile) const 
 {
-    Piece piece = logic.getPieceAt(fromRank, fromFile);
-    int direction = (piece == Piece::WHITE_PAWN) ? 1 : -1; // White moves up, Black moves down
-    int startRank = (piece == Piece::WHITE_PAWN) ? 1 : 6; // Starting ranks for pawns
+    ChessLogic::Piece piece = logic.getPieceAt(fromRank, fromFile);
+    int direction = (piece == ChessLogic::Piece::WHITE_PAWN) ? 1 : -1; // White moves up, Black moves down
+    int startRank = (piece == ChessLogic::Piece::WHITE_PAWN) ? 1 : 6; // Starting ranks for pawns
 
     // Standard move forward
     if (toFile == fromFile) 
@@ -181,98 +168,133 @@ bool ChessMoveValidator::validatePawnMove(
     return false;
 }
 
-bool ChessMoveValidator::validateRookMove(
+// Individual piece validation methods removed - now using validateBasicPieceMovement()
+
+bool ChessMoveValidator::wouldLeaveKingInCheck(
     const ChessLogic& logic, 
     int fromRank, 
     int fromFile, 
     int toRank, 
     int toFile) const 
 {
-    // Rook moves in straight lines: either same rank or same file
-    if (fromRank != toRank && fromFile != toFile) 
-    {
-        return false; // Not a straight line
-    }
-
-    // Use the sliding piece helper to check if path is clear
-    return isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
+    // Get the current player (whose king we're checking)
+    ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
+    ChessLogic::Player opponent = (currentPlayer == ChessLogic::Player::WHITE_PLAYER) 
+                                  ? ChessLogic::Player::BLACK_PLAYER 
+                                  : ChessLogic::Player::WHITE_PLAYER;
+    
+    // Create a copy to test the move (efficient for 8x8 board)
+    ChessLogic testLogic = logic;
+    
+    // Make the temporary move
+    testLogic.makeTemporaryMove(fromRank, fromFile, toRank, toFile);
+    
+    // Find the king position after the move
+    std::pair<int, int> kingPos = testLogic.getKingPosition(currentPlayer);
+    
+    // Check if the king is under attack
+    return isSquareUnderAttack(testLogic, kingPos.first, kingPos.second, opponent);
 }
 
-bool ChessMoveValidator::validateKnightMove(
+bool ChessMoveValidator::isSquareUnderAttack(
     const ChessLogic& logic, 
+    int rank, 
+    int file, 
+    ChessLogic::Player attackingPlayer) const 
+{
+    // Check all squares on the board for pieces belonging to the attacking player
+    for (int r = 0; r < 8; r++) 
+    {
+        for (int f = 0; f < 8; f++) 
+        {
+            ChessLogic::Piece piece = logic.getPieceAt(r, f);
+            
+            // Skip empty squares
+            if (piece == ChessLogic::Piece::EMPTY) continue;
+            
+            // Check if this piece belongs to the attacking player
+            bool isAttackersPiece = false;
+            if (attackingPlayer == ChessLogic::Player::WHITE_PLAYER) 
+            {
+                isAttackersPiece = logic.isWhitePiece(r, f);
+            } else {
+                isAttackersPiece = logic.isBlackPiece(r, f);
+            }
+            
+            if (!isAttackersPiece) continue;
+            
+            // Check if this piece can attack the target square
+            // For pawns, special logic since they attack differently than they move
+            if (piece == ChessLogic::Piece::WHITE_PAWN || piece == ChessLogic::Piece::BLACK_PAWN) 
+            {
+                int direction = (piece == ChessLogic::Piece::WHITE_PAWN) ? 1 : -1;
+                if (rank == r + direction && abs(file - f) == 1) 
+                {
+                    return true; // Pawn can attack diagonally
+                }
+            } else 
+            {
+                // For other pieces, use existing movement validation
+                // but skip friendly fire check since we're checking attacks
+                if (validateBasicPieceMovement(logic, piece, r, f, rank, file)) 
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false; // No piece can attack this square
+}
+
+bool ChessMoveValidator::validateBasicPieceMovement(
+    const ChessLogic& logic, 
+    ChessLogic::Piece piece, 
     int fromRank, 
     int fromFile, 
     int toRank, 
     int toFile) const 
 {
-    int rankDiff = abs(toRank - fromRank);
-    int fileDiff = abs(toFile - fromFile);
-
-    // Knight moves in L-shape: 2 in one direction and 1 in the other
-    if (!((rankDiff == 2 && fileDiff == 1) || (rankDiff == 1 && fileDiff == 2))) 
-    {
-        return false; // Not a valid knight move
+    // This validates piece movement without checking destination square ownership
+    // Used for attack detection where we want to know if a piece CAN reach a square
+    
+    switch (piece) {
+        case ChessLogic::Piece::WHITE_ROOK:
+        case ChessLogic::Piece::BLACK_ROOK:
+            return (fromRank == toRank || fromFile == toFile) && 
+                   isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
+        
+        case ChessLogic::Piece::WHITE_BISHOP:
+        case ChessLogic::Piece::BLACK_BISHOP: {
+            int rankDiff = abs(toRank - fromRank);
+            int fileDiff = abs(toFile - fromFile);
+            return (rankDiff == fileDiff) && 
+                   isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
+        }
+        
+        case ChessLogic::Piece::WHITE_QUEEN:
+        case ChessLogic::Piece::BLACK_QUEEN: {
+            int rankDiff = abs(toRank - fromRank);
+            int fileDiff = abs(toFile - fromFile);
+            return ((fromRank == toRank || fromFile == toFile || rankDiff == fileDiff) && 
+                    isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile));
+        }
+        
+        case ChessLogic::Piece::WHITE_KNIGHT:
+        case ChessLogic::Piece::BLACK_KNIGHT: {
+            int rankDiff = abs(toRank - fromRank);
+            int fileDiff = abs(toFile - fromFile);
+            return (rankDiff == 2 && fileDiff == 1) || (rankDiff == 1 && fileDiff == 2);
+        }
+        
+        case ChessLogic::Piece::WHITE_KING:
+        case ChessLogic::Piece::BLACK_KING: {
+            int rankDiff = abs(toRank - fromRank);
+            int fileDiff = abs(toFile - fromFile);
+            return rankDiff <= 1 && fileDiff <= 1;
+        }
+        
+        default:
+            return false;
     }
-
-    return true; // Valid knight move
 }
-
-bool ChessMoveValidator::validateBishopMove(
-    const ChessLogic& logic, 
-    int fromRank, 
-    int fromFile, 
-    int toRank, 
-    int toFile) const 
-{
-    int rankDiff = abs(toRank - fromRank);
-    int fileDiff = abs(toFile - fromFile);
-
-    // Bishop moves diagonally: rank difference must equal file difference
-    if (rankDiff != fileDiff) 
-    {
-        return false; // Not a diagonal move
-    }
-
-    // Use the sliding piece helper to check if path is clear
-    return isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
-}
-
-bool ChessMoveValidator::validateKingMove(
-    const ChessLogic& logic, 
-    int fromRank, 
-    int fromFile, 
-    int toRank, 
-    int toFile) const 
-{
-    int rankDiff = abs(toRank - fromRank);
-    int fileDiff = abs(toFile - fromFile);
-
-    // King moves one square in any direction
-    if (rankDiff > 1 || fileDiff > 1) 
-    {
-        return false; // Move too far
-    }
-
-    return true; // Valid king move
-}
-
-bool ChessMoveValidator::validateQueenMove(
-    const ChessLogic& logic, 
-    int fromRank, 
-    int fromFile, 
-    int toRank, 
-    int toFile) const 
-{
-    int rankDiff = abs(toRank - fromRank);
-    int fileDiff = abs(toFile - fromFile);
-
-    // Queen moves in straight lines or diagonals
-    if (fromRank != toRank && fromFile != toFile && rankDiff != fileDiff) 
-    {
-        return false; // Not a valid queen move
-    }
-
-    // Use the sliding piece helper to check if path is clear
-    return isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
-}
-
