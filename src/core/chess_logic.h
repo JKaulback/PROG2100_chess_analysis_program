@@ -59,13 +59,29 @@ public:
     Player getCurrentPlayer() const;
     bool isPlayerTurn(Player player) const;
     void switchTurn();
+    
+    // Castling rights queries
+    bool canCastleKingside(Player player) const;
+    bool canCastleQueenside(Player player) const;
+    
+    // Execute castling move
+    void executeCastling(int fromRank, int fromFile, int toRank, int toFile);
 private:
     // Game state variables
     std::array<std::array<Piece, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board; // Board representation
     std::vector<Piece> capturedPieces; // Captured pieces
     Player currentPlayer; // Whose turn it is (White goes first)
+    
+    // Castling rights tracking
+    bool whiteKingMoved = false;
+    bool blackKingMoved = false;
+    bool whiteKingsideRookMoved = false;
+    bool whiteQueensideRookMoved = false;
+    bool blackKingsideRookMoved = false;
+    bool blackQueensideRookMoved = false;
 
     // Helpers
     void initPieces(); // Helper to add pieces to the board
     Player getPieceOwner(Piece piece) const; // Get which player owns a piece
+    void updateCastlingRights(int fromRank, int fromFile); // Update castling rights when pieces move
 };

@@ -69,8 +69,21 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     auto validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
     
     // 2. If valid, execute the move and switch turns
-    if (validationResult == MoveResult::VALID) {
-        logic.executeMove(srcRank, srcFile, destRank, destFile);
+    if (validationResult == MoveResult::VALID || 
+        validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
+        validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) 
+    {
+        
+        // Handle castling moves specially
+        if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
+            validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) 
+        {
+            logic.executeCastling(srcRank, srcFile, destRank, destFile);
+        } else 
+        {
+            logic.executeMove(srcRank, srcFile, destRank, destFile);
+        }
+        
         logic.switchTurn(); // Switch to the other player
         return true;
     }

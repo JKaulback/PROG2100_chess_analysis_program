@@ -14,7 +14,16 @@ public:
         INVALID_SAME_POSITION,
         INVALID_NO_PIECE,
         INVALID_WRONG_TURN,
-        INVALID_ILLEGAL_MOVE
+        INVALID_ILLEGAL_MOVE,
+        
+        // Castling results
+        VALID_CASTLE_KINGSIDE,
+        VALID_CASTLE_QUEENSIDE,
+        INVALID_CASTLE_KING_MOVED,
+        INVALID_CASTLE_ROOK_MOVED,
+        INVALID_CASTLE_PATH_BLOCKED,
+        INVALID_CASTLE_THROUGH_CHECK,
+        INVALID_CASTLE_IN_CHECK
     };
 
     ChessMoveValidator() = default;
@@ -51,11 +60,25 @@ private:
     // Piece specific validation (only pawn needs special handling)
     bool validatePawnMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 
+    // Castling validation methods
+    bool validateCastling(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+    bool canCastle(const ChessLogic& logic, ChessLogic::Player player, bool isKingside) const;
+
     // Mapping of MoveResult to descriptive strings
     std::map<MoveResult, std::string> resultStrings = {
         {MoveResult::VALID, "Valid move"},
         {MoveResult::INVALID_OUT_OF_BOUNDS, "Move is out of bounds"},
         {MoveResult::INVALID_SAME_POSITION, "Cannot move to the same position"},
-        {MoveResult::INVALID_WRONG_TURN, "Not your turn"}
+        {MoveResult::INVALID_WRONG_TURN, "Not your turn"},
+        {MoveResult::INVALID_ILLEGAL_MOVE, "Illegal move"},
+        
+        // Castling messages
+        {MoveResult::VALID_CASTLE_KINGSIDE, "Valid kingside castle"},
+        {MoveResult::VALID_CASTLE_QUEENSIDE, "Valid queenside castle"},
+        {MoveResult::INVALID_CASTLE_KING_MOVED, "Cannot castle - king has moved"},
+        {MoveResult::INVALID_CASTLE_ROOK_MOVED, "Cannot castle - rook has moved"},
+        {MoveResult::INVALID_CASTLE_PATH_BLOCKED, "Cannot castle - path is blocked"},
+        {MoveResult::INVALID_CASTLE_THROUGH_CHECK, "Cannot castle through check"},
+        {MoveResult::INVALID_CASTLE_IN_CHECK, "Cannot castle while in check"}
     };
 };

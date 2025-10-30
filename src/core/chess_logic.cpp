@@ -86,6 +86,9 @@ void ChessLogic::executeMove(
     // Note: This method assumes the move has already been validated
     // All validation will be handled by ChessMoveValidator
     
+    // Update castling rights before moving
+    updateCastlingRights(srcRank, srcFile);
+    
     // Capture piece if present
     if (board[destRank][destFile] != ChessLogic::Piece::EMPTY) 
     {
@@ -202,4 +205,65 @@ void ChessLogic::makeTemporaryMove(int fromRank, int fromFile, int toRank, int t
 void ChessLogic::undoTemporaryMove(int fromRank, int fromFile, int toRank, int toFile, Piece capturedPiece) {
     board[fromRank][fromFile] = board[toRank][toFile];
     board[toRank][toFile] = capturedPiece;
+}
+
+bool ChessLogic::canCastleKingside(Player player) const {
+    if (player == Player::WHITE_PLAYER) {
+        return !whiteKingMoved && !whiteKingsideRookMoved;
+    } else {
+        return !blackKingMoved && !blackKingsideRookMoved;
+    }
+}
+
+bool ChessLogic::canCastleQueenside(Player player) const {
+    if (player == Player::WHITE_PLAYER) {
+        return !whiteKingMoved && !whiteQueensideRookMoved;
+    } else {
+        return !blackKingMoved && !blackQueensideRookMoved;
+    }
+}
+
+void ChessLogic::updateCastlingRights(int fromRank, int fromFile) {
+    Piece piece = board[fromRank][fromFile];
+    
+    // Check if king moved
+    if (piece == Piece::WHITE_KING) {
+        whiteKingMoved = true;
+    } else if (piece == Piece::BLACK_KING) {
+        blackKingMoved = true;
+    }
+    // Check if rook moved
+    else if (piece == Piece::WHITE_ROOK) {
+        if (fromRank == 0 && fromFile == 0) { // Queenside rook
+            whiteQueensideRookMoved = true;
+        } else if (fromRank == 0 && fromFile == 7) { // Kingside rook
+            whiteKingsideRookMoved = true;
+        }
+    } else if (piece == Piece::BLACK_ROOK) {
+        if (fromRank == 7 && fromFile == 0) { // Queenside rook
+            blackQueensideRookMoved = true;
+        } else if (fromRank == 7 && fromFile == 7) { // Kingside rook
+            blackKingsideRookMoved = true;
+        }
+    }
+}
+
+void ChessLogic::executeCastling(int fromRank, int fromFile, int toRank, int toFile) {
+    // Move the king
+    board[toRank][toFile] = board[fromRank][fromFile];
+    board[fromRank][fromFile] = Piece::EMPTY;
+    
+    // Move the rook
+    if (toFile == 6) { // Kingside castling
+        // Move rook from h-file to f-file
+        board[toRank][5] = board[toRank][7];
+        board[toRank][7] = Piece::EMPTY;
+    } else if (toFile == 2) { // Queenside castling
+        // Move rook from a-file to d-file
+        board[toRank][3] = board[toRank][0];
+        board[toRank][0] = Piece::EMPTY;
+    }
+    
+    // Update castling rights
+    updateCastlingRights(fromRank, fromFile);
 }
