@@ -76,6 +76,9 @@ bool ChessMoveValidator::validatePieceMovement(
         case Piece::WHITE_KNIGHT:
         case Piece::BLACK_KNIGHT:
             return validateKnightMove(logic, fromRank, fromFile, toRank, toFile);
+        case Piece::WHITE_BISHOP:
+        case Piece::BLACK_BISHOP:
+            return validateBishopMove(logic, fromRank, fromFile, toRank, toFile);
         default:
             return false; // For now, unhandled pieces are invalid
     }
@@ -186,5 +189,48 @@ bool ChessMoveValidator::validateKnightMove(
     }
 
     return true; // Valid knight move
+}
+
+bool ChessMoveValidator::validateBishopMove(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    int rankDiff = abs(toRank - fromRank);
+    int fileDiff = abs(toFile - fromFile);
+
+    // Bishop moves diagonally: rank difference must equal file difference
+    if (rankDiff != fileDiff) 
+    {
+        return false; // Not a diagonal move
+    }
+
+    // Check if path is clear
+    int rankStep = (toRank > fromRank) ? 1 : -1;
+    int fileStep = (toFile > fromFile) ? 1 : -1;
+
+    int currentRank = fromRank + rankStep;
+    int currentFile = fromFile + fileStep;
+
+    while (currentRank != toRank && currentFile != toFile) 
+    {
+        if (!logic.isSquareEmpty(currentRank, currentFile)) 
+        {
+            return false; // Path is blocked
+        }
+        currentRank += rankStep;
+        currentFile += fileStep;
+    }
+
+    // Check destination square
+    if (!logic.isSquareEmpty(toRank, toFile) &&
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+    {
+        return false; // Cannot capture own piece
+    }
+
+    return true; // Valid bishop move
 }
 
