@@ -31,8 +31,6 @@ public:
     
     // Move validation and execution methods (Controller orchestration)
     bool attemptMove(int srcRank, int srcFile, int destRank, int destFile); // Validate and execute move
-    MoveResult validateMove(int srcRank, int srcFile, int destRank, int destFile) const; // Just validate
-    std::string getMoveValidationMessage(int srcRank, int srcFile, int destRank, int destFile) const; // Get validation message
 private:
     ChessLogic logic; // Own the logic object
     ChessGUI gui; // Own the GUI object

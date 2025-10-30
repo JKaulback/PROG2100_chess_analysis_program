@@ -12,7 +12,7 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     int toFile) const 
 {
     // 1. Check if source and destination are within board boundaries
-    if (!isValidSquare(fromRank, fromFile) || !isValidSquare(toRank, toFile)) {
+    if (!isValidSquare(logic, fromRank, fromFile) || !isValidSquare(logic, toRank, toFile)) {
         return MoveResult::INVALID_OUT_OF_BOUNDS;
     }
     
@@ -64,15 +64,10 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     return MoveResult::VALID;
 }
 
-std::string ChessMoveValidator::resultToString(MoveResult result) const 
+bool ChessMoveValidator::isValidSquare(const ChessLogic& logic, int rank, int file) const 
 {
-    return resultStrings.at(result);
-}
-
-bool ChessMoveValidator::isValidSquare(int rank, int file) const 
-{
-    return rank >= BoardCfg::MIN_RANK && rank <= BoardCfg::MAX_RANK &&
-           file >= BoardCfg::MIN_FILE && file <= BoardCfg::MAX_FILE;
+    // Delegate to ChessLogic to avoid duplication
+    return logic.isValidSquare(rank, file);
 }
 
 bool ChessMoveValidator::validatePieceMovement(

@@ -91,14 +91,3 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     // 3. Move was invalid - return false
     return false;
 }
-
-MoveResult ChessAnalysisProgram::validateMove(int srcRank, int srcFile, int destRank, int destFile) const 
-{
-    return moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
-}
-
-std::string ChessAnalysisProgram::getMoveValidationMessage(int srcRank, int srcFile, int destRank, int destFile) const 
-{
-    auto result = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
-    return moveValidator.resultToString(result);
-}
