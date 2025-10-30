@@ -5,6 +5,9 @@ namespace BoardCfg = Config::Board;
 
 ChessLogic::ChessLogic() : currentPlayer(Player::WHITE_PLAYER)
 {
+    // Initialize en passant state
+    clearEnPassantState();
+    
     // Initialize pieces array and board representation
     initializeBoard();
 }
@@ -98,6 +101,9 @@ void ChessLogic::executeMove(
     // Execute the move using move semantics for efficiency
     board[destRank][destFile] = std::move(board[srcRank][srcFile]);
     board[srcRank][srcFile] = ChessLogic::Piece::EMPTY;
+    
+    // Update en passant state after the move
+    updateEnPassantState(srcRank, srcFile, destRank, destFile);
 }
 
 std::string ChessLogic::pieceToString(Piece piece) const 
@@ -186,6 +192,8 @@ bool ChessLogic::isPlayerTurn(Player player) const
 void ChessLogic::switchTurn() 
 {
     currentPlayer = (currentPlayer == Player::WHITE_PLAYER) ? Player::BLACK_PLAYER : Player::WHITE_PLAYER;
+    // En passant is only valid for one turn, so clear it when switching turns
+    // Note: This will be called AFTER the move that might have set up en passant
 }
 
 ChessLogic::Player ChessLogic::getPieceOwner(Piece piece) const {
@@ -266,4 +274,66 @@ void ChessLogic::executeCastling(int fromRank, int fromFile, int toRank, int toF
     
     // Update castling rights
     updateCastlingRights(fromRank, fromFile);
+}
+
+// En passant query methods
+bool ChessLogic::isEnPassantAvailable() const {
+    return enPassantTargetRank != -1 && enPassantTargetFile != -1;
+}
+
+bool ChessLogic::isEnPassantTarget(int rank, int file) const {
+    return enPassantTargetRank == rank && enPassantTargetFile == file;
+}
+
+std::pair<int, int> ChessLogic::getEnPassantTarget() const {
+    return {enPassantTargetRank, enPassantTargetFile};
+}
+
+std::pair<int, int> ChessLogic::getEnPassantPawn() const {
+    return {enPassantPawnRank, enPassantPawnFile};
+}
+
+// Execute en passant move
+void ChessLogic::executeEnPassant(int fromRank, int fromFile, int toRank, int toFile) {
+    // Move the capturing pawn
+    board[toRank][toFile] = board[fromRank][fromFile];
+    board[fromRank][fromFile] = Piece::EMPTY;
+    
+    // Capture the en passant pawn
+    Piece capturedPawn = board[enPassantPawnRank][enPassantPawnFile];
+    capturedPieces.push_back(capturedPawn);
+    board[enPassantPawnRank][enPassantPawnFile] = Piece::EMPTY;
+    
+    // Clear en passant state
+    clearEnPassantState();
+}
+
+// Helper methods for en passant
+void ChessLogic::updateEnPassantState(int fromRank, int fromFile, int toRank, int toFile) {
+    Piece piece = board[toRank][toFile]; // The piece that just moved
+    
+    // Clear previous en passant state
+    clearEnPassantState();
+    
+    // Check if a pawn made a double move
+    if (piece == Piece::WHITE_PAWN || piece == Piece::BLACK_PAWN) {
+        int rankDiff = abs(toRank - fromRank);
+        
+        // If pawn moved 2 squares, set up en passant
+        if (rankDiff == 2) {
+            enPassantPawnRank = toRank;
+            enPassantPawnFile = toFile;
+            
+            // The target square is between the starting and ending positions
+            enPassantTargetRank = (fromRank + toRank) / 2;
+            enPassantTargetFile = toFile;
+        }
+    }
+}
+
+void ChessLogic::clearEnPassantState() {
+    enPassantTargetRank = -1;
+    enPassantTargetFile = -1;
+    enPassantPawnRank = -1;
+    enPassantPawnFile = -1;
 }

@@ -71,15 +71,21 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     // 2. If valid, execute the move and switch turns
     if (validationResult == MoveResult::VALID || 
         validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
-        validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) 
+        validationResult == MoveResult::VALID_CASTLE_QUEENSIDE ||
+        validationResult == MoveResult::VALID_EN_PASSANT) 
     {
         
-        // Handle castling moves specially
+        // Handle special moves
         if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
             validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) 
         {
             logic.executeCastling(srcRank, srcFile, destRank, destFile);
-        } else 
+        } 
+        else if (validationResult == MoveResult::VALID_EN_PASSANT) 
+        {
+            logic.executeEnPassant(srcRank, srcFile, destRank, destFile);
+        } 
+        else 
         {
             logic.executeMove(srcRank, srcFile, destRank, destFile);
         }

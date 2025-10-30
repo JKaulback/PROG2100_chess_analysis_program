@@ -64,8 +64,17 @@ public:
     bool canCastleKingside(Player player) const;
     bool canCastleQueenside(Player player) const;
     
+    // En passant queries
+    bool isEnPassantAvailable() const;
+    bool isEnPassantTarget(int rank, int file) const;
+    std::pair<int, int> getEnPassantTarget() const;
+    std::pair<int, int> getEnPassantPawn() const;
+    
     // Execute castling move
     void executeCastling(int fromRank, int fromFile, int toRank, int toFile);
+    
+    // Execute en passant move
+    void executeEnPassant(int fromRank, int fromFile, int toRank, int toFile);
 private:
     // Game state variables
     std::array<std::array<Piece, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board; // Board representation
@@ -79,9 +88,17 @@ private:
     bool whiteQueensideRookMoved = false;
     bool blackKingsideRookMoved = false;
     bool blackQueensideRookMoved = false;
+    
+    // En passant tracking
+    int enPassantTargetRank = -1;  // -1 means no en passant available
+    int enPassantTargetFile = -1;  // The square where the capturing pawn will land
+    int enPassantPawnRank = -1;    // The rank of the pawn that can be captured
+    int enPassantPawnFile = -1;    // The file of the pawn that can be captured
 
     // Helpers
     void initPieces(); // Helper to add pieces to the board
     Player getPieceOwner(Piece piece) const; // Get which player owns a piece
     void updateCastlingRights(int fromRank, int fromFile); // Update castling rights when pieces move
+    void updateEnPassantState(int fromRank, int fromFile, int toRank, int toFile); // Update en passant state after moves
+    void clearEnPassantState(); // Clear en passant availability
 };

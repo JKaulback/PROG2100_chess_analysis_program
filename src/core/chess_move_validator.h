@@ -16,9 +16,10 @@ public:
         INVALID_WRONG_TURN,
         INVALID_ILLEGAL_MOVE,
         
-        // Castling results
+        // Special move results
         VALID_CASTLE_KINGSIDE,
-        VALID_CASTLE_QUEENSIDE
+        VALID_CASTLE_QUEENSIDE,
+        VALID_EN_PASSANT
     };
 
     ChessMoveValidator() = default;
@@ -54,5 +55,8 @@ private:
     // Castling validation methods
     bool validateCastling(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     bool canCastle(const ChessLogic& logic, ChessLogic::Player player, bool isKingside) const;
+    
+    // En passant validation method
+    bool validateEnPassant(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 
 };

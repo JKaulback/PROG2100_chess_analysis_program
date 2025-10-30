@@ -39,10 +39,16 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
         return MoveResult::INVALID_ILLEGAL_MOVE;
     }
 
-    // 6. Check if this is a castling move
+    // 6. Check for special moves
     ChessLogic::Piece movingPiece = logic.getPieceAt(fromRank, fromFile);
     bool isCastlingAttempt = (movingPiece == ChessLogic::Piece::WHITE_KING || movingPiece == ChessLogic::Piece::BLACK_KING) 
                             && abs(toFile - fromFile) == 2 && fromRank == toRank;
+    
+    // Check for en passant attempt
+    bool isEnPassantAttempt = (movingPiece == ChessLogic::Piece::WHITE_PAWN || movingPiece == ChessLogic::Piece::BLACK_PAWN)
+                             && logic.isSquareEmpty(toRank, toFile) 
+                             && abs(toFile - fromFile) == 1
+                             && logic.isEnPassantTarget(toRank, toFile);
     
     // 7. Validate piece-specific movement rules
     if (!validatePieceMovement(logic, fromRank, fromFile, toRank, toFile)) {
@@ -54,10 +60,14 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
         return MoveResult::INVALID_ILLEGAL_MOVE;
     }
 
-    // 9. If this was a successful castling move, return specific result
+    // 9. Return appropriate result for special moves
     if (isCastlingAttempt) {
         bool isKingside = (toFile > fromFile);
         return isKingside ? MoveResult::VALID_CASTLE_KINGSIDE : MoveResult::VALID_CASTLE_QUEENSIDE;
+    }
+    
+    if (isEnPassantAttempt) {
+        return MoveResult::VALID_EN_PASSANT;
     }
 
     // If we get here, the move is valid
@@ -160,13 +170,19 @@ bool ChessMoveValidator::validatePawnMove(
             return true;
         }
     }
-    // Capture move
+    // Capture move (including en passant)
     else if (abs(toFile - fromFile) == 1 && toRank == fromRank + direction) 
     {
+        // Regular capture
         if (!logic.isSquareEmpty(toRank, toFile) &&
             !logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
         {
             return true;
+        }
+        // En passant capture
+        if (logic.isSquareEmpty(toRank, toFile) && logic.isEnPassantTarget(toRank, toFile)) 
+        {
+            return validateEnPassant(logic, fromRank, fromFile, toRank, toFile);
         }
     }
 
@@ -318,6 +334,43 @@ bool ChessMoveValidator::canCastle(const ChessLogic& logic, ChessLogic::Player p
     }
     
     return true; // All castling conditions met
+}
+
+bool ChessMoveValidator::validateEnPassant(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const {
+    // Check if en passant is available
+    if (!logic.isEnPassantAvailable()) {
+        return false;
+    }
+    
+    // Check if the destination is the en passant target square
+    if (!logic.isEnPassantTarget(toRank, toFile)) {
+        return false;
+    }
+    
+    // Get the en passant pawn position
+    std::pair<int, int> enPassantPawn = logic.getEnPassantPawn();
+    int pawnRank = enPassantPawn.first;
+    int pawnFile = enPassantPawn.second;
+    
+    // Verify the en passant pawn exists and is the opponent's pawn
+    ChessLogic::Piece targetPawn = logic.getPieceAt(pawnRank, pawnFile);
+    if (targetPawn == ChessLogic::Piece::EMPTY) {
+        return false;
+    }
+    
+    // Verify it's an opponent's pawn
+    ChessLogic::Piece movingPiece = logic.getPieceAt(fromRank, fromFile);
+    if (logic.areSameColorPieces(fromRank, fromFile, pawnRank, pawnFile)) {
+        return false; // Cannot capture your own pawn
+    }
+    
+    // Verify the capturing pawn is on the correct rank for en passant
+    int expectedRank = (movingPiece == ChessLogic::Piece::WHITE_PAWN) ? 4 : 3;
+    if (fromRank != expectedRank) {
+        return false;
+    }
+    
+    return true; // Valid en passant capture
 }
 
 bool ChessMoveValidator::validateBasicPieceMovement(
