@@ -82,8 +82,11 @@ bool ChessMoveValidator::validatePieceMovement(
         case Piece::WHITE_KING:
         case Piece::BLACK_KING:
             return validateKingMove(logic, fromRank, fromFile, toRank, toFile);
+        case Piece::WHITE_QUEEN:
+        case Piece::BLACK_QUEEN:
+            return validateQueenMove(logic, fromRank, fromFile, toRank, toFile);
         default:
-            return false; // For now, unhandled pieces are invalid
+            return false; // Unknown piece type
     }
 }
 
@@ -261,5 +264,48 @@ bool ChessMoveValidator::validateKingMove(
     }
 
     return true; // Valid king move
+}
+
+bool ChessMoveValidator::validateQueenMove(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    int rankDiff = abs(toRank - fromRank);
+    int fileDiff = abs(toFile - fromFile);
+
+    // Queen moves in straight lines or diagonals
+    if (fromRank != toRank && fromFile != toFile && rankDiff != fileDiff) 
+    {
+        return false; // Not a valid queen move
+    }
+
+    // Check if path is clear
+    int rankStep = (toRank > fromRank) ? 1 : (toRank < fromRank) ? -1 : 0;
+    int fileStep = (toFile > fromFile) ? 1 : (toFile < fromFile) ? -1 : 0;
+
+    int currentRank = fromRank + rankStep;
+    int currentFile = fromFile + fileStep;
+
+    while (currentRank != toRank || currentFile != toFile) 
+    {
+        if (!logic.isSquareEmpty(currentRank, currentFile)) 
+        {
+            return false; // Path is blocked
+        }
+        currentRank += rankStep;
+        currentFile += fileStep;
+    }
+
+    // Check destination square
+    if (!logic.isSquareEmpty(toRank, toFile) &&
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+    {
+        return false; // Cannot capture own piece
+    }
+
+    return true; // Valid queen move
 }
 
