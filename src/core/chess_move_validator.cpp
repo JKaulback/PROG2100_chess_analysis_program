@@ -65,11 +65,14 @@ bool ChessMoveValidator::validatePieceMovement(
 {
     Piece piece = logic.getPieceAt(fromRank, fromFile);
     
-    switch (piece) {
+    switch (piece) 
+    {
         case Piece::WHITE_PAWN:
         case Piece::BLACK_PAWN:
             return validatePawnMove(logic, fromRank, fromFile, toRank, toFile);
-        // Future: Add cases for other pieces (Rook, Knight, Bishop, Queen, King)
+        case Piece::WHITE_ROOK:
+        case Piece::BLACK_ROOK:
+            return validateRookMove(logic, fromRank, fromFile, toRank, toFile);
         default:
             return false; // For now, unhandled pieces are invalid
     }
@@ -87,22 +90,27 @@ bool ChessMoveValidator::validatePawnMove(
     int startRank = (piece == Piece::WHITE_PAWN) ? 1 : 6; // Starting ranks for pawns
 
     // Standard move forward
-    if (toFile == fromFile) {
+    if (toFile == fromFile) 
+    {
         // One square forward
-        if (toRank == fromRank + direction && logic.isSquareEmpty(toRank, toFile)) {
+        if (toRank == fromRank + direction && logic.isSquareEmpty(toRank, toFile)) 
+        {
             return true;
         }
         // Two squares forward from starting position
         if (fromRank == startRank && toRank == fromRank + 2 * direction &&
             logic.isSquareEmpty(fromRank + direction, toFile) &&
-            logic.isSquareEmpty(toRank, toFile)) {
+            logic.isSquareEmpty(toRank, toFile)) 
+        {
             return true;
         }
     }
     // Capture move
-    else if (abs(toFile - fromFile) == 1 && toRank == fromRank + direction) {
+    else if (abs(toFile - fromFile) == 1 && toRank == fromRank + direction) 
+    {
         if (!logic.isSquareEmpty(toRank, toFile) &&
-            !logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) {
+            !logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+        {
             return true;
         }
     }
@@ -110,3 +118,42 @@ bool ChessMoveValidator::validatePawnMove(
     // Invalid pawn move
     return false;
 }
+
+
+bool ChessMoveValidator::validateRookMove(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    // Rook moves in straight lines: either same rank or same file
+    if (fromRank != toRank && fromFile != toFile) 
+    {
+        return false; // Not a straight line
+    }
+
+    // Check if path is clear
+    int rankStep = (toRank > fromRank) ? 1 : (toRank < fromRank) ? -1 : 0;
+    int fileStep = (toFile > fromFile) ? 1 : (toFile < fromFile) ? -1 : 0;
+
+    int currentRank = fromRank + rankStep;
+    int currentFile = fromFile + fileStep;
+
+    while (currentRank != toRank || currentFile != toFile) {
+        if (!logic.isSquareEmpty(currentRank, currentFile)) {
+            return false; // Path is blocked
+        }
+        currentRank += rankStep;
+        currentFile += fileStep;
+    }
+
+    // Check destination square
+    if (!logic.isSquareEmpty(toRank, toFile) &&
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) {
+        return false; // Cannot capture own piece
+    }
+
+    return true; // Valid rook move
+}
+
