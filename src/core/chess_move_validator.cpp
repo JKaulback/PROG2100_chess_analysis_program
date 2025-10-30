@@ -36,7 +36,12 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
         return MoveResult::INVALID_WRONG_TURN;
     }
     
-    // 5. Validate piece-specific movement rules
+    // 5. Check destination square validity
+    if (!checkDestinationSquare(logic, fromRank, fromFile, toRank, toFile)) {
+        return MoveResult::INVALID_ILLEGAL_MOVE;
+    }
+
+    // 6. Validate piece-specific movement rules
     if (!validatePieceMovement(logic, fromRank, fromFile, toRank, toFile)) {
         return MoveResult::INVALID_ILLEGAL_MOVE;
     }
@@ -88,6 +93,51 @@ bool ChessMoveValidator::validatePieceMovement(
         default:
             return false; // Unknown piece type
     }
+}
+
+bool ChessMoveValidator::checkDestinationSquare(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    // Check if destination square is occupied by same color piece
+    if (!logic.isSquareEmpty(toRank, toFile) &&
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+    {
+        return false; // Cannot capture own piece
+    }
+    return true; // Destination square is valid
+}
+
+bool ChessMoveValidator::isPathClearForSlidingPiece(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    // Calculate the direction of movement
+    int rankStep = (toRank > fromRank) ? 1 : (toRank < fromRank) ? -1 : 0;
+    int fileStep = (toFile > fromFile) ? 1 : (toFile < fromFile) ? -1 : 0;
+
+    // Start checking from the square after the starting position
+    int currentRank = fromRank + rankStep;
+    int currentFile = fromFile + fileStep;
+
+    // Check each square along the path (excluding destination)
+    while (currentRank != toRank || currentFile != toFile) 
+    {
+        if (!logic.isSquareEmpty(currentRank, currentFile)) 
+        {
+            return false; // Path is blocked
+        }
+        currentRank += rankStep;
+        currentFile += fileStep;
+    }
+
+    return true; // Path is clear
 }
 
 bool ChessMoveValidator::validatePawnMove(
@@ -144,31 +194,8 @@ bool ChessMoveValidator::validateRookMove(
         return false; // Not a straight line
     }
 
-    // Check if path is clear
-    int rankStep = (toRank > fromRank) ? 1 : (toRank < fromRank) ? -1 : 0;
-    int fileStep = (toFile > fromFile) ? 1 : (toFile < fromFile) ? -1 : 0;
-
-    int currentRank = fromRank + rankStep;
-    int currentFile = fromFile + fileStep;
-
-    while (currentRank != toRank || currentFile != toFile) 
-    {
-        if (!logic.isSquareEmpty(currentRank, currentFile)) 
-        {
-            return false; // Path is blocked
-        }
-        currentRank += rankStep;
-        currentFile += fileStep;
-    }
-
-    // Check destination square
-    if (!logic.isSquareEmpty(toRank, toFile) &&
-        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
-    {
-        return false; // Cannot capture own piece
-    }
-
-    return true; // Valid rook move
+    // Use the sliding piece helper to check if path is clear
+    return isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
 }
 
 bool ChessMoveValidator::validateKnightMove(
@@ -185,13 +212,6 @@ bool ChessMoveValidator::validateKnightMove(
     if (!((rankDiff == 2 && fileDiff == 1) || (rankDiff == 1 && fileDiff == 2))) 
     {
         return false; // Not a valid knight move
-    }
-
-    // Check destination square
-    if (!logic.isSquareEmpty(toRank, toFile) &&
-        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
-    {
-        return false; // Cannot capture own piece
     }
 
     return true; // Valid knight move
@@ -213,31 +233,8 @@ bool ChessMoveValidator::validateBishopMove(
         return false; // Not a diagonal move
     }
 
-    // Check if path is clear
-    int rankStep = (toRank > fromRank) ? 1 : -1;
-    int fileStep = (toFile > fromFile) ? 1 : -1;
-
-    int currentRank = fromRank + rankStep;
-    int currentFile = fromFile + fileStep;
-
-    while (currentRank != toRank && currentFile != toFile) 
-    {
-        if (!logic.isSquareEmpty(currentRank, currentFile)) 
-        {
-            return false; // Path is blocked
-        }
-        currentRank += rankStep;
-        currentFile += fileStep;
-    }
-
-    // Check destination square
-    if (!logic.isSquareEmpty(toRank, toFile) &&
-        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
-    {
-        return false; // Cannot capture own piece
-    }
-
-    return true; // Valid bishop move
+    // Use the sliding piece helper to check if path is clear
+    return isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
 }
 
 bool ChessMoveValidator::validateKingMove(
@@ -254,13 +251,6 @@ bool ChessMoveValidator::validateKingMove(
     if (rankDiff > 1 || fileDiff > 1) 
     {
         return false; // Move too far
-    }
-
-    // Check destination square
-    if (!logic.isSquareEmpty(toRank, toFile) &&
-        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
-    {
-        return false; // Cannot capture own piece
     }
 
     return true; // Valid king move
@@ -282,30 +272,7 @@ bool ChessMoveValidator::validateQueenMove(
         return false; // Not a valid queen move
     }
 
-    // Check if path is clear
-    int rankStep = (toRank > fromRank) ? 1 : (toRank < fromRank) ? -1 : 0;
-    int fileStep = (toFile > fromFile) ? 1 : (toFile < fromFile) ? -1 : 0;
-
-    int currentRank = fromRank + rankStep;
-    int currentFile = fromFile + fileStep;
-
-    while (currentRank != toRank || currentFile != toFile) 
-    {
-        if (!logic.isSquareEmpty(currentRank, currentFile)) 
-        {
-            return false; // Path is blocked
-        }
-        currentRank += rankStep;
-        currentFile += fileStep;
-    }
-
-    // Check destination square
-    if (!logic.isSquareEmpty(toRank, toFile) &&
-        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
-    {
-        return false; // Cannot capture own piece
-    }
-
-    return true; // Valid queen move
+    // Use the sliding piece helper to check if path is clear
+    return isPathClearForSlidingPiece(logic, fromRank, fromFile, toRank, toFile);
 }
 
