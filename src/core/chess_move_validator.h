@@ -14,7 +14,9 @@ public:
         VALID,
         INVALID_OUT_OF_BOUNDS,
         INVALID_SAME_POSITION,
-        INVALID_WRONG_TURN
+        INVALID_NO_PIECE,
+        INVALID_WRONG_TURN,
+        INVALID_ILLEGAL_MOVE
     };
 
     ChessMoveValidator() = default;
@@ -36,6 +38,12 @@ private:
     // Helper function for boundary checking
     bool isValidSquare(int rank, int file) const;
     
+    // Chess rule validation
+    bool validatePieceMovement(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+
+    // Piece specific validation
+    bool validatePawnMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+
     // Mapping of MoveResult to descriptive strings
     std::map<MoveResult, std::string> resultStrings = {
         {MoveResult::VALID, "Valid move"},
