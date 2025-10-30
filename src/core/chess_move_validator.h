@@ -44,6 +44,7 @@ private:
     // Piece specific validation
     bool validatePawnMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     bool validateRookMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+    bool validateKnightMove(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     // Mapping of MoveResult to descriptive strings
     std::map<MoveResult, std::string> resultStrings = {
         {MoveResult::VALID, "Valid move"},

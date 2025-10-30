@@ -73,6 +73,9 @@ bool ChessMoveValidator::validatePieceMovement(
         case Piece::WHITE_ROOK:
         case Piece::BLACK_ROOK:
             return validateRookMove(logic, fromRank, fromFile, toRank, toFile);
+        case Piece::WHITE_KNIGHT:
+        case Piece::BLACK_KNIGHT:
+            return validateKnightMove(logic, fromRank, fromFile, toRank, toFile);
         default:
             return false; // For now, unhandled pieces are invalid
     }
@@ -119,7 +122,6 @@ bool ChessMoveValidator::validatePawnMove(
     return false;
 }
 
-
 bool ChessMoveValidator::validateRookMove(
     const ChessLogic& logic, 
     int fromRank, 
@@ -140,8 +142,10 @@ bool ChessMoveValidator::validateRookMove(
     int currentRank = fromRank + rankStep;
     int currentFile = fromFile + fileStep;
 
-    while (currentRank != toRank || currentFile != toFile) {
-        if (!logic.isSquareEmpty(currentRank, currentFile)) {
+    while (currentRank != toRank || currentFile != toFile) 
+    {
+        if (!logic.isSquareEmpty(currentRank, currentFile)) 
+        {
             return false; // Path is blocked
         }
         currentRank += rankStep;
@@ -150,10 +154,37 @@ bool ChessMoveValidator::validateRookMove(
 
     // Check destination square
     if (!logic.isSquareEmpty(toRank, toFile) &&
-        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) {
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+    {
         return false; // Cannot capture own piece
     }
 
     return true; // Valid rook move
+}
+
+bool ChessMoveValidator::validateKnightMove(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    int rankDiff = abs(toRank - fromRank);
+    int fileDiff = abs(toFile - fromFile);
+
+    // Knight moves in L-shape: 2 in one direction and 1 in the other
+    if (!((rankDiff == 2 && fileDiff == 1) || (rankDiff == 1 && fileDiff == 2))) 
+    {
+        return false; // Not a valid knight move
+    }
+
+    // Check destination square
+    if (!logic.isSquareEmpty(toRank, toFile) &&
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+    {
+        return false; // Cannot capture own piece
+    }
+
+    return true; // Valid knight move
 }
 
