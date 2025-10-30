@@ -54,6 +54,8 @@ public:
     
     // Board state queries for advanced validation
     bool isValidSquare(const int rank, const int file) const;
+    bool isPawn(Piece piece) const; // Made public for validator use
+    bool isKing(Piece piece) const; // Helper for king detection
     
     // Turn management
     Player getCurrentPlayer() const;
@@ -101,7 +103,6 @@ private:
     // Helpers
     void initPieces(); // Helper to add pieces to the board
     Player getPieceOwner(Piece piece) const; // Get which player owns a piece
-    bool isPawn(Piece piece) const; // Check if piece is a pawn (either color)
     void updateCastlingRights(int fromRank, int fromFile); // Update castling rights when pieces move
     void updateEnPassantState(int fromRank, int fromFile, int toRank, int toFile); // Update en passant state after moves
     void clearEnPassantState(); // Clear en passant availability

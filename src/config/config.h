@@ -36,8 +36,18 @@ namespace Config {
         constexpr int KINGSIDE_CASTLE_KING_FILE = 6;
         constexpr int QUEENSIDE_CASTLE_ROOK_FILE = 3;
         constexpr int KINGSIDE_CASTLE_ROOK_FILE = 5;
-        constexpr int WHITE_PROMOTION_RANK = 7;
-        constexpr int BLACK_PROMOTION_RANK = 0;
+        
+        // Promotion ranks (where pawns promote)
+        constexpr int WHITE_PROMOTES_AT_RANK = BLACK_BACK_RANK;  // White promotes at rank 7
+        constexpr int BLACK_PROMOTES_AT_RANK = WHITE_BACK_RANK;  // Black promotes at rank 0
+        
+        // Pawn movement directions
+        constexpr int WHITE_PAWN_DIRECTION = 1;   // White pawns move up (positive direction)
+        constexpr int BLACK_PAWN_DIRECTION = -1;  // Black pawns move down (negative direction)
+        
+        // En passant capture ranks
+        constexpr int WHITE_EN_PASSANT_CAPTURE_RANK = 4;  // White captures en passant from rank 4
+        constexpr int BLACK_EN_PASSANT_CAPTURE_RANK = 3;  // Black captures en passant from rank 3
     }
 
     // Piece settings

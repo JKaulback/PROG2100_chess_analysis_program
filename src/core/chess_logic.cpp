@@ -1,4 +1,5 @@
 #include "chess_logic.h"
+#include <cmath> // For abs() function
 
 // Namespace alias for cleaner code while maintaining clarity
 namespace BoardCfg = Config::Board;
@@ -209,6 +210,10 @@ bool ChessLogic::isPawn(Piece piece) const {
     return piece == Piece::WHITE_PAWN || piece == Piece::BLACK_PAWN;
 }
 
+bool ChessLogic::isKing(Piece piece) const {
+    return piece == Piece::WHITE_KING || piece == Piece::BLACK_KING;
+}
+
 void ChessLogic::makeTemporaryMove(int fromRank, int fromFile, int toRank, int toFile) {
     board[toRank][toFile] = board[fromRank][fromFile];
     board[fromRank][fromFile] = Piece::EMPTY;
@@ -246,15 +251,15 @@ void ChessLogic::updateCastlingRights(int fromRank, int fromFile) {
     }
     // Check if rook moved
     else if (piece == Piece::WHITE_ROOK) {
-        if (fromRank == 0 && fromFile == 0) { // Queenside rook
+        if (fromRank == BoardCfg::WHITE_BACK_RANK && fromFile == BoardCfg::QUEENSIDE_ROOK_FILE) {
             whiteQueensideRookMoved = true;
-        } else if (fromRank == 0 && fromFile == 7) { // Kingside rook
+        } else if (fromRank == BoardCfg::WHITE_BACK_RANK && fromFile == BoardCfg::KINGSIDE_ROOK_FILE) {
             whiteKingsideRookMoved = true;
         }
     } else if (piece == Piece::BLACK_ROOK) {
-        if (fromRank == 7 && fromFile == 0) { // Queenside rook
+        if (fromRank == BoardCfg::BLACK_BACK_RANK && fromFile == BoardCfg::QUEENSIDE_ROOK_FILE) {
             blackQueensideRookMoved = true;
-        } else if (fromRank == 7 && fromFile == 7) { // Kingside rook
+        } else if (fromRank == BoardCfg::BLACK_BACK_RANK && fromFile == BoardCfg::KINGSIDE_ROOK_FILE) {
             blackKingsideRookMoved = true;
         }
     }
@@ -266,14 +271,14 @@ void ChessLogic::executeCastling(int fromRank, int fromFile, int toRank, int toF
     board[fromRank][fromFile] = Piece::EMPTY;
     
     // Move the rook
-    if (toFile == 6) { // Kingside castling
-        // Move rook from h-file to f-file
-        board[toRank][5] = board[toRank][7];
-        board[toRank][7] = Piece::EMPTY;
-    } else if (toFile == 2) { // Queenside castling
-        // Move rook from a-file to d-file
-        board[toRank][3] = board[toRank][0];
-        board[toRank][0] = Piece::EMPTY;
+    if (toFile == BoardCfg::KINGSIDE_CASTLE_KING_FILE) { // Kingside castling
+        // Move rook from kingside to its new position
+        board[toRank][BoardCfg::KINGSIDE_CASTLE_ROOK_FILE] = board[toRank][BoardCfg::KINGSIDE_ROOK_FILE];
+        board[toRank][BoardCfg::KINGSIDE_ROOK_FILE] = Piece::EMPTY;
+    } else if (toFile == BoardCfg::QUEENSIDE_CASTLE_KING_FILE) { // Queenside castling
+        // Move rook from queenside to its new position
+        board[toRank][BoardCfg::QUEENSIDE_CASTLE_ROOK_FILE] = board[toRank][BoardCfg::QUEENSIDE_ROOK_FILE];
+        board[toRank][BoardCfg::QUEENSIDE_ROOK_FILE] = Piece::EMPTY;
     }
     
     // Update castling rights
