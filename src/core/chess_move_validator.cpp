@@ -79,6 +79,9 @@ bool ChessMoveValidator::validatePieceMovement(
         case Piece::WHITE_BISHOP:
         case Piece::BLACK_BISHOP:
             return validateBishopMove(logic, fromRank, fromFile, toRank, toFile);
+        case Piece::WHITE_KING:
+        case Piece::BLACK_KING:
+            return validateKingMove(logic, fromRank, fromFile, toRank, toFile);
         default:
             return false; // For now, unhandled pieces are invalid
     }
@@ -232,5 +235,31 @@ bool ChessMoveValidator::validateBishopMove(
     }
 
     return true; // Valid bishop move
+}
+
+bool ChessMoveValidator::validateKingMove(
+    const ChessLogic& logic, 
+    int fromRank, 
+    int fromFile, 
+    int toRank, 
+    int toFile) const 
+{
+    int rankDiff = abs(toRank - fromRank);
+    int fileDiff = abs(toFile - fromFile);
+
+    // King moves one square in any direction
+    if (rankDiff > 1 || fileDiff > 1) 
+    {
+        return false; // Move too far
+    }
+
+    // Check destination square
+    if (!logic.isSquareEmpty(toRank, toFile) &&
+        logic.areSameColorPieces(fromRank, fromFile, toRank, toFile)) 
+    {
+        return false; // Cannot capture own piece
+    }
+
+    return true; // Valid king move
 }
 
