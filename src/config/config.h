@@ -36,6 +36,8 @@ namespace Config {
         constexpr int KINGSIDE_CASTLE_KING_FILE = 6;
         constexpr int QUEENSIDE_CASTLE_ROOK_FILE = 3;
         constexpr int KINGSIDE_CASTLE_ROOK_FILE = 5;
+        constexpr int WHITE_PROMOTION_RANK = 7;
+        constexpr int BLACK_PROMOTION_RANK = 0;
     }
 
     // Piece settings

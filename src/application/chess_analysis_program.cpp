@@ -66,12 +66,11 @@ ChessLogic::Piece ChessAnalysisProgram::getDraggedPiece() const
 bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, int destFile) 
 {
     // 1. Validate the move using the validator
-    auto validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
+    MoveResult validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
     
     // 2. If valid, execute the move and switch turns
     if (isValidMoveResult(validationResult)) 
     {
-        
         // Handle special moves
         if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
             validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) 
@@ -82,7 +81,11 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
         {
             logic.executeEnPassant(srcRank, srcFile, destRank, destFile);
         } 
-        else 
+        else if (validationResult == MoveResult::VALID_PROMOTION)
+        {
+            logic.executePromotion(srcRank, srcFile, destRank, destFile);
+        }
+        else
         {
             logic.executeMove(srcRank, srcFile, destRank, destFile);
         }
@@ -99,5 +102,6 @@ bool ChessAnalysisProgram::isValidMoveResult(MoveResult result) const {
     return result == MoveResult::VALID || 
            result == MoveResult::VALID_CASTLE_KINGSIDE || 
            result == MoveResult::VALID_CASTLE_QUEENSIDE ||
-           result == MoveResult::VALID_EN_PASSANT;
+           result == MoveResult::VALID_EN_PASSANT ||
+           result == MoveResult::VALID_PROMOTION;
 }

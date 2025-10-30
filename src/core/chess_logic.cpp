@@ -341,3 +341,28 @@ void ChessLogic::clearEnPassantState() {
     enPassantPawnRank = -1;
     enPassantPawnFile = -1;
 }
+
+void ChessLogic::executePromotion(int fromRank, int fromFile, int toRank, int toFile, Piece promoteTo) {
+    // Validate promoteTo piece
+    if (promoteTo == Piece::EMPTY) {
+        promoteTo = (currentPlayer == Player::WHITE_PLAYER) ? 
+            Piece::WHITE_QUEEN : 
+            Piece::BLACK_QUEEN;
+    }
+    
+    // Capture piece if present at destination
+    if (board[toRank][toFile] != Piece::EMPTY) 
+    {
+        capturedPieces.push_back(std::move(board[toRank][toFile]));
+    }
+
+    // Move the pawn to the promotion square
+    board[toRank][toFile] = board[fromRank][fromFile];
+    board[fromRank][fromFile] = Piece::EMPTY;
+
+    // Promote the pawn to the chosen piece
+    board[toRank][toFile] = promoteTo;
+
+    // Clear en passant state after promotion
+    clearEnPassantState();
+}

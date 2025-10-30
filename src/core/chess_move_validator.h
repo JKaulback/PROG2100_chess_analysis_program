@@ -19,7 +19,8 @@ public:
         // Special move results
         VALID_CASTLE_KINGSIDE,
         VALID_CASTLE_QUEENSIDE,
-        VALID_EN_PASSANT
+        VALID_EN_PASSANT,
+        VALID_PROMOTION
     };
 
     ChessMoveValidator() = default;
@@ -33,9 +34,7 @@ public:
         int toRank, 
         int toFile
     ) const;
-private:
-
-    
+private:    
     // Chess rule validation
     bool validatePieceMovement(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     bool checkDestinationSquare(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
@@ -58,4 +57,6 @@ private:
     // En passant validation method
     bool validateEnPassant(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 
+    // Promotion validation method
+    bool validatePromotion(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 };

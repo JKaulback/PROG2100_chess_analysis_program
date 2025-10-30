@@ -75,6 +75,9 @@ public:
     
     // Execute en passant move
     void executeEnPassant(int fromRank, int fromFile, int toRank, int toFile);
+
+    // Execute pawn promotion move
+    void executePromotion(int fromRank, int fromFile, int toRank, int toFile, Piece promoteTo = Piece::EMPTY);
 private:
     // Game state variables
     std::array<std::array<Piece, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board; // Board representation
