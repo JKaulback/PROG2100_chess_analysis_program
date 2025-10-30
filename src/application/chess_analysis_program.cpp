@@ -69,10 +69,7 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     auto validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
     
     // 2. If valid, execute the move and switch turns
-    if (validationResult == MoveResult::VALID || 
-        validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
-        validationResult == MoveResult::VALID_CASTLE_QUEENSIDE ||
-        validationResult == MoveResult::VALID_EN_PASSANT) 
+    if (isValidMoveResult(validationResult)) 
     {
         
         // Handle special moves
@@ -96,4 +93,11 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
     
     // 3. Move was invalid - return false
     return false;
+}
+
+bool ChessAnalysisProgram::isValidMoveResult(MoveResult result) const {
+    return result == MoveResult::VALID || 
+           result == MoveResult::VALID_CASTLE_KINGSIDE || 
+           result == MoveResult::VALID_CASTLE_QUEENSIDE ||
+           result == MoveResult::VALID_EN_PASSANT;
 }

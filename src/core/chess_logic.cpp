@@ -33,10 +33,10 @@ void ChessLogic::initializeBoard()
 void ChessLogic::initPieces() 
 {
     // Determine ranks for this color
-    int whitePawnRank = 1;
-    int whiteBackRank = 0;
-    int blackPawnRank = 6;
-    int blackBackRank = 7;
+    int whitePawnRank = BoardCfg::WHITE_PAWN_START_RANK;
+    int whiteBackRank = BoardCfg::WHITE_BACK_RANK;
+    int blackPawnRank = BoardCfg::BLACK_PAWN_START_RANK;
+    int blackBackRank = BoardCfg::BLACK_BACK_RANK;
     
     // Add pawns using move semantics for efficiency
     for (int file = 0; file < BoardCfg::BOARD_DIMENSION; ++file) 
@@ -192,8 +192,8 @@ bool ChessLogic::isPlayerTurn(Player player) const
 void ChessLogic::switchTurn() 
 {
     currentPlayer = (currentPlayer == Player::WHITE_PLAYER) ? Player::BLACK_PLAYER : Player::WHITE_PLAYER;
-    // En passant is only valid for one turn, so clear it when switching turns
-    // Note: This will be called AFTER the move that might have set up en passant
+    // Note: En passant state is cleared in updateEnPassantState() after each move
+    // This ensures the state is available for the current turn but cleared for the next
 }
 
 ChessLogic::Player ChessLogic::getPieceOwner(Piece piece) const {
@@ -203,6 +203,10 @@ ChessLogic::Player ChessLogic::getPieceOwner(Piece piece) const {
         return Player::BLACK_PLAYER;
     }
     return Player::WHITE_PLAYER; // Default
+}
+
+bool ChessLogic::isPawn(Piece piece) const {
+    return piece == Piece::WHITE_PAWN || piece == Piece::BLACK_PAWN;
 }
 
 void ChessLogic::makeTemporaryMove(int fromRank, int fromFile, int toRank, int toFile) {
@@ -316,7 +320,7 @@ void ChessLogic::updateEnPassantState(int fromRank, int fromFile, int toRank, in
     clearEnPassantState();
     
     // Check if a pawn made a double move
-    if (piece == Piece::WHITE_PAWN || piece == Piece::BLACK_PAWN) {
+    if (isPawn(piece)) {
         int rankDiff = abs(toRank - fromRank);
         
         // If pawn moved 2 squares, set up en passant

@@ -31,6 +31,10 @@ public:
     
     // Move validation and execution methods (Controller orchestration)
     bool attemptMove(int srcRank, int srcFile, int destRank, int destFile); // Validate and execute move
+    
+private:
+    // Helper methods
+    bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
 private:
     ChessLogic logic; // Own the logic object
     ChessGUI gui; // Own the GUI object

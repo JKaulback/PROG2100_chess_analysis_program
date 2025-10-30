@@ -12,7 +12,7 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     int toFile) const 
 {
     // 1. Check if source and destination are within board boundaries
-    if (!isValidSquare(logic, fromRank, fromFile) || !isValidSquare(logic, toRank, toFile)) {
+    if (!logic.isValidSquare(fromRank, fromFile) || !logic.isValidSquare(toRank, toFile)) {
         return MoveResult::INVALID_OUT_OF_BOUNDS;
     }
     
@@ -74,11 +74,7 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     return MoveResult::VALID;
 }
 
-bool ChessMoveValidator::isValidSquare(const ChessLogic& logic, int rank, int file) const 
-{
-    // Delegate to ChessLogic to avoid duplication
-    return logic.isValidSquare(rank, file);
-}
+
 
 bool ChessMoveValidator::validatePieceMovement(
     const ChessLogic& logic, 
@@ -152,7 +148,7 @@ bool ChessMoveValidator::validatePawnMove(
 {
     ChessLogic::Piece piece = logic.getPieceAt(fromRank, fromFile);
     int direction = (piece == ChessLogic::Piece::WHITE_PAWN) ? 1 : -1; // White moves up, Black moves down
-    int startRank = (piece == ChessLogic::Piece::WHITE_PAWN) ? 1 : 6; // Starting ranks for pawns
+    int startRank = (piece == ChessLogic::Piece::WHITE_PAWN) ? BoardCfg::WHITE_PAWN_START_RANK : BoardCfg::BLACK_PAWN_START_RANK;
 
     // Standard move forward
     if (toFile == fromFile) 

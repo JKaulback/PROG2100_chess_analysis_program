@@ -23,6 +23,19 @@ namespace Config {
         constexpr int MIN_FILE = 0;
         constexpr int MAX_FILE = 7;
         constexpr int BOARD_DIMENSION = 8;
+        
+        // Chess-specific constants
+        constexpr int WHITE_PAWN_START_RANK = 1;
+        constexpr int BLACK_PAWN_START_RANK = 6;
+        constexpr int WHITE_BACK_RANK = 0;
+        constexpr int BLACK_BACK_RANK = 7;
+        constexpr int KING_FILE = 4;
+        constexpr int QUEENSIDE_ROOK_FILE = 0;
+        constexpr int KINGSIDE_ROOK_FILE = 7;
+        constexpr int QUEENSIDE_CASTLE_KING_FILE = 2;
+        constexpr int KINGSIDE_CASTLE_KING_FILE = 6;
+        constexpr int QUEENSIDE_CASTLE_ROOK_FILE = 3;
+        constexpr int KINGSIDE_CASTLE_ROOK_FILE = 5;
     }
 
     // Piece settings

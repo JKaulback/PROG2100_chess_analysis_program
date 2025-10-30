@@ -34,8 +34,7 @@ public:
         int toFile
     ) const;
 private:
-    // Helper function for boundary checking (delegates to ChessLogic)
-    bool isValidSquare(const ChessLogic& logic, int rank, int file) const;
+
     
     // Chess rule validation
     bool validatePieceMovement(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
