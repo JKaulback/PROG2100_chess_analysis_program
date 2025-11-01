@@ -51,6 +51,7 @@ public:
     bool isBlackPiece(const int rank, const int file) const;
     bool areSameColorPieces(const int rank1, const int file1, const int rank2, const int file2) const;
     const std::vector<Piece>& getCapturedPieces() const;
+    Player getPieceOwner(const Piece piece) const;
     
     // Board state queries for advanced validation
     bool isValidSquare(const int rank, const int file) const;
@@ -102,7 +103,6 @@ private:
 
     // Helpers
     void initPieces(); // Helper to add pieces to the board
-    Player getPieceOwner(Piece piece) const; // Get which player owns a piece
     void updateCastlingRights(int fromRank, int fromFile); // Update castling rights when pieces move
     void updateEnPassantState(int fromRank, int fromFile, int toRank, int toFile); // Update en passant state after moves
     void clearEnPassantState(); // Clear en passant availability

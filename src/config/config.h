@@ -58,5 +58,14 @@ namespace Config {
         constexpr float TEXTURE_SIZE = 150.0f;
         constexpr float SCALE = SIZE / TEXTURE_SIZE;
         constexpr float CENTER_OFFSET = (Board::SQUARE_SIZE / 2.0f) - (SIZE / 2.0f);
+        constexpr float CAPTURED_SIZE_RATIO = 0.4f;
+        constexpr float CAPTURED_SIZE = Board::SQUARE_SIZE * CAPTURED_SIZE_RATIO;
+        constexpr float CAPTURED_SCALE = CAPTURED_SIZE / TEXTURE_SIZE;
+        constexpr float CAPTURED_OFFSET_X = Board::SIZE + Board::OFFSET_X + CAPTURED_SIZE;
+        constexpr float CAPTURED_MARGIN = 50.0f;
+        constexpr float CAPTURED_OFFSET_Y_WHITE = Board::OFFSET_Y + CAPTURED_MARGIN;
+        constexpr float CAPTURED_OFFSET_Y_BLACK = Board::SIZE + Board::OFFSET_Y - CAPTURED_MARGIN;
+        constexpr float CAPTURED_STEP = CAPTURED_SIZE * 0.9f;
+        constexpr int MAX_CAPTURED_IN_ROW = 7;
     }
 }

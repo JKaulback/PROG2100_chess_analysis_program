@@ -36,6 +36,17 @@ ChessLogic::Player ChessAnalysisProgram::getCurrentPlayer() const
     return logic.getCurrentPlayer();
 }
 
+
+std::vector<ChessLogic::Piece> ChessAnalysisProgram::getCapturedPieces() const
+{
+    return logic.getCapturedPieces();
+}
+
+ChessLogic::Player ChessAnalysisProgram::getPieceOwner(const ChessLogic::Piece piece) const
+{
+    return logic.getPieceOwner(piece);
+}
+
 // Delegate methods to input handler
 bool ChessAnalysisProgram::getIsDragging() const 
 {

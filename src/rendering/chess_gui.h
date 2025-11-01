@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include <string>
+#include <vector>
 #include <map>
 #include "../config/config.h"
 

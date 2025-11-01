@@ -173,6 +173,16 @@ const std::vector<ChessLogic::Piece>& ChessLogic::getCapturedPieces() const
     return capturedPieces;
 }
 
+ChessLogic::Player ChessLogic::getPieceOwner(const ChessLogic::Piece piece) const
+{
+    if (piece >= ChessLogic::Piece::BLACK_KING && 
+        piece <= ChessLogic::Piece::BLACK_PAWN)
+    {
+        return ChessLogic::Player::BLACK_PLAYER;   
+    }
+    return ChessLogic::Player::WHITE_PLAYER; // Default to white
+}
+
 bool ChessLogic::isValidSquare(const int rank, const int file) const 
 {
     return rank >= BoardCfg::MIN_RANK && rank <= BoardCfg::MAX_RANK &&
@@ -195,15 +205,6 @@ void ChessLogic::switchTurn()
     currentPlayer = (currentPlayer == Player::WHITE_PLAYER) ? Player::BLACK_PLAYER : Player::WHITE_PLAYER;
     // Note: En passant state is cleared in updateEnPassantState() after each move
     // This ensures the state is available for the current turn but cleared for the next
-}
-
-ChessLogic::Player ChessLogic::getPieceOwner(Piece piece) const {
-    if (piece >= Piece::WHITE_KING && piece <= Piece::WHITE_PAWN) {
-        return Player::WHITE_PLAYER;
-    } else if (piece >= Piece::BLACK_KING && piece <= Piece::BLACK_PAWN) {
-        return Player::BLACK_PLAYER;
-    }
-    return Player::WHITE_PLAYER; // Default
 }
 
 bool ChessLogic::isPawn(Piece piece) const {

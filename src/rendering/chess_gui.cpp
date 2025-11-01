@@ -141,6 +141,35 @@ void ChessGUI::drawChessPieces() const
         // Draw the piece being dragged
         DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f, Config::Pieces::SCALE, WHITE);
     }
+    // Draw captured pieces (white at top, black at bottom)
+    std::vector<ChessLogic::Piece> capturedPieces = controller.getCapturedPieces();
+    if (!capturedPieces.empty()) {
+        int numBlack = 0;
+        int numWhite = 0;
+        for (int index = 0; index < capturedPieces.size(); index++) 
+        {
+            ChessLogic::Piece piece = capturedPieces[index];
+            std::string pieceString = controller.pieceToString(piece);
+            float yPos, col;
+            if (controller.getPieceOwner(piece) == ChessLogic::Player::WHITE_PLAYER)
+            {
+                col = (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
+                float numStepsY = (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
+                    numWhite : numWhite - 8;
+                yPos = PieceCfg::CAPTURED_OFFSET_Y_WHITE + (PieceCfg::CAPTURED_STEP * numStepsY);
+                numWhite++;
+            } else
+            {
+                col = (numBlack <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
+                float numStepsY = (numBlack <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
+                    numBlack : numBlack - 8;
+                yPos = PieceCfg::CAPTURED_OFFSET_Y_BLACK - (PieceCfg::CAPTURED_STEP * numStepsY);
+                numBlack++;
+            }
+            float xPos = PieceCfg::CAPTURED_OFFSET_X + (PieceCfg::CAPTURED_STEP * col);
+            DrawTextureEx(pieceTextures.at(pieceString), {xPos, yPos}, 0.0f, PieceCfg::CAPTURED_SCALE, WHITE);
+        }
+    }
 }
 
 float ChessGUI::getSquareSize() const 

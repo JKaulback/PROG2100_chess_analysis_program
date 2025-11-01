@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <vector>
 #include "../core/chess_logic.h"
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
@@ -21,6 +22,8 @@ public:
     ChessLogic::Piece getPieceAt(int rank, int file) const; // Delegate to logic
     std::string pieceToString(ChessLogic::Piece piece) const; // Delegate to logic
     ChessLogic::Player getCurrentPlayer() const; // Delegate to logic for turn info
+    std::vector<ChessLogic::Piece> getCapturedPieces() const; // Delegate to logic
+    ChessLogic::Player getPieceOwner(const ChessLogic::Piece piece) const; // Delegate to logic
     
     // Delegate methods to access input handler (for GUI)
     bool getIsDragging() const; // Delegate to input handler
