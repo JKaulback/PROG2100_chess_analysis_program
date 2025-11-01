@@ -20,12 +20,6 @@ public:
         VALID_CASTLE_QUEENSIDE,
         VALID_EN_PASSANT,
         VALID_PROMOTION,
-
-        // Game ending move
-        GAME_END_DRAW,
-        GAME_END_STALEMATE,
-        GAME_END_WHITE_WIN,
-        GAME_END_BLACK_WIN
     };
 
     ChessMoveValidator() = default;
@@ -65,6 +59,4 @@ private:
     // Promotion validation method
     bool validatePromotion(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
 
-    // 50-Move rule validation method (false to continue game)
-    bool validate50MoveRule(const ChessLogic& logic) const;
 };

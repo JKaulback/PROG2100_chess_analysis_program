@@ -6,22 +6,15 @@
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
 #include "../core/chess_move_validator.h"
+#include "../core/chess_game_state_analyzer.h"
 
 // Type alias for cleaner code
 using MoveResult = ChessMoveValidator::MoveResult;
+using GameState = ChessGameStateAnalyzer::GameState;
 
 // This class manages the overall chess analysis program
 class ChessAnalysisProgram {
 public:
-    // A public enumeration for the game state
-    enum class GameState {
-        IN_PROGRESS,
-        DRAW,
-        STALEMATE,
-        WHITE_WIN,
-        BLACK_WIN
-    };
-
     ChessAnalysisProgram(); // Constructor - now creates its own objects
     ~ChessAnalysisProgram(); // Destructor
 
@@ -52,11 +45,11 @@ public:
 private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
-    bool isGameEndingMove(MoveResult result) const; // Check if move ends the game
 private:
     ChessLogic logic; // Own the logic object
     ChessGUI gui; // Own the GUI object
     ChessInputHandler inputHandler; // Own the input handler object
     ChessMoveValidator moveValidator; // Own the move validator object
+    ChessGameStateAnalyzer gameStateAnalyzer; // Own the game state analyzer object
     GameState currentGameState;
 };

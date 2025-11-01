@@ -79,12 +79,6 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
         return MoveResult::VALID_PROMOTION;
     }
 
-    // 9. Check 50-Move Rule for draw
-    if (validate50MoveRule(logic))
-    {
-        return MoveResult::GAME_END_DRAW;
-    }
-
     // If we get here, the move is a standard valid move
     return MoveResult::VALID;
 }
@@ -495,10 +489,4 @@ bool ChessMoveValidator::validatePromotion(
     
     // Check if the move is a valid pawn move to the promotion rank
     return validatePawnMove(logic, fromRank, fromFile, toRank, toFile);
-}
-
-bool ChessMoveValidator::validate50MoveRule(const ChessLogic& logic) const
-{
-    if (logic.getHalfmoveClock() >= 100) return true;
-    return false;
 }

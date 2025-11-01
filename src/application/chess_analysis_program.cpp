@@ -3,7 +3,7 @@
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
-    logic{}, gui{*this}, inputHandler{}, moveValidator{},
+    logic{}, gui{*this}, inputHandler{}, moveValidator{}, gameStateAnalyzer{},
     currentGameState{GameState::IN_PROGRESS}
 {}
 
@@ -105,33 +105,17 @@ bool ChessAnalysisProgram::attemptMove(int srcRank, int srcFile, int destRank, i
         }
         
         logic.switchTurn(); // Switch to the other player
+        
+        // After successful move, analyze the new game state
+        currentGameState = gameStateAnalyzer.analyzeGameState(logic);
         isSuccessful = true;
-    }
-    
-    // 3. If game ending move, update the game state
-    if (isGameEndingMove(validationResult)) {
-        switch (validationResult)
-        {
-            case MoveResult::GAME_END_DRAW:
-                currentGameState = GameState::DRAW;
-                break;
-            case MoveResult::GAME_END_STALEMATE:
-                currentGameState = GameState::STALEMATE;
-                break;
-            case MoveResult::GAME_END_WHITE_WIN:
-                currentGameState = GameState::WHITE_WIN;
-                break;
-            case MoveResult::GAME_END_BLACK_WIN:
-                currentGameState = GameState::BLACK_WIN;
-                break;
-        }
     }
 
     // 4. Move was invalid - return false
     return isSuccessful;
 }
 
-ChessAnalysisProgram::GameState ChessAnalysisProgram::getGameState() const
+GameState ChessAnalysisProgram::getGameState() const
 {
     return currentGameState;
 }
@@ -147,33 +131,33 @@ bool ChessAnalysisProgram::isValidMoveResult(MoveResult result) const
            result == MoveResult::VALID_CASTLE_KINGSIDE || 
            result == MoveResult::VALID_CASTLE_QUEENSIDE ||
            result == MoveResult::VALID_EN_PASSANT ||
-           result == MoveResult::VALID_PROMOTION ||
-           isGameEndingMove(result);
-}
-
-bool ChessAnalysisProgram::isGameEndingMove(MoveResult result) const
-{
-    return result == MoveResult::GAME_END_DRAW ||
-           result == MoveResult::GAME_END_STALEMATE ||
-           result == MoveResult::GAME_END_WHITE_WIN ||
-           result == MoveResult::GAME_END_BLACK_WIN;
+           result == MoveResult::VALID_PROMOTION;
 }
 
 std::string ChessAnalysisProgram::getGameOverString() const
 {
     std::string gameOverText;   
     switch (currentGameState) {
-        case ChessAnalysisProgram::GameState::DRAW:
-            gameOverText = GOCfg::DRAW_STRING;
-            break;
-        case ChessAnalysisProgram::GameState::STALEMATE:
-            gameOverText = GOCfg::STALEMATE_STRING;
-            break;
-        case ChessAnalysisProgram::GameState::WHITE_WIN:
+        case GameState::WHITE_WIN:
             gameOverText = GOCfg::WHITE_WIN_STRING;
             break;
-        case ChessAnalysisProgram::GameState::BLACK_WIN:
+        case GameState::BLACK_WIN:
             gameOverText = GOCfg::BLACK_WIN_STRING;
+            break;
+        case GameState::STALEMATE:
+            gameOverText = GOCfg::STALEMATE_STRING;
+            break;
+        case GameState::DRAW_50_MOVES:
+            gameOverText = GOCfg::DRAW_50_MOVES_STRING;
+            break;
+        case GameState::DRAW_THREEFOLD_REPETITION:
+            gameOverText = GOCfg::DRAW_THREEFOLD_REPETITION_STRING;
+            break;
+        case GameState::DRAW_INSUFFICIENT_MATERIAL:
+            gameOverText = GOCfg::DRAW_INSUFFICIENT_MATERIAL_STRING;
+            break;
+        case GameState::IN_PROGRESS:
+            gameOverText = ""; // No game over message
             break;
         default:
             gameOverText = GOCfg::ERROR_STRING;
