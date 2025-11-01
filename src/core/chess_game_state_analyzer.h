@@ -16,4 +16,5 @@ public:
 
     GameState analyzeGameState(const ChessLogic& logic);
     bool isDraw50Moves(const ChessLogic& logic);
+    bool isInsufficientMaterial(const ChessLogic& logic);
 };
