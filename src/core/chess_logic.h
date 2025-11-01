@@ -81,11 +81,15 @@ public:
 
     // Execute pawn promotion move
     void executePromotion(int fromRank, int fromFile, int toRank, int toFile, Piece promoteTo = Piece::EMPTY);
+
+    // Game ending accessor checks
+    int getHalfmoveClock() const;
 private:
     // Game state variables
     std::array<std::array<Piece, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board; // Board representation
     std::vector<Piece> capturedPieces; // Captured pieces
     Player currentPlayer; // Whose turn it is (White goes first)
+    int halfMoveClock; // Moves since last pawn move or last capture
     
     // Castling rights tracking
     bool whiteKingMoved = false;

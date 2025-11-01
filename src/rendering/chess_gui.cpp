@@ -5,7 +5,8 @@
 namespace WinCfg = Config::Window;
 namespace BoardCfg = Config::Board;
 namespace PieceCfg = Config::Pieces;
-
+namespace GOCfg = Config::GameOver;
+namespace StatsCfg = Config::GameStatistics;
 
 ChessGUI::ChessGUI(const ChessAnalysisProgram& ctrl) : controller(ctrl) 
 {
@@ -69,10 +70,19 @@ void ChessGUI::draw() const
     ClearBackground(RAYWHITE);
 
     // Draw the chess board
-    DrawTextureEx(boardTexture, {0, 0}, 0.0f, Config::Board::SCALE, WHITE);
+    DrawTextureEx(boardTexture, {0, 0}, 0.0f, BoardCfg::SCALE, WHITE);
 
     // Draw all chess pieces in play
     drawChessPieces();
+
+    // Draw the stats
+    drawStats();
+
+    // Check for game over
+    if (controller.isGameOver())
+    {
+        drawGameOverScreen();
+    }
 
     EndDrawing();
 }
@@ -81,8 +91,8 @@ void ChessGUI::draw() const
 
 Vector2 ChessGUI::screenPosToBoardPos(Vector2 screenPos) const 
 {
-    int file = static_cast<int>((screenPos.x - Config::Board::OFFSET_X) / Config::Board::SQUARE_SIZE);
-    int rank = Config::Board::MAX_RANK - static_cast<int>((screenPos.y - Config::Board::OFFSET_Y) / Config::Board::SQUARE_SIZE);
+    int file = static_cast<int>((screenPos.x - BoardCfg::OFFSET_X) / BoardCfg::SQUARE_SIZE);
+    int rank = BoardCfg::MAX_RANK - static_cast<int>((screenPos.y - BoardCfg::OFFSET_Y) / BoardCfg::SQUARE_SIZE);
 
     return 
     {
@@ -94,8 +104,8 @@ Vector2 ChessGUI::boardPosToScreenPos(Vector2 boardPos) const
 {
     return Vector2
     {
-        Config::Board::OFFSET_X + (boardPos.x * Config::Board::SQUARE_SIZE) + Config::Pieces::CENTER_OFFSET,
-        Config::Board::OFFSET_Y + ((Config::Board::MAX_RANK - boardPos.y) * Config::Board::SQUARE_SIZE) + Config::Pieces::CENTER_OFFSET,
+        BoardCfg::OFFSET_X + (boardPos.x * BoardCfg::SQUARE_SIZE) + PieceCfg::CENTER_OFFSET,
+        BoardCfg::OFFSET_Y + ((BoardCfg::MAX_RANK - boardPos.y) * BoardCfg::SQUARE_SIZE) + PieceCfg::CENTER_OFFSET,
 
     };
 }
@@ -103,9 +113,9 @@ Vector2 ChessGUI::boardPosToScreenPos(Vector2 boardPos) const
 void ChessGUI::drawChessPieces() const 
 {
     // Draw all playable pieces not being dragged
-    for (int rank = Config::Board::MIN_RANK; rank <= Config::Board::MAX_RANK; rank++) 
+    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++) 
     {
-        for (int file = Config::Board::MIN_FILE; file <= Config::Board::MAX_FILE; file++) 
+        for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) 
         {
             // Skip piece if being dragged
             if (controller.getIsDragging() && 
@@ -119,8 +129,13 @@ void ChessGUI::drawChessPieces() const
             if (currentPiece != ChessLogic::Piece::EMPTY) 
             {
                 std::string pieceString = controller.pieceToString(currentPiece);
-                const Vector2 screenPos = boardPosToScreenPos({static_cast<float>(file), static_cast<float>(rank)});
-                DrawTextureEx(pieceTextures.at(pieceString), screenPos, 0.0f, Config::Pieces::SCALE, WHITE);
+                const Vector2 screenPos = 
+                    boardPosToScreenPos({
+                        static_cast<float>(file), 
+                        static_cast<float>(rank)
+                    });
+                DrawTextureEx(pieceTextures.at(pieceString), screenPos, 0.0f, 
+                    PieceCfg::SCALE, WHITE);
             }
         }
     }
@@ -134,12 +149,13 @@ void ChessGUI::drawChessPieces() const
         // Calculate draw position
         const Vector2 drawPos = 
         {
-            mousePos.x - dragOffset.x - Config::Pieces::SIZE / 2.0f,
-            mousePos.y - dragOffset.y - Config::Pieces::SIZE / 2.0f
+            mousePos.x - dragOffset.x - PieceCfg::SIZE / 2.0f,
+            mousePos.y - dragOffset.y - PieceCfg::SIZE / 2.0f
         };
 
         // Draw the piece being dragged
-        DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f, Config::Pieces::SCALE, WHITE);
+        DrawTextureEx(pieceTextures.at(pieceString), drawPos, 0.0f,
+            PieceCfg::SCALE, WHITE);
     }
     // Draw captured pieces (white at top, black at bottom)
     std::vector<ChessLogic::Piece> capturedPieces = controller.getCapturedPieces();
@@ -156,28 +172,69 @@ void ChessGUI::drawChessPieces() const
                 col = (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
                 float numStepsY = (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
                     numWhite : numWhite - 8;
-                yPos = PieceCfg::CAPTURED_OFFSET_Y_WHITE + (PieceCfg::CAPTURED_STEP * numStepsY);
+                yPos = PieceCfg::CAPTURED_OFFSET_Y_WHITE + 
+                    (PieceCfg::CAPTURED_STEP * numStepsY);
                 numWhite++;
             } else
             {
                 col = (numBlack <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
                 float numStepsY = (numBlack <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
                     numBlack : numBlack - 8;
-                yPos = PieceCfg::CAPTURED_OFFSET_Y_BLACK - (PieceCfg::CAPTURED_STEP * numStepsY);
+                yPos = PieceCfg::CAPTURED_OFFSET_Y_BLACK - 
+                    (PieceCfg::CAPTURED_STEP * numStepsY);
                 numBlack++;
             }
-            float xPos = PieceCfg::CAPTURED_OFFSET_X + (PieceCfg::CAPTURED_STEP * col);
-            DrawTextureEx(pieceTextures.at(pieceString), {xPos, yPos}, 0.0f, PieceCfg::CAPTURED_SCALE, WHITE);
+            float xPos = PieceCfg::CAPTURED_OFFSET_X + 
+                (PieceCfg::CAPTURED_STEP * col);
+            DrawTextureEx(pieceTextures.at(pieceString), {xPos, yPos}, 0.0f, 
+                PieceCfg::CAPTURED_SCALE, WHITE);
         }
     }
 }
 
+void ChessGUI::drawGameOverScreen() const
+{
+    // Get the text to display
+    std::string gameOverText = controller.getGameOverString();
+
+    // Calculate text size
+    Vector2 textSize = MeasureTextEx(GetFontDefault(), gameOverText.c_str(), 
+        GOCfg::STATE_FONT_SIZE_PX, GOCfg::STATE_FONT_SPACING);
+
+    // Center text position in window
+    Vector2 textPos = {
+        WinCfg::CENTER_X - (textSize.x / 2.0f),
+        WinCfg::CENTER_Y - (textSize.y / 2.0f)
+    };
+
+    // Draw background
+    DrawRectangle(GOCfg::BACKGROUND_POS_X, GOCfg::BACKGROUND_POS_Y, 
+        GetScreenWidth(), GetScreenHeight(), GOCfg::BACKGROUND_COLOR);
+
+    // Draw text
+    DrawText(gameOverText.c_str(), (int)textPos.x, (int)textPos.y, 
+        GOCfg::STATE_FONT_SIZE_PX, GOCfg::STATE_FONT_COLOR);
+}
+
 float ChessGUI::getSquareSize() const 
 {
-    return Config::Board::SQUARE_SIZE;
+    return BoardCfg::SQUARE_SIZE;
 }
 
 float ChessGUI::getPieceSize() const 
 {
-    return Config::Pieces::SIZE;
+    return PieceCfg::SIZE;
+}
+
+void ChessGUI::drawStats() const
+{
+    drawHalfMoveClock(0);
+}
+
+void ChessGUI::drawHalfMoveClock(const int statIndex) const
+{
+    DrawText(TextFormat("HALFMOVE CLOCK: %i", controller.getHalfmoveClock()),
+        StatsCfg::START_DRAW_X, 
+        StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex),
+        StatsCfg::STATS_FONT_SIZE_PX, StatsCfg::STATS_FONT_COLOR);
 }

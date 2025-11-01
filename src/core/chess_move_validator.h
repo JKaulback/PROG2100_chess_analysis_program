@@ -7,7 +7,6 @@
 
 class ChessMoveValidator {
 public:
-    // Simple validation result enum - start with basic cases
     enum class MoveResult {
         VALID,
         INVALID_OUT_OF_BOUNDS,
@@ -20,7 +19,13 @@ public:
         VALID_CASTLE_KINGSIDE,
         VALID_CASTLE_QUEENSIDE,
         VALID_EN_PASSANT,
-        VALID_PROMOTION
+        VALID_PROMOTION,
+
+        // Game ending move
+        GAME_END_DRAW,
+        GAME_END_STALEMATE,
+        GAME_END_WHITE_WIN,
+        GAME_END_BLACK_WIN
     };
 
     ChessMoveValidator() = default;
@@ -59,4 +64,7 @@ private:
 
     // Promotion validation method
     bool validatePromotion(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+
+    // 50-Move rule validation method (false to continue game)
+    bool validate50MoveRule(const ChessLogic& logic) const;
 };

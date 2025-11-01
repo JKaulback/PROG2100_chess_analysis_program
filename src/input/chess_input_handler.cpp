@@ -15,8 +15,8 @@ void ChessInputHandler::handleInput(ChessAnalysisProgram& controller, const Ches
 {
     const Vector2 mousePos = GetMousePosition();
     
-    // Check for drag start
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) 
+    // Check for drag start if the game is in progress
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !controller.isGameOver()) 
     {
         // Check if dragging a piece
         const Vector2 boardPos = gui.screenPosToBoardPos(mousePos);

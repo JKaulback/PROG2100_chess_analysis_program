@@ -11,6 +11,9 @@ ChessLogic::ChessLogic() : currentPlayer(Player::WHITE_PLAYER)
     
     // Initialize pieces array and board representation
     initializeBoard();
+
+    // Initialize 50 move rule counter
+    halfMoveClock = 0;
 }
 
 ChessLogic::~ChessLogic() 
@@ -90,6 +93,9 @@ void ChessLogic::executeMove(
     // Note: This method assumes the move has already been validated
     // All validation will be handled by ChessMoveValidator
     
+    // Assume move without pawn or capture
+    halfMoveClock++;
+
     // Update castling rights before moving
     updateCastlingRights(srcRank, srcFile);
     
@@ -97,6 +103,8 @@ void ChessLogic::executeMove(
     if (board[destRank][destFile] != ChessLogic::Piece::EMPTY) 
     {
         capturedPieces.push_back(std::move(board[destRank][destFile]));
+        // Piece captured
+        halfMoveClock = 0;
     }
 
     // Execute the move using move semantics for efficiency
@@ -105,6 +113,9 @@ void ChessLogic::executeMove(
     
     // Update en passant state after the move
     updateEnPassantState(srcRank, srcFile, destRank, destFile);
+
+    // Check if piece moved was a pawn
+    if (isPawn(board[destRank][destFile])) halfMoveClock = 0;
 }
 
 std::string ChessLogic::pieceToString(Piece piece) const 
@@ -267,6 +278,9 @@ void ChessLogic::updateCastlingRights(int fromRank, int fromFile) {
 }
 
 void ChessLogic::executeCastling(int fromRank, int fromFile, int toRank, int toFile) {
+    // No capture or pawn movement during castling. Iterate half move clock
+    halfMoveClock++;
+    
     // Move the king
     board[toRank][toFile] = board[fromRank][fromFile];
     board[fromRank][fromFile] = Piece::EMPTY;
@@ -305,6 +319,9 @@ std::pair<int, int> ChessLogic::getEnPassantPawn() const {
 
 // Execute en passant move
 void ChessLogic::executeEnPassant(int fromRank, int fromFile, int toRank, int toFile) {
+    // Pawn was moved, reset half move clock
+    halfMoveClock = 0;
+
     // Move the capturing pawn
     board[toRank][toFile] = board[fromRank][fromFile];
     board[fromRank][fromFile] = Piece::EMPTY;
@@ -349,6 +366,9 @@ void ChessLogic::clearEnPassantState() {
 }
 
 void ChessLogic::executePromotion(int fromRank, int fromFile, int toRank, int toFile, Piece promoteTo) {
+    // Pawn was moved, reset half move clock
+    halfMoveClock = 0;
+    
     // Validate promoteTo piece
     if (promoteTo == Piece::EMPTY) {
         promoteTo = (currentPlayer == Player::WHITE_PLAYER) ? 
@@ -371,4 +391,9 @@ void ChessLogic::executePromotion(int fromRank, int fromFile, int toRank, int to
 
     // Clear en passant state after promotion
     clearEnPassantState();
+}
+
+int ChessLogic::getHalfmoveClock() const
+{
+    return halfMoveClock;
 }

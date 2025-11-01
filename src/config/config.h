@@ -1,5 +1,7 @@
 #pragma once
 
+#include <raylib.h>
+
 namespace Config {
     // Window settings
     namespace Window {
@@ -7,6 +9,8 @@ namespace Config {
         constexpr int HEIGHT = 1080;
         constexpr int TARGET_FPS = 60;
         constexpr const char* TITLE = "Chess Analysis Program";
+        constexpr float CENTER_X = WIDTH / 2.0f;
+        constexpr float CENTER_Y = HEIGHT / 2.0f; 
     }
 
     // Board settings
@@ -67,5 +71,30 @@ namespace Config {
         constexpr float CAPTURED_OFFSET_Y_BLACK = Board::SIZE + Board::OFFSET_Y - CAPTURED_MARGIN;
         constexpr float CAPTURED_STEP = CAPTURED_SIZE * 0.9f;
         constexpr int MAX_CAPTURED_IN_ROW = 7;
+    }
+
+    // Game Over settings
+    namespace GameOver {
+        constexpr const char* DRAW_STRING = "DRAW";
+        constexpr const char* STALEMATE_STRING = "STALEMATE";
+        constexpr const char* WHITE_WIN_STRING = "WHITE WINS!";
+        constexpr const char* BLACK_WIN_STRING = "BLACK WINS!";
+        constexpr const char* ERROR_STRING = "ERROR!!!";
+        constexpr int STATE_FONT_SIZE_PX = 100;
+        constexpr int STATE_FONT_SPACING = 1;
+        constexpr Color STATE_FONT_COLOR = RED;
+        constexpr int BACKGROUND_POS_X = 0;
+        constexpr int BACKGROUND_POS_Y = 0;
+        constexpr Color BACKGROUND_COLOR = {100, 100, 100, 128};
+    }
+
+    namespace GameStatistics {
+        constexpr int STATS_FONT_SIZE_PX = 20;
+        constexpr int STATS_FONT_SPACING = 1;
+        constexpr Color STATS_FONT_COLOR = BLACK;
+
+        constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4; // 3/4 over
+        constexpr int START_DRAW_Y = Window::HEIGHT / 4; // Start at top 1/4
+        constexpr int DRAW_STEP_Y = STATS_FONT_SIZE_PX; // Single spaced
     }
 }
