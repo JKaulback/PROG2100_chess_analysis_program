@@ -21,6 +21,9 @@ StateAnalyzer::GameState StateAnalyzer::analyzeGameState(const ChessLogic& logic
         return StateAnalyzer::GameState::WHITE_WIN;
     }
 
+    // Stalemate
+    if (isStalemate(logic)) return StateAnalyzer::GameState::STALEMATE;
+
     // For now, return IN_PROGRESS if no ending conditions are met
     return StateAnalyzer::GameState::IN_PROGRESS;
 }
@@ -106,6 +109,11 @@ bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const
 bool StateAnalyzer::isCheckmate(const ChessLogic& logic) const
 {
     return (isInCheck(logic) && !hasLegalMoves(logic));
+}
+
+bool StateAnalyzer::isStalemate(const ChessLogic& logic) const
+{
+    return (!isInCheck(logic) && !hasLegalMoves(logic));
 }
 
 // --- HELPERS ---
