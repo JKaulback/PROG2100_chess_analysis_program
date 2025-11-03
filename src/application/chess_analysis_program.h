@@ -27,7 +27,8 @@ public:
     std::vector<ChessLogic::Piece> getCapturedPieces() const; // Delegate to logic
     ChessLogic::Player getPieceOwner(const ChessLogic::Piece piece) const; // Delegate to logic
     int getHalfmoveClock() const; // Delegate to logic
-    
+    std::string getCurrentFENString() const; // Delegate to logic
+
     // Delegate methods to access input handler (for GUI)
     bool getIsDragging() const; // Delegate to input handler
     int getDraggedPieceRank() const; // Delegate to input handler

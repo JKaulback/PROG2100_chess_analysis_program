@@ -22,6 +22,7 @@ private:
     bool isInsufficientMaterial(const ChessLogic& logic) const;
     bool isCheckmate(const ChessLogic& logic) const;
     bool isStalemate(const ChessLogic& logic) const;
+    bool isThreefoldRepetition(const ChessLogic& logic) const;
 
     // Helper methods for state changes
     bool isInCheck(const ChessLogic& logic) const;

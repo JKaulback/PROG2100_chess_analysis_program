@@ -76,8 +76,8 @@ namespace Config {
     // Game Over settings
     namespace GameOver {
         constexpr const char* DRAW_50_MOVES_STRING = "DRAW: 50 MOVE RULE";
-        constexpr const char* DRAW_THREEFOLD_REPETITION_STRING = "DRAW: THREEFOLD REPETITION";
-        constexpr const char* DRAW_INSUFFICIENT_MATERIAL_STRING = "DRAW: INSUFFICIENT MATERIAL";
+        constexpr const char* DRAW_THREEFOLD_REPETITION_STRING = "DRAW:\nTHREEFOLD REPETITION";
+        constexpr const char* DRAW_INSUFFICIENT_MATERIAL_STRING = "DRAW:\nINSUFFICIENT MATERIAL";
         constexpr const char* STALEMATE_STRING = "STALEMATE";
         constexpr const char* WHITE_WIN_STRING = "WHITE WINS!";
         constexpr const char* BLACK_WIN_STRING = "BLACK WINS!";

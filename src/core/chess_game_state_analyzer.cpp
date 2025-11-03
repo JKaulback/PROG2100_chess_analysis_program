@@ -24,6 +24,9 @@ StateAnalyzer::GameState StateAnalyzer::analyzeGameState(const ChessLogic& logic
     // Stalemate
     if (isStalemate(logic)) return StateAnalyzer::GameState::STALEMATE;
 
+    // Threefold Repetition
+    if (isThreefoldRepetition(logic)) return StateAnalyzer::GameState::DRAW_THREEFOLD_REPETITION;
+
     // For now, return IN_PROGRESS if no ending conditions are met
     return StateAnalyzer::GameState::IN_PROGRESS;
 }
@@ -182,4 +185,9 @@ bool StateAnalyzer::hasLegalMoves(const ChessLogic& logic) const
     }
     // No legal moves found
     return false;
+}
+
+bool StateAnalyzer::isThreefoldRepetition(const ChessLogic& logic) const
+{
+    return logic.hasThreefoldRepetition();
 }

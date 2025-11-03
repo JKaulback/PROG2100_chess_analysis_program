@@ -14,6 +14,9 @@ ChessLogic::ChessLogic() : currentPlayer(Player::WHITE_PLAYER)
 
     // Initialize 50 move rule counter
     halfMoveClock = 0;
+
+    // Initialize the position occurrances
+    positionOccurrances.insert({getCurrentPositionString(), 1});
 }
 
 ChessLogic::~ChessLogic() 
@@ -116,6 +119,10 @@ void ChessLogic::executeMove(
 
     // Check if piece moved was a pawn
     if (isPawn(board[destRank][destFile])) halfMoveClock = 0;
+
+    // Update position occurance string
+    std::string currentPosition = getCurrentPositionString();
+    positionOccurrances[currentPosition]++;
 }
 
 std::string ChessLogic::pieceToString(Piece piece) const 
@@ -298,6 +305,10 @@ void ChessLogic::executeCastling(int fromRank, int fromFile, int toRank, int toF
     
     // Update castling rights
     updateCastlingRights(fromRank, fromFile);
+
+    // Update position occurance string
+    std::string currentPosition = getCurrentPositionString();
+    positionOccurrances[currentPosition]++;
 }
 
 // En passant query methods
@@ -333,6 +344,10 @@ void ChessLogic::executeEnPassant(int fromRank, int fromFile, int toRank, int to
     
     // Clear en passant state
     clearEnPassantState();
+
+    // Update position occurance string
+    std::string currentPosition = getCurrentPositionString();
+    positionOccurrances[currentPosition]++;
 }
 
 // Helper methods for en passant
@@ -391,9 +406,130 @@ void ChessLogic::executePromotion(int fromRank, int fromFile, int toRank, int to
 
     // Clear en passant state after promotion
     clearEnPassantState();
+
+    // Update position occurance string
+    
+    std::string currentPosition = getCurrentPositionString();
+    positionOccurrances[currentPosition]++;
 }
 
 int ChessLogic::getHalfmoveClock() const
 {
     return halfMoveClock;
 }
+
+bool ChessLogic::hasThreefoldRepetition() const
+{
+    for (const std::pair<const std::string, int>& pair : positionOccurrances)
+    {
+        if (pair.second >= 3) return true;
+    }
+    return false;
+}
+
+std::string ChessLogic::getCurrentPositionString() const
+{
+    std::string positionString = "";
+    
+    // 1. Board positions to FEN string
+    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++)
+    {
+        int emptyCount = 0;
+        for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++)
+        {
+            Piece piece = getPieceAt(rank, file);
+            if (piece == Piece::EMPTY)
+            {
+                emptyCount++;
+                continue;
+            }
+            
+            if (emptyCount > 0)
+            {
+                positionString += std::to_string(emptyCount);
+                emptyCount = 0;
+            }
+            positionString += pieceToFENString(piece);
+        }
+        if (emptyCount > 0)
+        {
+            positionString += std::to_string(emptyCount);
+        }
+        positionString += "/";
+    }
+
+    // Drop the trailing /
+    if (!positionString.empty())
+    {
+        positionString.pop_back();
+    }
+
+    // 2. Add the current player turn
+    if (currentPlayer == Player::WHITE_PLAYER)
+    {
+        positionString += " w ";
+    }
+    else
+    {
+        positionString += " b ";
+    }
+
+    // 3. Add castling rights
+    positionString += castlingRightsToFENString();
+    positionString += " ";
+
+    // 4. Add en passant target
+    positionString += enPassantTargetToFENString();
+
+    return positionString;
+}
+
+std::string ChessLogic::pieceToFENString(Piece piece) const
+{
+    switch(piece) {
+        case Piece::EMPTY: return "-";
+        case Piece::WHITE_KING: return "K";
+        case Piece::WHITE_QUEEN: return "Q";
+        case Piece::WHITE_ROOK: return "R";
+        case Piece::WHITE_BISHOP: return "B";
+        case Piece::WHITE_KNIGHT: return "N";
+        case Piece::WHITE_PAWN: return "P";
+        case Piece::BLACK_KING: return "k";
+        case Piece::BLACK_QUEEN: return "q";
+        case Piece::BLACK_ROOK: return "r";
+        case Piece::BLACK_BISHOP: return "b";
+        case Piece::BLACK_KNIGHT: return "n";
+        case Piece::BLACK_PAWN: return "p";
+        default: return "ERROR";        
+    }
+}
+
+std::string ChessLogic::castlingRightsToFENString() const
+{
+    std::string castlingRightsString = "";
+    
+    if (canCastleKingside(Player::WHITE_PLAYER)) castlingRightsString += "K";
+    if (canCastleQueenside(Player::WHITE_PLAYER)) castlingRightsString += "Q";
+    if (canCastleKingside(Player::BLACK_PLAYER)) castlingRightsString += "k";
+    if (canCastleQueenside(Player::BLACK_PLAYER)) castlingRightsString += "q";
+    
+    // If no castling rights, use "-"
+    if (castlingRightsString.empty())
+    {
+        castlingRightsString = "-";
+    }
+
+    return castlingRightsString;
+}
+
+std::string ChessLogic::enPassantTargetToFENString() const
+{
+    std::string enPassantString = "-";
+    if (enPassantTargetFile != -1 && enPassantTargetRank != -1) {
+        char fileChar = 'a' + enPassantTargetFile;
+        char rankChar = '1' + enPassantTargetRank;
+        enPassantString = std::string(1, fileChar) + std::string(1, rankChar);
+    }
+    return enPassantString;
+}
+

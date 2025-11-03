@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <array>
 #include <string>
 #include "../config/config.h"
@@ -52,6 +53,7 @@ public:
     bool areSameColorPieces(const int rank1, const int file1, const int rank2, const int file2) const;
     const std::vector<Piece>& getCapturedPieces() const;
     Player getPieceOwner(const Piece piece) const;
+    std::string getCurrentPositionString() const; // Generates a string based on board state, player turn, castling rights, and en passant target square
     
     // Board state queries for advanced validation
     bool isValidSquare(const int rank, const int file) const;
@@ -84,12 +86,16 @@ public:
 
     // Game ending accessor checks
     int getHalfmoveClock() const;
+
+    // Threefold repetition check
+    bool hasThreefoldRepetition() const;
 private:
     // Game state variables
     std::array<std::array<Piece, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board; // Board representation
     std::vector<Piece> capturedPieces; // Captured pieces
     Player currentPlayer; // Whose turn it is (White goes first)
     int halfMoveClock; // Moves since last pawn move or last capture
+    std::map<std::string, int> positionOccurrances;
     
     // Castling rights tracking
     bool whiteKingMoved = false;
@@ -110,4 +116,8 @@ private:
     void updateCastlingRights(int fromRank, int fromFile); // Update castling rights when pieces move
     void updateEnPassantState(int fromRank, int fromFile, int toRank, int toFile); // Update en passant state after moves
     void clearEnPassantState(); // Clear en passant availability
+    void recordCurrentPosition(); // Add current board position to map or iterate if it already exists
+    std::string pieceToFENString(Piece piece) const; // Generate a FEN string for pieces on board
+    std::string castlingRightsToFENString() const; // Generate a FEN string for castling rights
+    std::string enPassantTargetToFENString() const; // Generate a FEN string for an en passant target (- if none)
 };

@@ -170,3 +170,8 @@ int ChessAnalysisProgram::getHalfmoveClock() const
 {
     return logic.getHalfmoveClock();
 }
+
+std::string ChessAnalysisProgram::getCurrentFENString() const
+{
+    return logic.getCurrentPositionString();
+}

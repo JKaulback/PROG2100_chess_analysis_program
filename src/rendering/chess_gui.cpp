@@ -162,9 +162,9 @@ void ChessGUI::drawChessPieces() const
     if (!capturedPieces.empty()) {
         int numBlack = 0;
         int numWhite = 0;
-        for (int index = 0; index < capturedPieces.size(); index++) 
+        for (int pieceIndex = 0; pieceIndex < capturedPieces.size(); pieceIndex++) 
         {
-            ChessLogic::Piece piece = capturedPieces[index];
+            ChessLogic::Piece piece = capturedPieces[pieceIndex];
             std::string pieceString = controller.pieceToString(piece);
             float yPos, col;
             if (controller.getPieceOwner(piece) == ChessLogic::Player::WHITE_PLAYER)
@@ -203,17 +203,17 @@ void ChessGUI::drawGameOverScreen() const
 
     // Center text position in window
     Vector2 textPos = {
-        WinCfg::CENTER_X - (textSize.x / 2.0f),
-        WinCfg::CENTER_Y - (textSize.y / 2.0f)
+        (GetScreenWidth() / 2.0f) - (textSize.x / 2.0f),
+        (GetScreenHeight() / 2.0f) - (textSize.y / 2.0f)
     };
 
     // Draw background
-    DrawRectangle(GOCfg::BACKGROUND_POS_X, GOCfg::BACKGROUND_POS_Y, 
-        GetScreenWidth(), GetScreenHeight(), GOCfg::BACKGROUND_COLOR);
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), GOCfg::BACKGROUND_COLOR);
 
     // Draw text
     DrawText(gameOverText.c_str(), (int)textPos.x, (int)textPos.y, 
         GOCfg::STATE_FONT_SIZE_PX, GOCfg::STATE_FONT_COLOR);
+
 }
 
 float ChessGUI::getSquareSize() const 
@@ -229,12 +229,21 @@ float ChessGUI::getPieceSize() const
 void ChessGUI::drawStats() const
 {
     drawHalfMoveClock(0);
+    // drawBoardState(12); // FOR DEBUGGING
 }
 
 void ChessGUI::drawHalfMoveClock(const int statIndex) const
 {
     DrawText(TextFormat("HALFMOVE CLOCK: %i", controller.getHalfmoveClock()),
         StatsCfg::START_DRAW_X, 
+        StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex),
+        StatsCfg::STATS_FONT_SIZE_PX, StatsCfg::STATS_FONT_COLOR);
+}
+
+void ChessGUI::drawBoardState(const int statIndex) const
+{
+    DrawText(TextFormat("BOARD STATE:\n%s", controller.getCurrentFENString().c_str()),
+        StatsCfg::START_DRAW_X - 300,
         StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex),
         StatsCfg::STATS_FONT_SIZE_PX, StatsCfg::STATS_FONT_COLOR);
 }
