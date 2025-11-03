@@ -1,24 +1,34 @@
 # Chess Analysis Program
 
-A sophisticated chess application built with C++ and Raylib, featuring an interactive graphical interface, comprehensive chess game logic, and a clean modular architecture implementing the Controller design pattern.
+A complete chess implementation in C++ featuring advanced rule validation, game state analysis, and professional graphical interface. This project demonstrates sophisticated programming concepts including complex algorithms, design patterns, and modern C++ practices with full chess rule compliance.
 
 ## 🎯 Overview
 
-This chess analysis program demonstrates advanced C++ programming concepts including object-oriented design, design patterns, memory management, and graphical programming. The application provides a fully functional chess board with piece movement, drag-and-drop interaction, and a professional modular codebase that follows software engineering best practices.
+This chess analysis program is a comprehensive implementation of chess with complete rule validation, game ending detection, and position analysis. The application showcases advanced programming techniques including algorithmic game state analysis, complex move validation systems, and professional software architecture patterns.
 
 ## ✨ Features
 
-- **Interactive Chess Board**: Visual 8x8 chess board with high-quality graphics
-- **Drag & Drop Gameplay**: Intuitive piece movement with mouse interaction
-- **Move Validation System**: Comprehensive move validation with clear error reporting
-- **Centralized Configuration**: Professional configuration management system
-- **Complete Chess Logic**: Full implementation of chess rules and piece behavior
-- **Professional GUI**: Clean, responsive interface built with Raylib
-- **Controller Architecture**: Enhanced MVC pattern with move validation coordination
-- **Modular Structure**: Organized folder structure with logical component separation
-- **Input Handling**: Dedicated input processing system independent of rendering
-- **Clean Dependencies**: No circular dependencies, clear component relationships
-- **Type Safety**: Modern C++ with type aliases and namespace management
+### **Complete Chess Implementation**
+- **Full Rule Validation**: All chess rules including castling, en passant, and pawn promotion
+- **Advanced Game States**: Checkmate, stalemate, and draw detection (50-move rule, insufficient material)
+- **Threefold Repetition**: Position history tracking with FEN-based position hashing
+- **Move Generation**: Legal move detection and validation for all piece types
+- **Game State Analysis**: Comprehensive end-game condition detection
+
+### **Professional User Interface**
+- **Interactive Chess Board**: High-quality 8x8 visual board with piece textures
+- **Drag & Drop Gameplay**: Smooth piece movement with visual feedback
+- **Game Statistics Display**: Half-move clock, current board state (FEN notation)
+- **Game Over Detection**: Visual game ending notifications with result display
+- **Captured Pieces Display**: Visual tracking of captured pieces for both players
+
+### **Advanced Architecture**
+- **MVC Design Pattern**: Clean separation between Model, View, and Controller
+- **Move Validation System**: Dedicated validation layer with comprehensive rule checking
+- **Game State Analyzer**: Separate component for game ending condition detection
+- **Position History Tracking**: Efficient threefold repetition detection using hash maps
+- **Configuration Management**: Centralized configuration system with namespace organization
+- **Modular Design**: Clean component separation with no circular dependencies
 
 ## 🛠 Technical Stack
 
@@ -37,10 +47,12 @@ src/
 │   ├── chess_analysis_program.h     # Enhanced MVC Controller with move validation
 │   └── chess_analysis_program.cpp
 ├── core/                           # Game logic and validation systems
-│   ├── chess_logic.h              # Pure state management (Model)
+│   ├── chess_logic.h              # Game state management with position tracking
 │   ├── chess_logic.cpp
-│   ├── chess_move_validator.h      # Move validation system
-│   └── chess_move_validator.cpp
+│   ├── chess_move_validator.h      # Comprehensive move validation system
+│   ├── chess_move_validator.cpp
+│   ├── chess_game_state_analyzer.h # Game ending detection (checkmate, stalemate, draws)
+│   └── chess_game_state_analyzer.cpp
 ├── rendering/                      # User interface and rendering layer
 │   ├── chess_gui.h                # Graphics and visual presentation (View)
 │   └── chess_gui.cpp
@@ -62,12 +74,13 @@ The application implements a **Model-View-Controller (MVC)** architecture with c
 
 ### Core Components
 
-1. **ChessAnalysisProgram** (Controller): Orchestrates validation, logic, and UI components
-2. **ChessGUI** (View): Pure rendering with centralized configuration
-3. **ChessLogic** (Model): Pure state management with utility methods for validation
-4. **ChessMoveValidator**: Dedicated move validation with extensible architecture
-5. **ChessInputHandler**: Controller-integrated input processing system
-6. **Config Namespace**: Centralized configuration management system
+1. **ChessAnalysisProgram** (Controller): Orchestrates all game components and coordinates gameplay
+2. **ChessLogic** (Model): Game state management with position history tracking for threefold repetition
+3. **ChessMoveValidator**: Advanced validation system supporting all chess rules (castling, en passant, promotion)
+4. **ChessGameStateAnalyzer**: Dedicated game ending detection (checkmate, stalemate, draws)
+5. **ChessGUI** (View): Professional rendering with statistics display and game over screens
+6. **ChessInputHandler**: Sophisticated input processing with drag-and-drop support
+7. **Config Namespace**: Centralized configuration management for all components
 
 ### Architectural Benefits
 
@@ -77,12 +90,14 @@ The application implements a **Model-View-Controller (MVC)** architecture with c
 - **High Cohesion**: Related functionality grouped logically
 - **Easy Testing**: Each layer can be unit tested in isolation
 
-### Enhanced Data Flow
+### Advanced Data Flow
 
 ```
 User Input → InputHandler → Controller → MoveValidator → ChessLogic
+                ↓              ↓            ↓            ↓
+           Controller → GameStateAnalyzer → View → Screen Output
                 ↓              ↓            ↓
-           Controller → View (ChessGUI) → Screen Output
+         Position History → Threefold → Game Over Detection
                 ↓
            Config System → All Components
 ```
@@ -145,12 +160,18 @@ g++ -fdiagnostics-color=always -g src/main.cpp src/application/chess_analysis_pr
 
 ## 🎮 How to Use
 
-1. **Launch the Program**: Run the executable to open the chess board
-2. **Move Pieces**: Click and drag any piece to move it
-3. **Move Validation**: The system validates moves and provides feedback for invalid attempts
-4. **Board Boundaries**: Only moves within the 8x8 board are accepted
-5. **Visual Feedback**: Pieces highlight during drag operations
-6. **Error Handling**: Invalid moves are rejected with clear validation messages
+1. **Launch the Program**: Run the executable to start a new chess game
+2. **Make Moves**: Click and drag pieces to move them (drag-and-drop interface)
+3. **Rule Validation**: All chess rules are enforced (legal moves, turn order, check prevention)
+4. **Special Moves**: Castling, en passant, and pawn promotion are fully supported
+5. **Game Statistics**: View half-move clock and current board position (FEN notation)
+6. **Game Endings**: The game automatically detects and displays:
+   - Checkmate (winner declared)
+   - Stalemate (draw)
+   - 50-move rule (draw)
+   - Threefold repetition (draw)
+   - Insufficient material (draw)
+7. **Visual Feedback**: Captured pieces are displayed, game over screens show results
 
 ## 🧠 Learning Outcomes
 
@@ -182,12 +203,14 @@ This project demonstrates proficiency in:
 - Build automation and project structure organization
 - Cross-platform considerations
 
-### Game Development Fundamentals
+### Game Development & Algorithms
+- Advanced game logic implementation (chess rules)
+- Complex state management with position history
+- Algorithmic game analysis (checkmate detection, move generation)
 - Graphics programming with Raylib
-- Event handling and user input
-- Game state management
-- Asset loading and management
-- Performance optimization
+- Event handling and sophisticated user input processing
+- Hash-based position tracking for game analysis
+- Performance optimization for real-time gameplay
 
 ## �️ Architecture Highlights
 
@@ -205,17 +228,36 @@ namespace WinCfg = Config::Window;
 InitWindow(WinCfg::WIDTH, WinCfg::HEIGHT, WinCfg::TITLE);
 ```
 
-### Move Validation Architecture
+### Advanced Chess Implementation
 ```cpp
-// Type alias for cleaner code
-using MoveResult = ChessMoveValidator::MoveResult;
-
-// Controller coordination
-bool attemptMove(int fromRank, int fromFile, int toRank, int toFile) {
-    auto result = moveValidator.validateMove(logic, fromRank, fromFile, toRank, toFile);
-    if (result == MoveResult::VALID) {
-        logic.executeMove(fromRank, fromFile, toRank, toFile);
+// Complete move validation with special move support
+bool attemptMove(int srcRank, int srcFile, int destRank, int destFile) {
+    MoveResult validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
+    
+    if (isValidMoveResult(validationResult)) {
+        // Handle special moves
+        if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
+            validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) {
+            logic.executeCastling(srcRank, srcFile, destRank, destFile);
+        } else if (validationResult == MoveResult::VALID_EN_PASSANT) {
+            logic.executeEnPassant(srcRank, srcFile, destRank, destFile);
+        } else if (validationResult == MoveResult::VALID_PROMOTION) {
+            logic.executePromotion(srcRank, srcFile, destRank, destFile);
+        } else {
+            logic.executeMove(srcRank, srcFile, destRank, destFile);
+        }
+        
+        // Analyze game state after move
+        currentGameState = gameStateAnalyzer.analyzeGameState(logic);
         return true;
+    }
+    return false;
+}
+
+// Threefold repetition detection using position hashing
+bool hasThreefoldRepetition() const {
+    for (const auto& [position, count] : positionOccurrances) {
+        if (count >= 3) return true;
     }
     return false;
 }
@@ -236,44 +278,61 @@ bool attemptMove(int fromRank, int fromFile, int toRank, int toFile) {
 
 ## 🔍 Code Quality Highlights
 
-- **Enhanced MVC Architecture**: Model-View-Controller with dedicated validation layer
-- **Configuration Management**: Centralized config system with namespace organization
-- **Move Validation System**: Extensible validation with clear error reporting
-- **Type Safety**: Comprehensive use of enums, type aliases, and strong typing
-- **Modern C++ Features**: constexpr, namespace aliases, and using declarations
-- **No Circular Dependencies**: Well-designed component relationships
-- **Modular Structure**: Organized folder hierarchy for easy navigation and maintenance
-- **Resource Management**: Proper texture loading and cleanup with RAII
-- **Error Handling**: Robust validation system with detailed feedback
-- **Controller Coordination**: Centralized orchestration without tight coupling
-- **Single Responsibility**: Each class has one clear, well-defined purpose
-- **Extensible Design**: Easy to add new validation rules and features
-- **Professional Patterns**: Industry-standard architectural approaches
-- **Documentation**: Extensive inline comments explaining complex logic and architecture decisions
+### **Advanced Algorithms & Data Structures**
+- **Position Hashing**: Efficient threefold repetition using `std::unordered_map` with FEN strings
+- **Move Generation**: Complex legal move detection with check/checkmate analysis
+- **Game Tree Analysis**: Sophisticated game state evaluation and ending detection
+- **Hash-based Tracking**: Performance-optimized position history management
 
-## 🚧 Future Enhancements
+### **Professional Software Architecture**
+- **MVC Pattern**: Complete separation with dedicated validation and analysis layers
+- **Single Responsibility**: Each component has one clear, well-defined purpose
+- **SOLID Principles**: Well-designed interfaces and dependency management
+- **Configuration Management**: Centralized system with compile-time constants
+- **No Circular Dependencies**: Clean, maintainable component relationships
 
-The modular architecture makes these enhancements straightforward to implement:
+### **Modern C++ Implementation**
+- **STL Mastery**: Advanced use of containers, algorithms, and iterators
+- **Type Safety**: Comprehensive enums, type aliases, and strong typing
+- **Memory Management**: RAII principles with proper resource cleanup
+- **Modern Features**: `constexpr`, structured bindings, namespace aliases
+- **Template Usage**: Type-safe generic programming where appropriate
+- **Exception Safety**: Robust error handling throughout the codebase
 
-### Gameplay Features
-- [ ] Enhanced piece movement validation (piece-specific rules)
-- [ ] Chess move analysis and suggestions
-- [ ] Move history and replay functionality  
-- [ ] Advanced AI opponent (new `src/ai/` module)
-- [ ] Game state persistence (save/load functionality)
-- [ ] Tournament bracket system
-- [ ] Special moves (castling, en passant, promotion)
+## ✅ Implemented Features
+
+### **Core Chess Implementation** ✅ **COMPLETE**
+- [x] **Full Chess Rules**: All piece movements, turn management, board validation
+- [x] **Special Moves**: Castling (kingside/queenside), en passant capture, pawn promotion
+- [x] **Game State Analysis**: Checkmate, stalemate, check detection with legal move generation
+- [x] **Draw Conditions**: 50-move rule, threefold repetition, insufficient material
+- [x] **Position Tracking**: FEN-based position hashing for repetition detection
+- [x] **Move Validation**: Comprehensive validation preventing illegal moves and self-check
+
+### **Professional Architecture** ✅ **COMPLETE**
+- [x] **MVC Pattern**: Clean separation of Model, View, and Controller
+- [x] **Configuration System**: Centralized config management with namespaces
+- [x] **Game State Analyzer**: Dedicated component for end-game detection
+- [x] **Modular Design**: No circular dependencies, clear component relationships
+- [x] **Advanced UI**: Statistics display, game over screens, captured pieces tracking
+
+## 🚧 Potential Future Enhancements
+
+### Advanced Features
+- [ ] Move history with undo/redo functionality
+- [ ] Chess notation export (PGN format)
+- [ ] AI opponent with difficulty levels
+- [ ] Opening book and endgame tablebase
+- [ ] Network multiplayer support
+- [ ] Tournament management system
 
 ### Technical Improvements
-- [x] **Configuration system** (`src/config/` module) ✅ **IMPLEMENTED**
-- [x] **Move validation architecture** ✅ **IMPLEMENTED** 
-- [ ] Advanced validation rules (check, checkmate, stalemate)
-- [ ] Audio system (`src/audio/` module)
-- [ ] Network multiplayer (`src/network/` module)
-- [ ] Unit testing framework (`tests/` directory)
+- [ ] Unit testing framework integration
 - [ ] Performance profiling and optimization
 - [ ] Cross-platform build system (CMake)
-- [ ] Logging system for debugging and analysis
+- [ ] Audio system for move feedback
+- [ ] Save/load game functionality
+- [ ] Logging system for game analysis
 
 ## 📊 Technical Specifications
 

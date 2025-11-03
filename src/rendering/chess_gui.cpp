@@ -37,7 +37,7 @@ ChessGUI::~ChessGUI() {
 void ChessGUI::initPieceTextures() 
 {
     // Loop through the logical board
-    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK ; rank++) 
+    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++) 
     {
         for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) 
         {
@@ -171,7 +171,7 @@ void ChessGUI::drawChessPieces() const
             {
                 col = (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
                 float numStepsY = (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
-                    numWhite : numWhite - 8;
+                    numWhite : numWhite - PieceCfg::MAX_CAPTURED_IN_ROW;
                 yPos = PieceCfg::CAPTURED_OFFSET_Y_WHITE + 
                     (PieceCfg::CAPTURED_STEP * numStepsY);
                 numWhite++;
@@ -179,7 +179,7 @@ void ChessGUI::drawChessPieces() const
             {
                 col = (numBlack <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
                 float numStepsY = (numBlack <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
-                    numBlack : numBlack - 8;
+                    numBlack : numBlack - PieceCfg::MAX_CAPTURED_IN_ROW;
                 yPos = PieceCfg::CAPTURED_OFFSET_Y_BLACK - 
                     (PieceCfg::CAPTURED_STEP * numStepsY);
                 numBlack++;
