@@ -1,6 +1,7 @@
 #pragma once
 
 #include "chess_logic.h"
+#include "chess_move_validator.h"
 
 class ChessGameStateAnalyzer {
 public:
@@ -15,6 +16,13 @@ public:
     };
 
     GameState analyzeGameState(const ChessLogic& logic);
-    bool isDraw50Moves(const ChessLogic& logic);
-    bool isInsufficientMaterial(const ChessLogic& logic);
+private:
+    // State changing checks
+    bool isDraw50Moves(const ChessLogic& logic) const;
+    bool isInsufficientMaterial(const ChessLogic& logic) const;
+    bool isCheckmate(const ChessLogic& logic) const;
+
+    // Helper methods for state changes
+    bool isInCheck(const ChessLogic& logic) const;
+    bool hasLegalMoves(const ChessLogic& logic) const;
 };

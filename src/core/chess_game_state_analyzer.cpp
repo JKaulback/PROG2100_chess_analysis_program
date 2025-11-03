@@ -11,16 +11,26 @@ StateAnalyzer::GameState StateAnalyzer::analyzeGameState(const ChessLogic& logic
     // Insufficient material
     if (isInsufficientMaterial(logic)) return StateAnalyzer::GameState::DRAW_INSUFFICIENT_MATERIAL;
     
+    // Checkmate
+    if (isCheckmate(logic)) 
+    {
+        if (logic.getCurrentPlayer() == ChessLogic::Player::WHITE_PLAYER)
+        {
+            return StateAnalyzer::GameState::BLACK_WIN;
+        }
+        return StateAnalyzer::GameState::WHITE_WIN;
+    }
+
     // For now, return IN_PROGRESS if no ending conditions are met
     return StateAnalyzer::GameState::IN_PROGRESS;
 }
 
-bool StateAnalyzer::isDraw50Moves(const ChessLogic& logic)
+bool StateAnalyzer::isDraw50Moves(const ChessLogic& logic) const
 {
     return (logic.getHalfmoveClock() >= 100);
 }
 
-bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic)
+bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const
 {
     int whiteBishopCount = 0;
     int whiteKnightCount = 0;
@@ -91,4 +101,77 @@ bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic)
     }
 
     return insufficientMaterial;
+}
+
+bool StateAnalyzer::isCheckmate(const ChessLogic& logic) const
+{
+    return (isInCheck(logic) && !hasLegalMoves(logic));
+}
+
+// --- HELPERS ---
+bool StateAnalyzer::isInCheck(const ChessLogic& logic) const
+{
+    ChessMoveValidator validator;
+    
+    ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
+    std::pair<int, int> kingPosition = logic.getKingPosition(currentPlayer);
+    ChessLogic::Player opponent = (currentPlayer == ChessLogic::Player::WHITE_PLAYER) ?
+                                    ChessLogic::Player::BLACK_PLAYER :
+                                    ChessLogic::Player::WHITE_PLAYER;
+
+    return validator.isSquareUnderAttack(logic, kingPosition.first, kingPosition.second, opponent);
+}
+
+bool StateAnalyzer::hasLegalMoves(const ChessLogic& logic) const
+{
+    ChessMoveValidator validator;
+    ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
+    
+    // Iterate through all squares on the board to find current player's pieces
+    for (int fromRank = BoardCfg::MIN_RANK; fromRank <= BoardCfg::MAX_RANK; fromRank++)
+    {
+        for (int fromFile = BoardCfg::MIN_FILE; fromFile <= BoardCfg::MAX_FILE; fromFile++)
+        {
+            ChessLogic::Piece piece = logic.getPieceAt(fromRank, fromFile);
+            
+            // Skip empty squares
+            if (piece == ChessLogic::Piece::EMPTY) continue;
+            
+            // Check if this piece belongs to the current player
+            bool isCurrentPlayerPiece = false;
+            if (currentPlayer == ChessLogic::Player::WHITE_PLAYER)
+            {
+                isCurrentPlayerPiece = logic.isWhitePiece(fromRank, fromFile);
+            }
+            else
+            {
+                isCurrentPlayerPiece = logic.isBlackPiece(fromRank, fromFile);
+            }
+            
+            if (!isCurrentPlayerPiece) continue;
+            
+            // Try all possible destination squares for this piece
+            for (int toRank = BoardCfg::MIN_RANK; toRank <= BoardCfg::MAX_RANK; toRank++)
+            {
+                for (int toFile = BoardCfg::MIN_FILE; toFile <= BoardCfg::MAX_FILE; toFile++)
+                {
+                    // Skip moving to the same square
+                    if (fromRank == toRank && fromFile == toFile) continue;
+                    
+                    // Test if this move is valid
+                    ChessMoveValidator::MoveResult result = validator.validateMove(
+                        logic, fromRank, fromFile, toRank, toFile
+                    );
+                    
+                    // If we find any legal move, the player has legal moves
+                    if (validator.isValidMoveResult(result))
+                    {
+                        return true; // Found a legal move
+                    }
+                }
+            }
+        }
+    }
+    // No legal moves found
+    return false;
 }

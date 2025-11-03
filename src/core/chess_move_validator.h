@@ -33,17 +33,21 @@ public:
         int toRank, 
         int toFile
     ) const;
+
+    // Helper function for move and state validation
+    bool isSquareUnderAttack(const ChessLogic& logic, int rank, int file, ChessLogic::Player attackingPlayer) const;
+    bool wouldLeaveKingInCheck(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
+    bool isValidMoveResult(MoveResult result) const;
+    bool isInvalidMoveResult(MoveResult result) const;
 private:    
     // Chess rule validation
     bool validatePieceMovement(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     bool checkDestinationSquare(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-    bool wouldLeaveKingInCheck(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-
+    
     // Helper function for sliding pieces (rook, bishop, queen)
     bool isPathClearForSlidingPiece(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
     
     // Helper functions for check detection
-    bool isSquareUnderAttack(const ChessLogic& logic, int rank, int file, ChessLogic::Player attackingPlayer) const;
     bool validateBasicPieceMovement(const ChessLogic& logic, ChessLogic::Piece piece, int fromRank, int fromFile, int toRank, int toFile) const;
 
     // Piece specific validation (only pawn needs special handling)
@@ -58,5 +62,4 @@ private:
 
     // Promotion validation method
     bool validatePromotion(const ChessLogic& logic, int fromRank, int fromFile, int toRank, int toFile) const;
-
 };

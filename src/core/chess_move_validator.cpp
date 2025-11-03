@@ -490,3 +490,17 @@ bool ChessMoveValidator::validatePromotion(
     // Check if the move is a valid pawn move to the promotion rank
     return validatePawnMove(logic, fromRank, fromFile, toRank, toFile);
 }
+
+bool ChessMoveValidator::isValidMoveResult(MoveResult result) const
+{
+    return (result == MoveResult::VALID ||
+            result == MoveResult::VALID_CASTLE_KINGSIDE ||
+            result == MoveResult::VALID_CASTLE_QUEENSIDE ||
+            result == MoveResult::VALID_EN_PASSANT ||
+            result == MoveResult::VALID_PROMOTION);
+}
+
+bool ChessMoveValidator::isInvalidMoveResult(MoveResult result) const
+{
+    return !isValidMoveResult(result);
+}
