@@ -21,8 +21,8 @@ public:
     void run(); // Main loop
 
     // Delegate methods to access logic (for GUI)
-    ChessLogic::Piece getPieceAt(int rank, int file) const; // Delegate to logic
-    std::string pieceToString(ChessLogic::Piece piece) const; // Delegate to logic
+    ChessLogic::Piece getPieceAt(const int rank, const int file) const; // Delegate to logic
+    std::string pieceToString(const ChessLogic::Piece piece) const; // Delegate to logic
     ChessLogic::Player getCurrentPlayer() const; // Delegate to logic for turn info
     std::vector<ChessLogic::Piece> getCapturedPieces() const; // Delegate to logic
     ChessLogic::Player getPieceOwner(const ChessLogic::Piece piece) const; // Delegate to logic
@@ -37,7 +37,7 @@ public:
     ChessLogic::Piece getDraggedPiece() const; // Delegate to input handler
 
     // Move validation and execution methods (Controller orchestration)
-    bool attemptMove(int srcRank, int srcFile, int destRank, int destFile); // Validate and execute move
+    bool attemptMove(const int srcRank, const int srcFile, const int destRank, const int destFile); // Validate and execute move
     
     // Game state access for GUI drawing
     GameState getGameState() const;
