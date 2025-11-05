@@ -3,120 +3,91 @@
 using StateAnalyzer = ChessGameStateAnalyzer;
 namespace BoardCfg = Config::Board;
 
-StateAnalyzer::GameState StateAnalyzer::analyzeGameState(const ChessLogic& logic)
-{
-    // 50-Move Rule
+StateAnalyzer::GameState StateAnalyzer::analyzeGameState(const ChessLogic& logic) {
+    // Check 50-Move Rule
     if (isDraw50Moves(logic)) return StateAnalyzer::GameState::DRAW_50_MOVES;
     
-    // Insufficient material
+    // Check for insufficient material
     if (isInsufficientMaterial(logic)) return StateAnalyzer::GameState::DRAW_INSUFFICIENT_MATERIAL;
     
-    // Checkmate
-    if (isCheckmate(logic)) 
-    {
-        if (logic.getCurrentPlayer() == ChessLogic::Player::WHITE_PLAYER)
-        {
+    // Check for checkmate
+    if (isCheckmate(logic)) {
+        if (logic.getCurrentPlayer() == ChessLogic::Player::WHITE_PLAYER) {
             return StateAnalyzer::GameState::BLACK_WIN;
         }
         return StateAnalyzer::GameState::WHITE_WIN;
     }
 
-    // Stalemate
+    // Check for stalemate
     if (isStalemate(logic)) return StateAnalyzer::GameState::STALEMATE;
 
-    // Threefold Repetition
+    // Check for threefold repetition
     if (isThreefoldRepetition(logic)) return StateAnalyzer::GameState::DRAW_THREEFOLD_REPETITION;
 
-    // For now, return IN_PROGRESS if no ending conditions are met
+    // Return IN_PROGRESS if no ending conditions are met
     return StateAnalyzer::GameState::IN_PROGRESS;
 }
 
-bool StateAnalyzer::isDraw50Moves(const ChessLogic& logic) const
-{
-    return (logic.getHalfmoveClock() >= 100);
+bool StateAnalyzer::isDraw50Moves(const ChessLogic& logic) const {
+    return (logic.getHalfmoveClock() >= 100); // Check if halfmove clock reaches 50 full moves
 }
 
-bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const
-{
+bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const {
+    // Count relevant material (assume kings exist)
     int whiteBishopCount = 0;
     int whiteKnightCount = 0;
     int blackBishopCount = 0;
     int blackKnightCount = 0;
-    bool insufficientMaterial = true;
-    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++)
-    {
-        for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++)
-        {
+    bool insufficientMaterial = true; // Assume there is insufficient material until discovered otherwise
+    // Check each board position
+    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++) {
+        for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) {
             ChessLogic::Piece piece = logic.getPieceAt(rank, file);
             // If empty, skip
-            if (piece == ChessLogic::Piece::EMPTY)
-            {
-                continue;
-            }
-            // Check if a pawn exists
-            else if (piece == ChessLogic::Piece::BLACK_PAWN ||
-                piece == ChessLogic::Piece::WHITE_PAWN)
-            {
+            if (piece == ChessLogic::Piece::EMPTY) continue;
+            // If a pawn exists, there is sufficient material
+            else if (piece == ChessLogic::Piece::BLACK_PAWN || piece == ChessLogic::Piece::WHITE_PAWN) {
                 insufficientMaterial = false;
                 break;
             }
             // Check for white bishops
-            else if (piece == ChessLogic::Piece::WHITE_BISHOP)
-            {
-                whiteBishopCount++;
-            }
+            else if (piece == ChessLogic::Piece::WHITE_BISHOP) whiteBishopCount++;
             // Check for black bishops
-            else if (piece == ChessLogic::Piece::BLACK_BISHOP)
-            {
-                blackBishopCount++;
-            }
+            else if (piece == ChessLogic::Piece::BLACK_BISHOP) blackBishopCount++;
             // Check for white knights
-            else if (piece == ChessLogic::Piece::WHITE_KNIGHT)
-            {
-                whiteKnightCount++;
-            }
+            else if (piece == ChessLogic::Piece::WHITE_KNIGHT) whiteKnightCount++;
             // Check for black knights
-            else if (piece == ChessLogic::Piece::BLACK_KNIGHT)
-            {
-                blackKnightCount++;
-            }
+            else if (piece == ChessLogic::Piece::BLACK_KNIGHT) blackKnightCount++;
             // For any other piece except king
-            else if (piece != ChessLogic::Piece::WHITE_KING &&
-                piece != ChessLogic::Piece::BLACK_KING)
-            {
+            else if (piece != ChessLogic::Piece::WHITE_KING && piece != ChessLogic::Piece::BLACK_KING) {
                 insufficientMaterial = false;
                 break;
             }
-
             // Check if knight and bishop exist on one side
-            if ((whiteBishopCount && whiteKnightCount) ||
-                (blackBishopCount && blackKnightCount)) 
-            {
+            if ((whiteBishopCount && whiteKnightCount) || (blackBishopCount && blackKnightCount)) {
                 insufficientMaterial = false;
                 break;
             }
             // Check for multiples
-            else if (whiteBishopCount > 1 || whiteKnightCount > 1 ||
-                    blackBishopCount > 1 || blackKnightCount > 1)
-            {
+            else if (whiteBishopCount > 1 || whiteKnightCount > 1 || blackBishopCount > 1 || blackKnightCount > 1) {
                 insufficientMaterial = false;
                 break;
             }
         }
+        // Check if the file found sufficient material
         if (!insufficientMaterial) break;
     }
-
     return insufficientMaterial;
 }
 
 bool StateAnalyzer::isCheckmate(const ChessLogic& logic) const
 {
-    return (isInCheck(logic) && !hasLegalMoves(logic));
+    return (isInCheck(logic) && !hasLegalMoves(logic)); // Logic for checkmate
 }
 
 bool StateAnalyzer::isStalemate(const ChessLogic& logic) const
 {
-    return (!isInCheck(logic) && !hasLegalMoves(logic));
+    return (!isInCheck(logic) && !hasLegalMoves(logic)); // Logic for stalemate
 }
 
 // --- HELPERS ---

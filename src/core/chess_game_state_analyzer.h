@@ -14,7 +14,7 @@ public:
         DRAW_THREEFOLD_REPETITION,
         DRAW_INSUFFICIENT_MATERIAL
     };
-
+    // Accesses the game state
     GameState analyzeGameState(const ChessLogic& logic);
 private:
     // State changing checks
