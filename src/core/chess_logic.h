@@ -113,7 +113,7 @@ private:
 
     // Helpers
     void initPieces(); // Helper to add pieces to the board
-    void updateCastlingRights(int fromRank, int fromFile); // Update castling rights when pieces move
+    void updateCastlingRights(int fromRank, int fromFile, int toRank, int toFile); // Update castling rights when pieces move
     void updateEnPassantState(int fromRank, int fromFile, int toRank, int toFile); // Update en passant state after moves
     void clearEnPassantState(); // Clear en passant availability
     void recordCurrentPosition(); // Add current board position to map or iterate if it already exists

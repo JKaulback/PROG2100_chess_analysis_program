@@ -100,11 +100,12 @@ void ChessLogic::executeMove(
     halfMoveClock++;
 
     // Update castling rights before moving
-    updateCastlingRights(srcRank, srcFile);
+    updateCastlingRights(srcRank, srcFile, destRank, destFile);
     
     // Capture piece if present
     if (board[destRank][destFile] != ChessLogic::Piece::EMPTY) 
     {
+        // Check if we're capturing a rook
         capturedPieces.push_back(std::move(board[destRank][destFile]));
         // Piece captured
         halfMoveClock = 0;
@@ -259,26 +260,41 @@ bool ChessLogic::canCastleQueenside(Player player) const {
     }
 }
 
-void ChessLogic::updateCastlingRights(int fromRank, int fromFile) {
-    Piece piece = board[fromRank][fromFile];
-    
+void ChessLogic::updateCastlingRights(int fromRank, int fromFile, int toRank, int toFile) {
+    Piece pieceMoved = board[fromRank][fromFile];
+    Piece pieceCaptured = board[toRank][toFile];
+
     // Check if king moved
-    if (piece == Piece::WHITE_KING) {
+    if (pieceMoved == Piece::WHITE_KING) {
         whiteKingMoved = true;
-    } else if (piece == Piece::BLACK_KING) {
+    } else if (pieceMoved == Piece::BLACK_KING) {
         blackKingMoved = true;
     }
     // Check if rook moved
-    else if (piece == Piece::WHITE_ROOK) {
+    else if (pieceMoved == Piece::WHITE_ROOK) {
         if (fromRank == BoardCfg::WHITE_BACK_RANK && fromFile == BoardCfg::QUEENSIDE_ROOK_FILE) {
             whiteQueensideRookMoved = true;
         } else if (fromRank == BoardCfg::WHITE_BACK_RANK && fromFile == BoardCfg::KINGSIDE_ROOK_FILE) {
             whiteKingsideRookMoved = true;
         }
-    } else if (piece == Piece::BLACK_ROOK) {
+    } else if (pieceMoved == Piece::BLACK_ROOK) {
         if (fromRank == BoardCfg::BLACK_BACK_RANK && fromFile == BoardCfg::QUEENSIDE_ROOK_FILE) {
             blackQueensideRookMoved = true;
         } else if (fromRank == BoardCfg::BLACK_BACK_RANK && fromFile == BoardCfg::KINGSIDE_ROOK_FILE) {
+            blackKingsideRookMoved = true;
+        }
+    }
+    // Check if rook captures
+    if (pieceCaptured == Piece::WHITE_ROOK) {
+        if (toRank == BoardCfg::WHITE_BACK_RANK && toFile == BoardCfg::QUEENSIDE_ROOK_FILE) {
+            whiteQueensideRookMoved = true;
+        } else if (toRank == BoardCfg::WHITE_BACK_RANK && toFile == BoardCfg::KINGSIDE_ROOK_FILE) {
+            whiteKingsideRookMoved = true;
+        }
+    } else if (pieceCaptured == Piece::BLACK_ROOK) {
+        if (toRank == BoardCfg::BLACK_BACK_RANK && toFile == BoardCfg::QUEENSIDE_ROOK_FILE) {
+            blackQueensideRookMoved = true;
+        } else if (toRank == BoardCfg::BLACK_BACK_RANK && toFile == BoardCfg::KINGSIDE_ROOK_FILE) {
             blackKingsideRookMoved = true;
         }
     }
@@ -304,7 +320,7 @@ void ChessLogic::executeCastling(int fromRank, int fromFile, int toRank, int toF
     }
     
     // Update castling rights
-    updateCastlingRights(fromRank, fromFile);
+    updateCastlingRights(fromRank, fromFile, toRank, toFile);
 
     // Update position occurance string
     std::string currentPosition = getCurrentPositionString();
@@ -394,6 +410,7 @@ void ChessLogic::executePromotion(int fromRank, int fromFile, int toRank, int to
     // Capture piece if present at destination
     if (board[toRank][toFile] != Piece::EMPTY) 
     {
+        updateCastlingRights(fromRank, fromFile, toRank, toFile);
         capturedPieces.push_back(std::move(board[toRank][toFile]));
     }
 
