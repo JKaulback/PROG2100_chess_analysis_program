@@ -17,6 +17,7 @@ public:
     // Accesses the game state
     GameState analyzeGameState(const ChessLogic& logic);
 private:
+    ChessMoveValidator validator;
     // State changing checks
     bool isDraw50Moves(const ChessLogic& logic) const;
     bool isInsufficientMaterial(const ChessLogic& logic) const;
