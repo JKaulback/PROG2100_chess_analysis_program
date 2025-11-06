@@ -17,8 +17,8 @@ public:
     void draw() const; // Draw GUI elements - pure rendering
     
     // Public methods for controller to access
-    Vector2 screenPosToBoardPos(Vector2) const; // Translate screen position to board position
-    Vector2 boardPosToScreenPos(Vector2) const; // Translate board position to screen position
+    Vector2 screenPosToBoardPos(const Vector2) const; // Translate screen position to board position
+    Vector2 boardPosToScreenPos(const Vector2) const; // Translate board position to screen position
     float getSquareSize() const;
     float getPieceSize() const;
 
