@@ -23,8 +23,8 @@ ChessLogic::Piece ChessAnalysisProgram::getPieceAt(int rank, int file) const {
     return logic.getPieceAt(rank, file); // ChessLogic::Piece at board rank and file
 }
 
-std::string ChessAnalysisProgram::pieceToString(ChessLogic::Piece piece) const {
-    return logic.pieceToString(piece); // String in form "wk" for texture rendering
+std::string ChessAnalysisProgram::pieceToTextureString(ChessLogic::Piece piece) const {
+    return logic.pieceToTextureString(piece); // String in form "wk" for texture rendering
 }
 
 ChessLogic::Player ChessAnalysisProgram::getCurrentPlayer() const {

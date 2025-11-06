@@ -46,7 +46,7 @@ void ChessGUI::initPieceTextures()
             if (currentPiece != ChessLogic::Piece::EMPTY) 
             {
                 // Ensure the texture hasn't been loaded yet
-                std::string pieceString = controller.pieceToString(currentPiece);
+                std::string pieceString = controller.pieceToTextureString(currentPiece);
                 if (!pieceTextures.count(pieceString)) {
                     // Load the texture
                     loadPieceTexture(pieceString);
@@ -128,7 +128,7 @@ void ChessGUI::drawChessPieces() const
             ChessLogic::Piece currentPiece = controller.getPieceAt(rank, file);
             if (currentPiece != ChessLogic::Piece::EMPTY) 
             {
-                std::string pieceString = controller.pieceToString(currentPiece);
+                std::string pieceString = controller.pieceToTextureString(currentPiece);
                 const Vector2 screenPos = 
                     boardPosToScreenPos({
                         static_cast<float>(file), 
@@ -143,7 +143,7 @@ void ChessGUI::drawChessPieces() const
     if (controller.getIsDragging()) 
     {
         const Vector2 mousePos = GetMousePosition();
-        std::string pieceString = controller.pieceToString(controller.getDraggedPiece());
+        std::string pieceString = controller.pieceToTextureString(controller.getDraggedPiece());
         Vector2 dragOffset = controller.getDragOffset();
 
         // Calculate draw position
@@ -165,7 +165,7 @@ void ChessGUI::drawChessPieces() const
         for (int pieceIndex = 0; pieceIndex < capturedPieces.size(); pieceIndex++) 
         {
             ChessLogic::Piece piece = capturedPieces[pieceIndex];
-            std::string pieceString = controller.pieceToString(piece);
+            std::string pieceString = controller.pieceToTextureString(piece);
             float yPos, col;
             if (controller.getPieceOwner(piece) == ChessLogic::Player::WHITE_PLAYER)
             {
