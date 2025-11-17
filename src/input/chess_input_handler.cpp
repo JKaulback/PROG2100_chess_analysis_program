@@ -2,7 +2,9 @@
 #include "../rendering/chess_gui.h"
 #include "../application/chess_analysis_program.h"
 
-ChessInputHandler::ChessInputHandler() {
+ChessInputHandler::ChessInputHandler(ChessAnalysisProgram& controller) 
+    : controller(controller) {
+
     // Initialize drag state
     resetDragState();
 }
@@ -10,9 +12,7 @@ ChessInputHandler::ChessInputHandler() {
 ChessInputHandler::~ChessInputHandler() 
 {}
 
-void ChessInputHandler::handleInput(
-    ChessAnalysisProgram& controller, 
-    const ChessGUI& gui) {
+void ChessInputHandler::handleInput(const ChessGUI& gui) {
 
     const Vector2 mousePos = GetMousePosition();
     

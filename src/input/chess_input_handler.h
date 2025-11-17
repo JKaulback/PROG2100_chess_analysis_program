@@ -10,10 +10,10 @@ class ChessAnalysisProgram;
 // This class handles all user input for the chess program
 class ChessInputHandler {
 public:
-    ChessInputHandler(); // Constructor
+    ChessInputHandler(ChessAnalysisProgram& controller); // Constructor
     ~ChessInputHandler(); // Destructor
 
-    void handleInput(ChessAnalysisProgram& controller, const ChessGUI& gui); // Process input through controller
+    void handleInput(const ChessGUI& gui); // Process input through controller
 
     // Getters for drag state (used by GUI for rendering)
     bool getIsDragging() const;
@@ -28,6 +28,7 @@ private:
     int draggedPieceFile; // The original file of a dragged piece
     Vector2 dragOffset; // The offset from the mouse to prevent "jump"
     ChessLogic::Piece draggedPiece; // The actual piece being dragged
+    ChessAnalysisProgram& controller; // Reference to the controller
     
     // Helper methods
     void resetDragState(); // Reset drag state variables

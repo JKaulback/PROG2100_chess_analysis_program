@@ -3,7 +3,7 @@
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
-    logic{}, gui{*this}, inputHandler{}, moveValidator{}, gameStateAnalyzer{},
+    logic{}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
     currentGameState{GameState::IN_PROGRESS}
 {}
 
@@ -13,7 +13,7 @@ ChessAnalysisProgram::~ChessAnalysisProgram()
 void ChessAnalysisProgram::run() {
     // Main loop
     while (!WindowShouldClose()) { // Detect window close button or ESC key
-        inputHandler.handleInput(*this, gui); // Input handler processes input through controller
+        inputHandler.handleInput(gui); // Input handler processes input through controller
         gui.draw(); // GUI only renders
     }
 }
@@ -80,18 +80,14 @@ bool ChessAnalysisProgram::attemptMove(
     // 2. If valid move, execute the move and switch turns
     if (isValidMoveResult(validationResult)) {
         // Handle different types of valid moves
-        if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) {
+        if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || validationResult == MoveResult::VALID_CASTLE_QUEENSIDE)
             logic.executeCastling(srcRank, srcFile, destRank, destFile);
-        } 
-        else if (validationResult == MoveResult::VALID_EN_PASSANT) {
+        else if (validationResult == MoveResult::VALID_EN_PASSANT)
             logic.executeEnPassant(srcRank, srcFile, destRank, destFile);
-        } 
-        else if (validationResult == MoveResult::VALID_PROMOTION) {
+        else if (validationResult == MoveResult::VALID_PROMOTION)
             logic.executePromotion(srcRank, srcFile, destRank, destFile);
-        }
-        else {
+        else
             logic.executeMove(srcRank, srcFile, destRank, destFile);
-        }
         
         logic.switchTurn(); // Switch to the other player
         
