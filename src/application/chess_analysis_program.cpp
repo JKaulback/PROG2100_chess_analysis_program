@@ -69,25 +69,21 @@ ChessLogic::Piece ChessAnalysisProgram::getDraggedPiece() const {
 }
 
 // Move validation and execution methods (Controller coordination)
-bool ChessAnalysisProgram::attemptMove(
-    const int srcRank,
-    const int srcFile,
-    const int destRank,
-    const int destFile) {
+bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
     // 1. Validate the move using the validator
-    MoveResult validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
+    MoveResult validationResult = moveValidator.validateMove(logic, move);
     
     // 2. If valid move, execute the move and switch turns
     if (isValidMoveResult(validationResult)) {
         // Handle different types of valid moves
         if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || validationResult == MoveResult::VALID_CASTLE_QUEENSIDE)
-            logic.executeCastling(srcRank, srcFile, destRank, destFile);
+            logic.executeCastling(move);
         else if (validationResult == MoveResult::VALID_EN_PASSANT)
-            logic.executeEnPassant(srcRank, srcFile, destRank, destFile);
+            logic.executeEnPassant(move);
         else if (validationResult == MoveResult::VALID_PROMOTION)
-            logic.executePromotion(srcRank, srcFile, destRank, destFile);
+            logic.executePromotion(move);
         else
-            logic.executeMove(srcRank, srcFile, destRank, destFile);
+            logic.executeMove(move);
         
         logic.switchTurn(); // Switch to the other player
         

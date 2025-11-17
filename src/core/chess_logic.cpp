@@ -66,11 +66,11 @@ ChessLogic::Piece ChessLogic::getPieceAt(const int rank, const int file) const {
     return board[rank][file]; // Return the piece in the array
 }
 
-void ChessLogic::executeMove(
-    const int srcRank, 
-    const int srcFile,
-    const int destRank, 
-    const int destFile) {
+void ChessLogic::executeMove(const ChessMove& move) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Note: This method assumes the move has already been validated
     // All validation will be handled by ChessMoveValidator
     
@@ -78,7 +78,7 @@ void ChessLogic::executeMove(
     halfMoveClock++;
 
     // Update castling rights before moving (need to check if rook will be captured)
-    updateCastlingRights(srcRank, srcFile, destRank, destFile);
+    updateCastlingRights(move);
     
     // Capture piece if present
     if (board[destRank][destFile] != ChessLogic::Piece::EMPTY) 
@@ -93,7 +93,7 @@ void ChessLogic::executeMove(
     board[srcRank][srcFile] = ChessLogic::Piece::EMPTY;
     
     // Update en passant state after the move
-    updateEnPassantState(srcRank, srcFile, destRank, destFile);
+    updateEnPassantState(move);
 
     // Reset halfmoce clock if piece moved was a pawn
     if (isPawn(board[destRank][destFile])) 
@@ -158,11 +158,11 @@ bool ChessLogic::isBlackPiece(const int rank, const int file) const {
     return piece >= Piece::BLACK_KING && piece <= Piece::BLACK_PAWN;
 }
 
-bool ChessLogic::areSameColorPieces(
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+bool ChessLogic::areSameColorPieces(const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
 
     return (isWhitePiece(srcRank, srcFile) && isWhitePiece(destRank, destFile)) ||
            (isBlackPiece(srcRank, srcFile) && isBlackPiece(destRank, destFile));
@@ -207,22 +207,21 @@ bool ChessLogic::isKing(const Piece piece) const {
     return piece == Piece::WHITE_KING || piece == Piece::BLACK_KING;
 }
 
-void ChessLogic::makeTemporaryMove(
-    const int srcRank, 
-    const int srcFile,
-    const int destRank,
-    const int destFile) {
+void ChessLogic::makeTemporaryMove(const ChessMove& move) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
 
     board[destRank][destFile] = board[srcRank][srcFile];
     board[srcRank][srcFile] = Piece::EMPTY;
 }
 
-void ChessLogic::undoTemporaryMove(
-    const int srcRank,
-    const int srcFile,
-    const int destRank,
-    const int destFile,
-    const Piece capturedPiece) {
+void ChessLogic::undoTemporaryMove(const ChessMove& move, const Piece capturedPiece) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
 
     board[srcRank][srcFile] = board[destRank][destFile];
     board[destRank][destFile] = capturedPiece;
@@ -240,11 +239,11 @@ bool ChessLogic::canCastleQueenside(const Player player) const {
         !blackKingMoved && !blackQueensideRookMoved;
 }
 
-void ChessLogic::updateCastlingRights(
-    const int srcRank,
-    const int srcFile,
-    const int destRank,
-    const int destFile) {
+void ChessLogic::updateCastlingRights(const ChessMove& move) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
 
     Piece pieceMoved = board[srcRank][srcFile];
     Piece pieceCaptured = board[destRank][destFile];
@@ -271,11 +270,11 @@ void ChessLogic::updateCastlingRights(
     }
 }
 
-void ChessLogic::executeCastling(
-    const int srcRank,
-    const int srcFile,
-    const int destRank,
-    const int destFile) {
+void ChessLogic::executeCastling(const ChessMove& move) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Note: This method assumes the castling has already been validated
     // All validation will be handled by ChessMoveValidator
 
@@ -298,7 +297,7 @@ void ChessLogic::executeCastling(
     }
     
     // Update castling rights
-    updateCastlingRights(srcRank, srcFile, destRank, destFile);
+    updateCastlingRights(move);
 
     // Update position occurance string
     std::string currentPosition = getCurrentPositionString();
@@ -323,11 +322,11 @@ std::pair<int, int> ChessLogic::getEnPassantPawn() const {
 }
 
 // Execute en passant move
-void ChessLogic::executeEnPassant(
-    const int srcRank,
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) {
+void ChessLogic::executeEnPassant(const ChessMove& move) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Pawn was moved, reset half move clock
     halfMoveClock = 0;
 
@@ -349,11 +348,11 @@ void ChessLogic::executeEnPassant(
 }
 
 // Helper methods for en passant
-void ChessLogic::updateEnPassantState(
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) {
+void ChessLogic::updateEnPassantState(const ChessMove& move) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // The piece that just moved
     Piece piece = board[destRank][destFile]; 
     
@@ -383,12 +382,11 @@ void ChessLogic::clearEnPassantState() {
     enPassantPawnFile = -1;
 }
 
-void ChessLogic::executePromotion(
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile, 
-    Piece promoteTo) {
+void ChessLogic::executePromotion(const ChessMove& move, Piece promoteTo) {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Pawn was moved, reset half move clock
     halfMoveClock = 0;
     
@@ -402,7 +400,7 @@ void ChessLogic::executePromotion(
     
     // Capture piece if present at destination
     if (board[destRank][destFile] != Piece::EMPTY) {
-        updateCastlingRights(srcRank, srcFile, destRank, destFile);
+        updateCastlingRights(move);
         capturedPieces.push_back(std::move(board[destRank][destFile]));
     }
 

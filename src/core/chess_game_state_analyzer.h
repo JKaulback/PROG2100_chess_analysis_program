@@ -2,6 +2,7 @@
 
 #include "chess_logic.h"
 #include "chess_move_validator.h"
+#include "chess_move.h"
 
 class ChessGameStateAnalyzer {
 public:

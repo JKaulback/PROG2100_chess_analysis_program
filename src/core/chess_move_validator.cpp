@@ -7,10 +7,11 @@ namespace BoardCfg = Config::Board;
 
 ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     const ChessLogic& logic,
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // 1. Check if source and destination are within board boundaries
     if (!logic.isValidSquare(srcRank, srcFile) || 
             !logic.isValidSquare(destRank, destFile)) 
@@ -34,15 +35,15 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
         return MoveResult::INVALID_WRONG_TURN;
     
     // 5. Check destination square validity
-    if (!checkDestinationSquare(logic, srcRank, srcFile, destRank, destFile)) 
+    if (!checkDestinationSquare(logic, move)) 
         return MoveResult::INVALID_ILLEGAL_MOVE;
 
     // 6. Validate piece-specific movement rules (includes special move validation internally)
-    if (!validatePieceMovement(logic, srcRank, srcFile, destRank, destFile)) 
+    if (!validatePieceMovement(logic, move)) 
         return MoveResult::INVALID_ILLEGAL_MOVE;
 
     // 7. Validate the player's king is not left in check
-    if (wouldLeaveKingInCheck(logic, srcRank, srcFile, destRank, destFile)) 
+    if (wouldLeaveKingInCheck(logic, move)) 
         return MoveResult::INVALID_ILLEGAL_MOVE;
 
     // 8. Determine the type of valid move for return value
@@ -50,19 +51,19 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     
     // Check for castling (king-specific move)
     if (logic.isKing(movingPiece) && 
-            validateCastling(logic, srcRank, srcFile, destRank, destFile)) {
+            validateCastling(logic, move)) {
         bool isKingside = (destFile > srcFile);
         return isKingside ? MoveResult::VALID_CASTLE_KINGSIDE : MoveResult::VALID_CASTLE_QUEENSIDE;
     }
 
     // Check for en passant (pawn-specific move)
     if (logic.isPawn(movingPiece) && 
-            validateEnPassant(logic, srcRank, srcFile, destRank, destFile)) 
+            validateEnPassant(logic, move)) 
         return MoveResult::VALID_EN_PASSANT;
     
     // Check for promotion (pawn-specific move)
     if (logic.isPawn(movingPiece) && 
-            validatePromotion(logic, srcRank, srcFile, destRank, destFile)) 
+            validatePromotion(logic, move)) 
         return MoveResult::VALID_PROMOTION;
 
     // If we get here, the move is a standard valid move
@@ -71,37 +72,37 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
 
 bool ChessMoveValidator::validatePieceMovement(
     const ChessLogic& logic, 
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     ChessLogic::Piece piece = logic.getPieceAt(srcRank, srcFile);
     
     // Special case for pawns - they have unique movement rules
     if (logic.isPawn(piece)) 
-        return validatePawnMove(logic, srcRank, srcFile, destRank, destFile);
+        return validatePawnMove(logic, move);
     
     // For all other pieces, use the unified basic movement validation
-    return validateBasicPieceMovement(logic, piece, srcRank, srcFile, destRank, destFile);
+    return validateBasicPieceMovement(logic, piece, move);
 }
 
 bool ChessMoveValidator::checkDestinationSquare(
     const ChessLogic& logic, 
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessMove& move) const {
+        
     // True if the destination square is empty or contains an opposing piece
-    return (logic.isSquareEmpty(destRank, destFile) || 
-        !logic.areSameColorPieces(srcRank, srcFile, destRank, destFile));
+    return (logic.isSquareEmpty(move.getDestRank(), move.getDestFile()) || 
+        !logic.areSameColorPieces(move));
 }
 
 bool ChessMoveValidator::isPathClearForSlidingPiece(
     const ChessLogic& logic, 
-    int srcRank, 
-    int srcFile, 
-    int destRank, 
-    int destFile) const {
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Calculate the direction of movement
     int rankStep = 
         (destRank > srcRank) ? 
@@ -134,11 +135,12 @@ bool ChessMoveValidator::isPathClearForSlidingPiece(
 }
 
 bool ChessMoveValidator::validatePawnMove(
-    const ChessLogic& logic, 
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessLogic& logic,
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Setup variables for checking
     ChessLogic::Piece piece = logic.getPieceAt(srcRank, srcFile);
     int direction = 
@@ -165,12 +167,12 @@ bool ChessMoveValidator::validatePawnMove(
     else if (abs(destFile - srcFile) == 1 && destRank == srcRank + direction) { 
         // Regular capture
         if (!logic.isSquareEmpty(destRank, destFile) &&
-                !logic.areSameColorPieces(srcRank, srcFile, destRank, destFile)) 
+                !logic.areSameColorPieces(move)) 
             return true;
         // En passant capture
         else if (logic.isSquareEmpty(destRank, destFile) && 
                 logic.isEnPassantTarget(destRank, destFile)) 
-            return validateEnPassant(logic, srcRank, srcFile, destRank, destFile);
+            return validateEnPassant(logic, move);
     }
     // Invalid pawn move
     return false;
@@ -178,10 +180,7 @@ bool ChessMoveValidator::validatePawnMove(
 
 bool ChessMoveValidator::wouldLeaveKingInCheck(
     const ChessLogic& logic, 
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessMove& move) const {
     // Get player and opponent
     ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
     ChessLogic::Player opponent = 
@@ -193,7 +192,7 @@ bool ChessMoveValidator::wouldLeaveKingInCheck(
     ChessLogic testLogic = logic;
     
     // Make the temporary move
-    testLogic.makeTemporaryMove(srcRank, srcFile, destRank, destFile);
+    testLogic.makeTemporaryMove(move);
     
     // Find the king position after the move
     std::pair<int, int> kingPos = testLogic.getKingPosition(currentPlayer);
@@ -237,7 +236,7 @@ bool ChessMoveValidator::isSquareUnderAttack(
                     return true; // Pawn can attack diagonally
             } else {
                 // For other pieces, use existing movement validation
-                if (validateBasicPieceMovement(logic, attackingPiece, atkRank, atkFile, defRank, defFile))
+                if (validateBasicPieceMovement(logic, attackingPiece, ChessMove{atkRank, atkFile, defRank, defFile}))
                     return true;
             }
         }
@@ -247,10 +246,11 @@ bool ChessMoveValidator::isSquareUnderAttack(
 
 bool ChessMoveValidator::validateCastling(
     const ChessLogic& logic,
-    const int srcRank,
-    const int srcFile,
-    const int destRank,
-    const int destFile) const {
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Get the player attempting to castle
     ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
     
@@ -328,10 +328,11 @@ bool ChessMoveValidator::canCastle(
 
 bool ChessMoveValidator::validateEnPassant(
     const ChessLogic& logic,
-    const int srcRank,
-    const int srcFile,
-    const int destRank,
-    const int destFile) const {
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // Check if en passant is available
     if (!logic.isEnPassantAvailable()) 
         return false;
@@ -352,7 +353,7 @@ bool ChessMoveValidator::validateEnPassant(
     
     // Verify it's an opponent's pawn
     ChessLogic::Piece movingPiece = logic.getPieceAt(srcRank, srcFile);
-    if (logic.areSameColorPieces(srcRank, srcFile, pawnRank, pawnFile)) 
+    if (logic.areSameColorPieces(ChessMove{srcRank, srcFile, pawnRank, pawnFile})) 
         return false; // Cannot capture your own pawn
     
     // Verify the capturing pawn is on the correct rank for en passant
@@ -368,29 +369,30 @@ bool ChessMoveValidator::validateEnPassant(
 
 bool ChessMoveValidator::validateBasicPieceMovement(
     const ChessLogic& logic, 
-    const ChessLogic::Piece piece, 
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessLogic::Piece piece,
+    const ChessMove& move) const {
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
     // This validates piece movement without checking destination square ownership
     // Used for attack detection where we want to know if a piece CAN reach a square
     switch (piece) {
         case ChessLogic::Piece::WHITE_ROOK:
         case ChessLogic::Piece::BLACK_ROOK:
             return (srcRank == destRank || srcFile == destFile) && // Horizontal and vertical
-                isPathClearForSlidingPiece(logic, srcRank, srcFile, destRank, destFile); // Sliding piece
+                isPathClearForSlidingPiece(logic, move); // Sliding piece
         
         case ChessLogic::Piece::WHITE_BISHOP:
         case ChessLogic::Piece::BLACK_BISHOP:
             return (abs(destRank - srcRank) == abs(destFile - srcFile)) && // Diagonal 
-                isPathClearForSlidingPiece(logic, srcRank, srcFile, destRank, destFile); // Sliding piece
+                isPathClearForSlidingPiece(logic, move); // Sliding piece
         
         case ChessLogic::Piece::WHITE_QUEEN:
         case ChessLogic::Piece::BLACK_QUEEN: 
             return ((srcRank == destRank || srcFile == destFile || // Horizontal and vertical
                 abs(destRank - srcRank) == abs(destFile - srcFile)) && // Diagonal
-                isPathClearForSlidingPiece(logic, srcRank, srcFile, destRank, destFile)); // Sliding piece
+                isPathClearForSlidingPiece(logic, move)); // Sliding piece
         
         case ChessLogic::Piece::WHITE_KNIGHT:
         case ChessLogic::Piece::BLACK_KNIGHT: 
@@ -404,7 +406,7 @@ bool ChessMoveValidator::validateBasicPieceMovement(
                 return true;            
             // Castling move (king moves 2 squares horizontally)
             if (abs(destRank - srcRank) == 0 && abs(destFile - srcFile) == 2) 
-                return validateCastling(logic, srcRank, srcFile, destRank, destFile);
+                return validateCastling(logic, move);
             
             return false;
         }
@@ -415,10 +417,12 @@ bool ChessMoveValidator::validateBasicPieceMovement(
 
 bool ChessMoveValidator::validatePromotion(
     const ChessLogic& logic, 
-    const int srcRank, 
-    const int srcFile, 
-    const int destRank, 
-    const int destFile) const {
+    const ChessMove& move) const {
+        
+    int srcRank = move.getSrcRank();
+    int srcFile = move.getSrcFile();
+    int destRank = move.getDestRank();
+    int destFile = move.getDestFile();
         // Get the piece being promoted
     ChessLogic::Piece piece = logic.getPieceAt(srcRank, srcFile);
     
@@ -433,7 +437,7 @@ bool ChessMoveValidator::validatePromotion(
         return false; // Not moving to promotion rank
     
     // Check if the move is a valid pawn move to the promotion rank
-    return validatePawnMove(logic, srcRank, srcFile, destRank, destFile);
+    return validatePawnMove(logic, move);
 }
 
 bool ChessMoveValidator::isValidMoveResult(const MoveResult result) const {

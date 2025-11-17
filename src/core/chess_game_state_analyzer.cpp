@@ -141,7 +141,7 @@ bool StateAnalyzer::hasLegalMoves(const ChessLogic& logic) const {
                     
                     // Test if this move is valid
                     ChessMoveValidator::MoveResult result = 
-                        validator.validateMove(logic, srcRank, srcFile, destRank, destFile);
+                        validator.validateMove(logic, ChessMove{srcRank, srcFile, destRank, destFile});
                     
                     // If we find any legal move, the player has legal moves
                     if (validator.isValidMoveResult(result))

@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include "../core/chess_logic.h"
+#include "../core/chess_move.h"
 
 // Forward declarations to avoid circular dependency
 class ChessGUI;

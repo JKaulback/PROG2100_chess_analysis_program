@@ -5,6 +5,7 @@
 #include <array>
 #include <string>
 #include "../config/config.h"
+#include "chess_move.h"
 
 namespace BoardCfg = Config::Board;
 
@@ -37,19 +38,19 @@ public:
 
     // Core state access methods
     Piece getPieceAt(const int rank, const int file) const;
-    void executeMove(const int srcRank, const int srcFile, const int destRank, const int destFile);
+    void executeMove(const ChessMove& move);
     std::string pieceToTextureString(const Piece piece) const;
     std::pair<int, int> getKingPosition(const Player player) const;
     
     // Temporary move methods for validation
-    void makeTemporaryMove(const int srcRank, const int srcFile, const int destRank, const int destFile);
-    void undoTemporaryMove(const int srcRank, const int srcFile, const int destRank, const int destFile, const Piece capturedPiece);
+    void makeTemporaryMove(const ChessMove& move);
+    void undoTemporaryMove(const ChessMove& move, const Piece capturedPiece);
 
     // Utility methods for validator (read-only access to game state)
     bool isSquareEmpty(const int rank, const int file) const;
     bool isWhitePiece(const int rank, const int file) const;
     bool isBlackPiece(const int rank, const int file) const;
-    bool areSameColorPieces(const int srcRank, const int srcFile, const int destRank, const int destFile) const;
+    bool areSameColorPieces(const ChessMove& move) const;
     const std::vector<Piece>& getCapturedPieces() const;
     Player getPieceOwner(const Piece piece) const;
     std::string getCurrentPositionString() const; // Generates a string based on board state, player turn, castling rights, and en passant target square
@@ -75,13 +76,13 @@ public:
     std::pair<int, int> getEnPassantPawn() const;
     
     // Execute castling move
-    void executeCastling(const int srcRank, const int srcFile, const int destRank, const int destFile);
+    void executeCastling(const ChessMove& move);
     
     // Execute en passant move
-    void executeEnPassant(const int srcRank, const int srcFile, const int destRank, const int destFile);
+    void executeEnPassant(const ChessMove& move);
 
     // Execute pawn promotion move
-    void executePromotion(const int srcRank, const int srcFile, const int destRank, const int destFile, Piece promoteTo = Piece::EMPTY);
+    void executePromotion(const ChessMove& move, Piece promoteTo = Piece::EMPTY);
 
     // Game ending accessor checks
     int getHalfmoveClock() const;
@@ -112,8 +113,8 @@ private:
 
     // Helpers
     void initializePieces(); // Helper to add pieces to the board
-    void updateCastlingRights(const int fromRank, const int fromFile, const int toRank, const int toFile); // Update castling rights when pieces move
-    void updateEnPassantState(const int fromRank, const int fromFile, const int toRank, const int toFile); // Update en passant state after moves
+    void updateCastlingRights(const ChessMove& move); // Update castling rights when pieces move
+    void updateEnPassantState(const ChessMove& move); // Update en passant state after moves
     void clearEnPassantState(); // Clear en passant availability
     void recordCurrentPosition(); // Add current board position to map or iterate if it already exists
     std::string pieceToFENString(const Piece piece) const; // Generate a FEN string based on piece type

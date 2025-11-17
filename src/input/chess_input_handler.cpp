@@ -52,7 +52,7 @@ void ChessInputHandler::handleInput(const ChessGUI& gui) {
         const int dropRank = static_cast<int>(boardDropPos.y);
 
         // Attempt move through controller (store validation for later implementations)
-        bool moveSuccessful = controller.attemptMove(draggedPieceRank, draggedPieceFile, dropRank, dropFile);
+        bool moveSuccessful = controller.attemptMove(ChessMove{draggedPieceRank, draggedPieceFile, dropRank, dropFile});
         
         // Stop dragging regardless of move success
         resetDragState();

@@ -2,11 +2,12 @@
 
 #include <raylib.h>
 #include <vector>
+#include "../core/chess_game_state_analyzer.h"
 #include "../core/chess_logic.h"
+#include "../core/chess_move_validator.h"
+#include "../core/chess_move.h"
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
-#include "../core/chess_move_validator.h"
-#include "../core/chess_game_state_analyzer.h"
 
 // Type alias for cleaner code
 using MoveResult = ChessMoveValidator::MoveResult;
@@ -37,7 +38,7 @@ public:
     ChessLogic::Piece getDraggedPiece() const; // Delegate to input handler
 
     // Move validation and execution methods (Controller orchestration)
-    bool attemptMove(const int srcRank, const int srcFile, const int destRank, const int destFile); // Validate and execute move
+    bool attemptMove(const ChessMove& move); // Validate and execute move
     
     // Game state access for GUI drawing
     GameState getGameState() const;
