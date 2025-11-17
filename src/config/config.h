@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <array>
 
 namespace Config {
     // Window settings
@@ -52,6 +53,13 @@ namespace Config {
         // En passant capture ranks
         constexpr int WHITE_EN_PASSANT_CAPTURE_RANK = 4;  // White captures en passant from rank 4
         constexpr int BLACK_EN_PASSANT_CAPTURE_RANK = 3;  // Black captures en passant from rank 3
+    
+        // Valid board values
+        constexpr char EMPTY = '-';
+        constexpr std::array<char, 12> VALID_PIECES = {
+            'P', 'R', 'N', 'B', 'Q', 'K', // White pieces
+            'p', 'r', 'n', 'b', 'q', 'k' // Black pieces
+        };
     }
 
     // Piece settings

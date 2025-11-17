@@ -3,7 +3,7 @@
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
-    logic{}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
+    board{}, gameState{board}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
     currentGameState{GameState::IN_PROGRESS}
 {}
 
@@ -19,32 +19,36 @@ void ChessAnalysisProgram::run() {
 }
 
 // Delegate methods to logic
-ChessLogic::Piece ChessAnalysisProgram::getPieceAt(int rank, int file) const {
-    return logic.getPieceAt(rank, file); // ChessLogic::Piece at board rank and file
+char ChessAnalysisProgram::getPieceAt(int rank, int file) const {
+    return board.getPieceAt(rank, file); // char at board rank and file
 }
 
-std::string ChessAnalysisProgram::pieceToTextureString(ChessLogic::Piece piece) const {
-    return logic.pieceToTextureString(piece); // String in form "wk" for texture rendering
+std::string ChessAnalysisProgram::pieceToTextureString(char piece) const {
+    return board.getPieceTextureString(piece); // String in form "wk" for texture rendering
 }
 
-ChessLogic::Player ChessAnalysisProgram::getCurrentPlayer() const {
-    return logic.getCurrentPlayer(); // ChessLogic::Player for current player
+char ChessAnalysisProgram::getCurrentPlayer() const {
+    return gameState.getCurrentPlayer(); // char for current player
 }
 
-std::vector<ChessLogic::Piece> ChessAnalysisProgram::getCapturedPieces() const {
-    return logic.getCapturedPieces(); // Vector of ChessLogic::Pieces for currently captured pieces
+std::vector<char> ChessAnalysisProgram::getCapturedPieces() const {
+    return board.getCapturedPieces(); // Vector of chars for currently captured pieces
 }
 
-ChessLogic::Player ChessAnalysisProgram::getPieceOwner(const ChessLogic::Piece piece) const {
-    return logic.getPieceOwner(piece); // ChessLogic::Player for the current piece owner
+char ChessAnalysisProgram::getPieceOwner(int rank, int file) const {
+    return board.getPieceOwner(rank, file); // char for the current piece owner
+}
+
+char ChessAnalysisProgram::getPieceOwner(char piece) const {
+    return board.getPieceOwner(piece);
 }
 
 int ChessAnalysisProgram::getHalfmoveClock() const {
-    return logic.getHalfmoveClock(); // Integer representing the halfmove clock
+    return gameState.getHalfmoveClock(); // Integer representing the halfmove clock
 }
 
 std::string ChessAnalysisProgram::getCurrentFENString() const {
-    return logic.getCurrentPositionString(); // String representing current game state (excludes halfmove and fullmove clock)
+    return "temp"; // TODO: FEN string manager
 }
 
 // Delegate methods to input handler
@@ -64,31 +68,33 @@ Vector2 ChessAnalysisProgram::getDragOffset() const {
     return inputHandler.getDragOffset(); // Offset coords to prevent the piece from "jumping" to mouse position
 }
 
-ChessLogic::Piece ChessAnalysisProgram::getDraggedPiece() const {
-    return inputHandler.getDraggedPiece(); // ChessLogic::Piece for the piece being dragged
+char ChessAnalysisProgram::getDraggedPiece() const {
+    return inputHandler.getDraggedPiece(); // char for the piece being dragged
 }
 
 // Move validation and execution methods (Controller coordination)
 bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
     // 1. Validate the move using the validator
-    MoveResult validationResult = moveValidator.validateMove(logic, move);
-    
+    MoveResult validationResult = moveValidator.validateMove(board, gameState, move);
+
     // 2. If valid move, execute the move and switch turns
     if (isValidMoveResult(validationResult)) {
-        // Handle different types of valid moves
+
+        // Update ChessGameState
+        gameState.makeMove(move);
+
+        // Update the board state
         if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || validationResult == MoveResult::VALID_CASTLE_QUEENSIDE)
-            logic.executeCastling(move);
+            board.executeCastling(move);
         else if (validationResult == MoveResult::VALID_EN_PASSANT)
-            logic.executeEnPassant(move);
+            board.executeEnPassant(move);
         else if (validationResult == MoveResult::VALID_PROMOTION)
-            logic.executePromotion(move);
+            board.executePromotion(move);
         else
-            logic.executeMove(move);
-        
-        logic.switchTurn(); // Switch to the other player
-        
+            board.executeBasicMove(move);
+                
         // After successful move, analyze the new game state
-        currentGameState = gameStateAnalyzer.analyzeGameState(logic);
+        currentGameState = gameStateAnalyzer.analyzeGameState(board, gameState);
         return true;
     }
 

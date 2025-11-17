@@ -3,9 +3,10 @@
 #include <raylib.h>
 #include <vector>
 #include "../core/chess_game_state_analyzer.h"
-#include "../core/chess_logic.h"
 #include "../core/chess_move_validator.h"
 #include "../core/chess_move.h"
+#include "../core/board/chess_board.h"
+#include "../core/game_state/chess_game_state.h"
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
 
@@ -22,11 +23,12 @@ public:
     void run(); // Main loop
 
     // Delegate methods to access logic (for GUI)
-    ChessLogic::Piece getPieceAt(const int rank, const int file) const; // Delegate to logic
-    std::string pieceToTextureString(const ChessLogic::Piece piece) const; // Delegate to logic
-    ChessLogic::Player getCurrentPlayer() const; // Delegate to logic for turn info
-    std::vector<ChessLogic::Piece> getCapturedPieces() const; // Delegate to logic
-    ChessLogic::Player getPieceOwner(const ChessLogic::Piece piece) const; // Delegate to logic
+    char getPieceAt(const int rank, const int file) const; // Delegate to logic
+    std::string pieceToTextureString(const char piece) const; // Delegate to logic
+    char getCurrentPlayer() const; // Delegate to logic for turn info
+    std::vector<char> getCapturedPieces() const; // Delegate to logic
+    char getPieceOwner(const int rank, const int file) const; // Delegate to logic
+    char getPieceOwner(const char piece) const; // Delegate to logic
     int getHalfmoveClock() const; // Delegate to logic
     std::string getCurrentFENString() const; // Delegate to logic
 
@@ -35,7 +37,7 @@ public:
     int getDraggedPieceRank() const; // Delegate to input handler
     int getDraggedPieceFile() const; // Delegate to input handler
     Vector2 getDragOffset() const; // Delegate to input handler
-    ChessLogic::Piece getDraggedPiece() const; // Delegate to input handler
+    char getDraggedPiece() const; // Delegate to input handler
 
     // Move validation and execution methods (Controller orchestration)
     bool attemptMove(const ChessMove& move); // Validate and execute move
@@ -48,10 +50,18 @@ private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
 private:
-    ChessLogic logic; // Own the logic object
+    // Board Management
+    ChessBoard board;
+    ChessGameState gameState;    
+
+    // Validation
+    ChessMoveValidator moveValidator; // Own the move validator object
+    
+    // Analysis & UI
     ChessGUI gui; // Own the GUI object
     ChessInputHandler inputHandler; // Own the input handler object
-    ChessMoveValidator moveValidator; // Own the move validator object
     ChessGameStateAnalyzer gameStateAnalyzer; // Own the game state analyzer object
+    
+    // Current state
     GameState currentGameState;
 };

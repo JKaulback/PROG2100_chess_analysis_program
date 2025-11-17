@@ -1,7 +1,6 @@
 #pragma once
 
 #include <raylib.h>
-#include "../core/chess_logic.h"
 #include "../core/chess_move.h"
 
 // Forward declarations to avoid circular dependency
@@ -21,14 +20,14 @@ public:
     int getDraggedPieceRank() const;
     int getDraggedPieceFile() const;
     Vector2 getDragOffset() const;
-    ChessLogic::Piece getDraggedPiece() const;
+    char getDraggedPiece() const;
 private:
     // Drag and drop state
     bool isDragging; // Whether a piece is being dragged
     int draggedPieceRank; // The original rank of a dragged piece
     int draggedPieceFile; // The original file of a dragged piece
     Vector2 dragOffset; // The offset from the mouse to prevent "jump"
-    ChessLogic::Piece draggedPiece; // The actual piece being dragged
+    char draggedPiece; // The actual piece being dragged
     ChessAnalysisProgram& controller; // Reference to the controller
     
     // Helper methods

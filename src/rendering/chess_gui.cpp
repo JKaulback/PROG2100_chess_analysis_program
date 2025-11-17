@@ -36,8 +36,8 @@ void ChessGUI::initPieceTextures() {
     for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++) {
         for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) {
             // Check the playable pieces
-            ChessLogic::Piece currentPiece = controller.getPieceAt(rank, file);
-            if (currentPiece != ChessLogic::Piece::EMPTY) {
+            char currentPiece = controller.getPieceAt(rank, file);
+            if (currentPiece != BoardCfg::EMPTY) {
                 // Ensure the texture hasn't been loaded yet
                 std::string pieceString = controller.pieceToTextureString(currentPiece);
                 if (!pieceTextures.count(pieceString))
@@ -103,8 +103,8 @@ void ChessGUI::drawChessPieces() const {
                     controller.getDraggedPieceFile() == file)
                 continue;
             // Draw playable pieces
-            ChessLogic::Piece currentPiece = controller.getPieceAt(rank, file);
-            if (currentPiece != ChessLogic::Piece::EMPTY) {
+            char currentPiece = controller.getPieceAt(rank, file);
+            if (currentPiece != BoardCfg::EMPTY) {
                 std::string pieceString = controller.pieceToTextureString(currentPiece);
                 const Vector2 screenPos = 
                     boardPosToScreenPos({
@@ -133,16 +133,16 @@ void ChessGUI::drawChessPieces() const {
             PieceCfg::SCALE, WHITE);
     }
     // Draw captured pieces (white at top, black at bottom)
-    std::vector<ChessLogic::Piece> capturedPieces = controller.getCapturedPieces();
+    std::vector<char> capturedPieces = controller.getCapturedPieces();
     if (!capturedPieces.empty()) {
         int numBlack = 0, numWhite = 0; // To track which column to draw in
         for (int pieceIndex = 0; pieceIndex < capturedPieces.size(); pieceIndex++) {
             // Set up variables to draw the piece
-            ChessLogic::Piece piece = capturedPieces[pieceIndex];
+            char piece = capturedPieces[pieceIndex];
             std::string pieceString = controller.pieceToTextureString(piece);
             float yPos, col;
 
-            if (controller.getPieceOwner(piece) == ChessLogic::Player::WHITE_PLAYER) {
+            if (controller.getPieceOwner(piece) == 'w') {
                 // When drawing more than the config max number, move to next col
                 col = 
                     (numWhite <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 

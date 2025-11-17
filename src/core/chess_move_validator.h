@@ -3,7 +3,8 @@
 #include <string>
 #include <map>
 #include "../config/config.h"
-#include "chess_logic.h"
+#include "board/chess_board.h"
+#include "game_state/chess_game_state.h"
 #include "chess_move.h"
 
 class ChessMoveValidator {
@@ -27,34 +28,34 @@ public:
     ~ChessMoveValidator() = default;
 
     // Main validation function - currently only checks board boundaries
-    MoveResult validateMove(const ChessLogic& logic, const ChessMove& move) const;
+    MoveResult validateMove(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
 
     // Helper function for move and state validation
-    bool isSquareUnderAttack(const ChessLogic& logic, const int defRank, const int defFile, const ChessLogic::Player attackingPlayer) const;
-    bool wouldLeaveKingInCheck(const ChessLogic& logic, const ChessMove& move) const;
+    bool isSquareUnderAttack(const ChessBoard& board, const ChessGameState& gameState, const int defRank, const int defFile, const char attackingPlayer) const;
+    bool wouldLeaveKingInCheck(const ChessBoard& board, const ChessGameState& gameState ,const ChessMove& move) const;
     bool isValidMoveResult(const MoveResult result) const;
     bool isInvalidMoveResult(const MoveResult result) const;
 private:    
     // Chess rule validation
-    bool validatePieceMovement(const ChessLogic& logic, const ChessMove& move) const;
-    bool checkDestinationSquare(const ChessLogic& logic, const ChessMove& move) const;
+    bool validatePieceMovement(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
+    bool checkDestinationSquare(const ChessBoard& board, const ChessMove& move) const;
     
     // Helper function for sliding pieces (rook, bishop, queen)
-    bool isPathClearForSlidingPiece(const ChessLogic& logic, const ChessMove& move) const;
+    bool isPathClearForSlidingPiece(const ChessBoard& board, const ChessMove& move) const;
     
     // Helper functions for check detection
-    bool validateBasicPieceMovement(const ChessLogic& logic, const ChessLogic::Piece piece, const ChessMove& move) const;
+    bool validateBasicPieceMovement(const ChessBoard& board, const ChessGameState& gameState, const char piece, const ChessMove& move) const;
 
     // Piece specific validation (only pawn needs special handling)
-    bool validatePawnMove(const ChessLogic& logic, const ChessMove& move) const;
+    bool validatePawnMove(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
 
     // Castling validation methods
-    bool validateCastling(const ChessLogic& logic, const ChessMove& move) const;
-    bool canCastle(const ChessLogic& logic, const ChessLogic::Player player, const bool isKingside) const;
+    bool validateCastling(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
+    bool canCastle(const ChessBoard& board, const ChessGameState& gameState, const char player, const bool isKingside) const;
     
     // En passant validation method
-    bool validateEnPassant(const ChessLogic& logic, const ChessMove& move) const;
+    bool validateEnPassant(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
 
     // Promotion validation method
-    bool validatePromotion(const ChessLogic& logic, const ChessMove& move) const;
+    bool validatePromotion(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
 };

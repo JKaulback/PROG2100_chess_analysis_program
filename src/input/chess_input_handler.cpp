@@ -20,12 +20,12 @@ void ChessInputHandler::handleInput(const ChessGUI& gui) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !controller.isGameOver()) {
         // Check if dragging a piece
         const Vector2 boardPos = gui.screenPosToBoardPos(mousePos);
-        const ChessLogic::Piece selectedPiece = 
+        const char selectedPiece = 
             controller.getPieceAt(
                 static_cast<int>(boardPos.y), 
                 static_cast<int>(boardPos.x));
 
-        if (selectedPiece != ChessLogic::Piece::EMPTY) {
+        if (selectedPiece != BoardCfg::EMPTY) {
             // Set state variables for dragging
             isDragging = true;
             draggedPieceRank = static_cast<int>(boardPos.y);
@@ -64,7 +64,7 @@ void ChessInputHandler::resetDragState() {
     draggedPieceRank = -1;
     draggedPieceFile = -1;
     dragOffset = {0, 0};
-    draggedPiece = ChessLogic::Piece::EMPTY;
+    draggedPiece = BoardCfg::EMPTY;
 }
 
 bool ChessInputHandler::getIsDragging() const {
@@ -83,7 +83,7 @@ Vector2 ChessInputHandler::getDragOffset() const {
     return dragOffset;
 }
 
-ChessLogic::Piece ChessInputHandler::getDraggedPiece() const {
+char ChessInputHandler::getDraggedPiece() const {
     return draggedPiece;
 }
 

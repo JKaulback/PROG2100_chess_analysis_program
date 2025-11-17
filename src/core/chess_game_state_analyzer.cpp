@@ -3,38 +3,40 @@
 using StateAnalyzer = ChessGameStateAnalyzer;
 namespace BoardCfg = Config::Board;
 
-StateAnalyzer::GameState StateAnalyzer::analyzeGameState(const ChessLogic& logic) {
+StateAnalyzer::GameState StateAnalyzer::analyzeGameState(
+    const ChessBoard& board,
+    const ChessGameState& gameState) {
     // Check 50-Move Rule
-    if (isDraw50Moves(logic)) 
+    if (isDraw50Moves(board)) 
         return StateAnalyzer::GameState::DRAW_50_MOVES;
     
     // Check for insufficient material
-    if (isInsufficientMaterial(logic)) 
+    if (isInsufficientMaterial(board)) 
         return StateAnalyzer::GameState::DRAW_INSUFFICIENT_MATERIAL;
     
     // Check for checkmate
-    if (isCheckmate(logic))        
-        return (logic.getCurrentPlayer() == ChessLogic::Player::WHITE_PLAYER) ?
+    if (isCheckmate(board, gameState))        
+        return (gameState.getCurrentPlayer() == 'w') ?
             StateAnalyzer::GameState::BLACK_WIN :
             StateAnalyzer::GameState::WHITE_WIN;
 
     // Check for stalemate
-    if (isStalemate(logic)) 
+    if (isStalemate(board, gameState)) 
         return StateAnalyzer::GameState::STALEMATE;
 
     // Check for threefold repetition
-    if (isThreefoldRepetition(logic)) 
+    if (isThreefoldRepetition(gameState)) 
         return StateAnalyzer::GameState::DRAW_THREEFOLD_REPETITION;
 
     // Return IN_PROGRESS if no ending conditions are met
     return StateAnalyzer::GameState::IN_PROGRESS;
 }
 
-bool StateAnalyzer::isDraw50Moves(const ChessLogic& logic) const {
-    return (logic.getHalfmoveClock() >= 100); // Check if halfmove clock reaches 50 full moves
+bool StateAnalyzer::isDraw50Moves(const ChessGameState& gameState) const {
+    return (gameState.getHalfmoveClock() >= 100); // Check if halfmove clock reaches 50 full moves
 }
 
-bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const {
+bool StateAnalyzer::isInsufficientMaterial(const ChessBoard& board) const {
     // Count relevant material (assume kings exist)
     int whiteBishopCount = 0;
     int whiteKnightCount = 0;
@@ -44,28 +46,27 @@ bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const {
     // Check each board position
     for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++) {
         for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) {
-            ChessLogic::Piece piece = logic.getPieceAt(rank, file);
+            char piece = board.getPieceAt(rank, file);
             // If empty, skip
-            if (piece == ChessLogic::Piece::EMPTY) 
+            if (piece == BoardCfg::EMPTY) 
                 continue;
             // If a pawn exists, there is sufficient material
-            else if (piece == ChessLogic::Piece::BLACK_PAWN || 
-                    piece == ChessLogic::Piece::WHITE_PAWN)
+            else if (board.isPawn(piece))
                 sufficientMaterial = true;
             // Check for white bishops
-            else if (piece == ChessLogic::Piece::WHITE_BISHOP) 
+            else if (piece == 'B') 
                 whiteBishopCount++;
             // Check for black bishops
-            else if (piece == ChessLogic::Piece::BLACK_BISHOP) 
+            else if (piece == 'b') 
                 blackBishopCount++;
             // Check for white knights
-            else if (piece == ChessLogic::Piece::WHITE_KNIGHT) 
+            else if (piece == 'N') 
                 whiteKnightCount++;
             // Check for black knights
-            else if (piece == ChessLogic::Piece::BLACK_KNIGHT) 
+            else if (piece == 'n') 
                 blackKnightCount++;
             // For any other piece except king
-            else if (piece != ChessLogic::Piece::WHITE_KING && piece != ChessLogic::Piece::BLACK_KING)
+            else if (!board.isKing(piece))
                 sufficientMaterial = true;
             // Check if knight and bishop exist on one side
             if ((whiteBishopCount && whiteKnightCount) || (blackBishopCount && blackKnightCount)) {
@@ -86,52 +87,52 @@ bool StateAnalyzer::isInsufficientMaterial(const ChessLogic& logic) const {
     return !sufficientMaterial;
 }
 
-bool StateAnalyzer::isCheckmate(const ChessLogic& logic) const {
-    return (isInCheck(logic) && !hasLegalMoves(logic)); // Logic for checkmate
+bool StateAnalyzer::isCheckmate(const ChessBoard& board, const ChessGameState& gameState) const {
+    return (isInCheck(board, gameState) && !hasLegalMoves(board, gameState)); // Logic for checkmate
 }
 
-bool StateAnalyzer::isStalemate(const ChessLogic& logic) const {
-    return (!isInCheck(logic) && !hasLegalMoves(logic)); // Logic for stalemate
+bool StateAnalyzer::isStalemate(const ChessBoard& board, const ChessGameState& gameState) const {
+    return (!isInCheck(board, gameState) && !hasLegalMoves(board, gameState)); // Logic for stalemate
 }
 
-bool StateAnalyzer::isThreefoldRepetition(const ChessLogic& logic) const
+bool StateAnalyzer::isThreefoldRepetition(const ChessGameState& gameState) const
 {
-    return logic.hasThreefoldRepetition();
+    return gameState.hasThreefoldRepetition();
 }
 
 // --- HELPERS ---
-bool StateAnalyzer::isInCheck(const ChessLogic& logic) const {
-    ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
-    std::pair<int, int> kingPosition = logic.getKingPosition(currentPlayer);
-    ChessLogic::Player opponent = 
-        (currentPlayer == ChessLogic::Player::WHITE_PLAYER) ?
-        ChessLogic::Player::BLACK_PLAYER :
-        ChessLogic::Player::WHITE_PLAYER;
+bool StateAnalyzer::isInCheck(const ChessBoard& board, const ChessGameState& gameState) const {
+    char currentPlayer = gameState.getCurrentPlayer();
+    std::pair<int, int> kingPosition = board.getKingPosition(currentPlayer);
+    char opponent = 
+        (currentPlayer == 'w') ?
+        'b' :
+        'w';
 
-    return validator.isSquareUnderAttack(logic, kingPosition.first, kingPosition.second, opponent);
+    return validator.isSquareUnderAttack(board, gameState, kingPosition.first, kingPosition.second, opponent);
 }
 
-bool StateAnalyzer::hasLegalMoves(const ChessLogic& logic) const {
-    ChessLogic::Player currentPlayer = logic.getCurrentPlayer();
-    
+bool StateAnalyzer::hasLegalMoves(const ChessBoard& board, const ChessGameState& gameState) const {
+    char currentPlayer = gameState.getCurrentPlayer();
+
     // Iterate through all squares on the board to find current player's pieces
     for (int srcRank = BoardCfg::MIN_RANK; srcRank <= BoardCfg::MAX_RANK; srcRank++) {
         for (int srcFile = BoardCfg::MIN_FILE; srcFile <= BoardCfg::MAX_FILE; srcFile++){
-            ChessLogic::Piece piece = logic.getPieceAt(srcRank, srcFile);
+            char piece = board.getPieceAt(srcRank, srcFile);
             
             // Skip empty squares
-            if (piece == ChessLogic::Piece::EMPTY) 
+            if (piece == BoardCfg::EMPTY) 
                 continue;
             
             // Check if this piece belongs to the current player
             bool isCurrentPlayerPiece = 
-                (currentPlayer == ChessLogic::Player::WHITE_PLAYER) ?
-                logic.isWhitePiece(srcRank, srcFile) :
-                logic.isBlackPiece(srcRank, srcFile);
+                (currentPlayer == 'w') ?
+                board.isWhitePiece(srcRank, srcFile) :
+                !board.isWhitePiece(srcRank, srcFile);
             
             if (!isCurrentPlayerPiece) 
                 continue;
-            
+
             // Try all possible destination squares for this piece
             for (int destRank = BoardCfg::MIN_RANK; destRank <= BoardCfg::MAX_RANK; destRank++) {
                 for (int destFile = BoardCfg::MIN_FILE; destFile <= BoardCfg::MAX_FILE; destFile++){
@@ -139,9 +140,10 @@ bool StateAnalyzer::hasLegalMoves(const ChessLogic& logic) const {
                     if (srcRank == destRank && srcFile == destFile) 
                         continue;
                     
+                    
                     // Test if this move is valid
                     ChessMoveValidator::MoveResult result = 
-                        validator.validateMove(logic, ChessMove{srcRank, srcFile, destRank, destFile});
+                        validator.validateMove(board, gameState, ChessMove{srcRank, srcFile, destRank, destFile});
                     
                     // If we find any legal move, the player has legal moves
                     if (validator.isValidMoveResult(result))

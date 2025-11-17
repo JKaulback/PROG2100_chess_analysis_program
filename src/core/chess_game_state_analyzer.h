@@ -1,6 +1,7 @@
 #pragma once
 
-#include "chess_logic.h"
+#include "board/chess_board.h"
+#include "game_state/chess_game_state.h"
 #include "chess_move_validator.h"
 #include "chess_move.h"
 
@@ -16,17 +17,17 @@ public:
         DRAW_INSUFFICIENT_MATERIAL
     };
     // Accesses the game state
-    GameState analyzeGameState(const ChessLogic& logic);
+    GameState analyzeGameState(const ChessBoard& board, const ChessGameState& gameState);
 private:
     ChessMoveValidator validator;
     // State changing checks
-    bool isDraw50Moves(const ChessLogic& logic) const;
-    bool isInsufficientMaterial(const ChessLogic& logic) const;
-    bool isCheckmate(const ChessLogic& logic) const;
-    bool isStalemate(const ChessLogic& logic) const;
-    bool isThreefoldRepetition(const ChessLogic& logic) const;
+    bool isDraw50Moves(const ChessGameState& gameState) const;
+    bool isInsufficientMaterial(const ChessBoard& board) const;
+    bool isCheckmate(const ChessBoard& board, const ChessGameState& gameState) const;
+    bool isStalemate(const ChessBoard& board, const ChessGameState& gameState) const;
+    bool isThreefoldRepetition(const ChessGameState& gameState) const;
 
     // Helper methods for state changes
-    bool isInCheck(const ChessLogic& logic) const;
-    bool hasLegalMoves(const ChessLogic& logic) const;
+    bool isInCheck(const ChessBoard& board, const ChessGameState& gameState) const;
+    bool hasLegalMoves(const ChessBoard& board, const ChessGameState& gameState) const;
 };
