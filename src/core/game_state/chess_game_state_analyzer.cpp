@@ -5,9 +5,10 @@ namespace BoardCfg = Config::Board;
 
 StateAnalyzer::GameState StateAnalyzer::analyzeGameState(
     const ChessBoard& board,
-    const ChessGameState& gameState) {
+    const ChessGameState& gameState,
+    const FENPositionTracker& fenStateHistory) {
     // Check 50-Move Rule
-    if (isDraw50Moves(board)) 
+    if (isDraw50Moves(gameState)) 
         return StateAnalyzer::GameState::DRAW_50_MOVES;
     
     // Check for insufficient material
@@ -25,7 +26,7 @@ StateAnalyzer::GameState StateAnalyzer::analyzeGameState(
         return StateAnalyzer::GameState::STALEMATE;
 
     // Check for threefold repetition
-    if (isThreefoldRepetition(gameState)) 
+    if (isThreefoldRepetition(fenStateHistory)) 
         return StateAnalyzer::GameState::DRAW_THREEFOLD_REPETITION;
 
     // Return IN_PROGRESS if no ending conditions are met
@@ -95,9 +96,9 @@ bool StateAnalyzer::isStalemate(const ChessBoard& board, const ChessGameState& g
     return (!isInCheck(board, gameState) && !hasLegalMoves(board, gameState)); // Logic for stalemate
 }
 
-bool StateAnalyzer::isThreefoldRepetition(const ChessGameState& gameState) const
+bool StateAnalyzer::isThreefoldRepetition(const FENPositionTracker& fenStateHistory) const
 {
-    return gameState.hasThreefoldRepetition();
+    return fenStateHistory.isThreefoldRepetition();
 }
 
 // --- HELPERS ---

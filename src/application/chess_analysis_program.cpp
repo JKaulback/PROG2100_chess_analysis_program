@@ -4,7 +4,7 @@
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
-    board{}, gameState{board}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
+    board{}, gameState{board}, fenStateHistory{}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
     currentGameState{GameState::IN_PROGRESS}
 {
     // Try to load initial position from FEN file
@@ -96,9 +96,12 @@ bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
             board.executePromotion(move);
         else
             board.executeBasicMove(move);
-                
+        
+        // Update position tracker
+        fenStateHistory.recordPosition(board, gameState);
+
         // After successful move, analyze the new game state
-        currentGameState = gameStateAnalyzer.analyzeGameState(board, gameState);
+        currentGameState = gameStateAnalyzer.analyzeGameState(board, gameState, fenStateHistory);
         return true;
     }
 

@@ -2,6 +2,7 @@
 
 #include "../board/chess_board.h"
 #include "chess_game_state.h"
+#include "fen_position_tracker.h"
 #include "../chess_move_validator.h"
 #include "../chess_move.h"
 
@@ -17,7 +18,10 @@ public:
         DRAW_INSUFFICIENT_MATERIAL
     };
     // Accesses the game state
-    GameState analyzeGameState(const ChessBoard& board, const ChessGameState& gameState);
+    GameState analyzeGameState(
+        const ChessBoard& board, 
+        const ChessGameState& gameState,
+        const FENPositionTracker& fenStateHistory);
 private:
     ChessMoveValidator validator;
     // State changing checks
@@ -25,7 +29,7 @@ private:
     bool isInsufficientMaterial(const ChessBoard& board) const;
     bool isCheckmate(const ChessBoard& board, const ChessGameState& gameState) const;
     bool isStalemate(const ChessBoard& board, const ChessGameState& gameState) const;
-    bool isThreefoldRepetition(const ChessGameState& gameState) const;
+    bool isThreefoldRepetition(const FENPositionTracker& fenStateHistory) const;
 
     // Helper methods for state changes
     bool isInCheck(const ChessBoard& board, const ChessGameState& gameState) const;

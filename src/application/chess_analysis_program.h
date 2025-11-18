@@ -7,6 +7,7 @@
 #include "../core/board/chess_board.h"
 #include "../core/game_state/chess_game_state.h"
 #include "../core/game_state/chess_game_state_analyzer.h"
+#include "../core/game_state/fen_position_tracker.h"
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
 
@@ -60,9 +61,10 @@ private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
 private:
-    // Board Management
+    // Game State Management
     ChessBoard board;
     ChessGameState gameState;    
+    FENPositionTracker fenStateHistory;
 
     // Validation
     ChessMoveValidator moveValidator; // Own the move validator object

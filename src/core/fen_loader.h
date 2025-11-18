@@ -2,6 +2,9 @@
 
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <vector>
+#include <iostream>
 #include "../application/chess_analysis_program.h"
 
 class FENLoader {

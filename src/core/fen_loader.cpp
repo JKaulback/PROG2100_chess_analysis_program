@@ -1,8 +1,4 @@
 #include "fen_loader.h"
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <iostream>
 
 bool FENLoader::loadFromFile(const std::string& filename, ChessAnalysisProgram& controller) {
     std::ifstream file(filename);

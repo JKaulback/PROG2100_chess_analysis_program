@@ -13,6 +13,7 @@
                 "src/core/board/chess_board.cpp",
                 "src/core/game_state/chess_game_state.cpp",
                 "src/core/game_state/chess_game_state_analyzer.cpp",
+                "src/core/game_state/fen_position_tracker.cpp",
                 "src/core/chess_move_validator.cpp",
                 "src/core/fen_loader.cpp",
                 "src/rendering/chess_gui.cpp",
