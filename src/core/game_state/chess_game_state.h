@@ -33,6 +33,14 @@ public:
 
     // Threefold repetition state
     bool hasThreefoldRepetition() const;
+    
+    // FEN loading support methods
+    void setCurrentPlayer(const char player);
+    void setCastlingRights(bool whiteKingside, bool whiteQueenside, bool blackKingside, bool blackQueenside);
+    void setEnPassantTarget(const int rank, const int file);
+    void clearEnPassantState();
+    void setHalfmoveClock(const int halfmoves);
+    void setFullmoveClock(const int fullmoves);
 private:
     // Game state variables
     const ChessBoard* board;
@@ -53,5 +61,4 @@ private:
     void updateEnPassantState(const ChessMove& move, const char srcPiece);
     void resetHalfmoveClock();
     void resetCastlingRights();
-    void clearEnPassantState();
 };

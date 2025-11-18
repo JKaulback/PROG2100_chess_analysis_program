@@ -1,9 +1,9 @@
 #pragma once
 
-#include "board/chess_board.h"
-#include "game_state/chess_game_state.h"
-#include "chess_move_validator.h"
-#include "chess_move.h"
+#include "../board/chess_board.h"
+#include "chess_game_state.h"
+#include "../chess_move_validator.h"
+#include "../chess_move.h"
 
 class ChessGameStateAnalyzer {
 public:

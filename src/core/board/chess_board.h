@@ -22,6 +22,7 @@ class ChessBoard {
         
         // Board manipulation
         void setPieceAt(const int rank, const int file, const char piece);
+        void clearBoard();
         void executeBasicMove(const ChessMove& move);
         void executeCastling(const ChessMove& move);
         void executeEnPassant(const ChessMove& move);
@@ -47,7 +48,6 @@ class ChessBoard {
         
         // Helper functions
         void boardInit();
-        void clearBoard();
         bool isValidBoardPosition(const int rank, const int file) const;
         bool isValidPiece(const char piece) const;
 

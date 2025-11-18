@@ -154,3 +154,42 @@ void ChessGameState::clearEnPassantState() {
     enPassantPawnRank = -1;
     enPassantPawnFile = -1;
 }
+
+// FEN loading support methods
+void ChessGameState::setCurrentPlayer(const char player) {
+    currentPlayer = player;
+}
+
+void ChessGameState::setCastlingRights(bool whiteKingside, bool whiteQueenside, bool blackKingside, bool blackQueenside) {
+    // Set castling rights based on parameters
+    whiteKRookMoved = !whiteKingside;
+    whiteQRookMoved = !whiteQueenside;
+    blackKRookMoved = !blackKingside;
+    blackQRookMoved = !blackQueenside;
+    
+    // If any castling rights are available, the king hasn't moved
+    whiteKingMoved = !(whiteKingside || whiteQueenside);
+    blackKingMoved = !(blackKingside || blackQueenside);
+}
+
+void ChessGameState::setEnPassantTarget(const int rank, const int file) {
+    enPassantTargetRank = rank;
+    enPassantTargetFile = file;
+    
+    // Set the pawn position based on the target square
+    if (rank == 2) { // White pawn moved two squares
+        enPassantPawnRank = 3;
+        enPassantPawnFile = file;
+    } else if (rank == 5) { // Black pawn moved two squares
+        enPassantPawnRank = 4;
+        enPassantPawnFile = file;
+    }
+}
+
+void ChessGameState::setHalfmoveClock(const int halfmoves) {
+    halfmoveClock = halfmoves;
+}
+
+void ChessGameState::setFullmoveClock(const int fullmoves) {
+    fullmoveClock = fullmoves;
+}

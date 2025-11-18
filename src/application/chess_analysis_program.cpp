@@ -1,11 +1,15 @@
 #include "chess_analysis_program.h"
+#include "../core/fen_loader.h"
 
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
     board{}, gameState{board}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
     currentGameState{GameState::IN_PROGRESS}
-{}
+{
+    // Try to load initial position from FEN file
+    FENLoader::loadFromFile("initial_position.fen", *this);
+}
 
 ChessAnalysisProgram::~ChessAnalysisProgram() 
 {}
@@ -149,4 +153,37 @@ std::string ChessAnalysisProgram::getGameOverString() const {
             break;
     }
     return gameOverText;
+}
+
+// FEN loader support methods
+void ChessAnalysisProgram::setPieceAt(const int rank, const int file, const char piece) {
+    board.setPieceAt(rank, file, piece);
+}
+
+void ChessAnalysisProgram::clearBoard() {
+    board.clearBoard();
+}
+
+void ChessAnalysisProgram::setCurrentPlayer(const char player) {
+    gameState.setCurrentPlayer(player);
+}
+
+void ChessAnalysisProgram::setCastlingRights(bool whiteKingside, bool whiteQueenside, bool blackKingside, bool blackQueenside) {
+    gameState.setCastlingRights(whiteKingside, whiteQueenside, blackKingside, blackQueenside);
+}
+
+void ChessAnalysisProgram::setEnPassantTarget(const int rank, const int file) {
+    gameState.setEnPassantTarget(rank, file);
+}
+
+void ChessAnalysisProgram::clearEnPassantTarget() {
+    gameState.clearEnPassantState();
+}
+
+void ChessAnalysisProgram::setHalfmoveClock(const int halfmoves) {
+    gameState.setHalfmoveClock(halfmoves);
+}
+
+void ChessAnalysisProgram::setFullmoveClock(const int fullmoves) {
+    gameState.setFullmoveClock(fullmoves);
 }

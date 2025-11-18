@@ -2,11 +2,11 @@
 
 #include <raylib.h>
 #include <vector>
-#include "../core/chess_game_state_analyzer.h"
 #include "../core/chess_move_validator.h"
 #include "../core/chess_move.h"
 #include "../core/board/chess_board.h"
 #include "../core/game_state/chess_game_state.h"
+#include "../core/game_state/chess_game_state_analyzer.h"
 #include "../rendering/chess_gui.h"
 #include "../input/chess_input_handler.h"
 
@@ -46,6 +46,16 @@ public:
     GameState getGameState() const;
     bool isGameOver() const;
     std::string getGameOverString() const; // Get a game over string mapped to a game state
+    
+    // FEN loader support methods
+    void setPieceAt(const int rank, const int file, const char piece);
+    void clearBoard();
+    void setCurrentPlayer(const char player);
+    void setCastlingRights(bool whiteKingside, bool whiteQueenside, bool blackKingside, bool blackQueenside);
+    void setEnPassantTarget(const int rank, const int file);
+    void clearEnPassantTarget();
+    void setHalfmoveClock(const int halfmoves);
+    void setFullmoveClock(const int fullmoves);
 private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
