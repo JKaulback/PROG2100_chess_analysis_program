@@ -18,5 +18,9 @@ private:
     
     void drawEngineStatus() const;
     void drawEngineAnalysis() const;
+    void drawAnalysisLine(const std::string text, const int multipv) const;
     void drawEngineControls() const;
+    
+    // Helper function for drawing text with gray background
+    void drawTextWithBackground(const std::string& text, int x, int y, int fontSize, Color textColor, Color bgColor = LIGHTGRAY) const;
 };

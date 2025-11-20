@@ -208,10 +208,17 @@ void ChessAnalysisProgram::setFullmoveClock(const int fullmoves) {
 
 void ChessAnalysisProgram::enableUCIEngine() {
     uciEngine->enable();
-    uciEngine->setPosition(
-        fenStateHistory.getStartPosition(),
-        fenStateHistory.getMoveHistory()
-    );
+    
+    // Get the position data
+    std::string startPos = fenStateHistory.getStartPosition();
+    std::vector<std::string> moves = fenStateHistory.getMoveHistory();
+    
+    // Debug: Force a standard starting position if none exists
+    if (startPos.empty()) {
+        startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    }
+    
+    uciEngine->setPosition(startPos, moves);
 }
 
 
@@ -236,8 +243,14 @@ bool ChessAnalysisProgram::isUCIEngineEnabled() const {
 
 void ChessAnalysisProgram::setUCIEnginePosition() {
     if (uciEngine && isUCIEngineEnabled()) {
+        // Primary approach: Use start position + moves (better for engine understanding)
         std::string startFen = fenStateHistory.getStartPosition();
         std::vector<std::string> moves = fenStateHistory.getMoveHistory();
+        
+        // Ensure we have a valid starting position
+        if (startFen.empty()) {
+            startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        }
 
         uciEngine->setPosition(startFen, moves);
     }

@@ -113,7 +113,7 @@ namespace Config {
         constexpr int FONT_SPACING = 1;
         constexpr Color FONT_COLOR = BLACK;
         
-        constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4;
+        constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4 - 300;
         constexpr int START_DRAW_Y = Window::HEIGHT / 8;
         constexpr int DRAW_STEP_Y = FONT_SIZE_PX;
         

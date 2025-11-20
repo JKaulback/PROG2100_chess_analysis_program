@@ -57,4 +57,7 @@ public:
     
 private:
     static const std::regex multipvRegex_;
+
+    static std::string parseCpOrMate(const std::string& line);
+    static std::string parsePv(const std::string& line);
 };
