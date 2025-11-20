@@ -65,7 +65,7 @@ public:
     void toggleUCIEngine();
     bool isUCIEngineEnabled() const;
     void setUCIEnginePosition();
-    EngineAnalysis pollUCIEngineAnalysis();
+    EngineAnalysis pollUCIEngineAnalysis() const;
 private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success

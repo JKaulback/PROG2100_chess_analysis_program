@@ -94,9 +94,14 @@ bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
             board.executeCastling(move);
         else if (validationResult == MoveResult::VALID_EN_PASSANT)
             board.executeEnPassant(move);
-        else if (validationResult == MoveResult::VALID_PROMOTION)
-            board.executePromotion(move);
-        else
+        else if (validationResult == MoveResult::VALID_PROMOTION) {
+            // Set the piece to promote to
+            char promoteTo =
+                (getCurrentPlayer() == 'w') ?
+                'q' :
+                'Q';
+            board.executePromotion(move, promoteTo);
+        } else
             board.executeBasicMove(move);
         
         // Update position tracker
@@ -238,6 +243,6 @@ void ChessAnalysisProgram::setUCIEnginePosition() {
     }
 }
 
-EngineAnalysis ChessAnalysisProgram::pollUCIEngineAnalysis() {
+EngineAnalysis ChessAnalysisProgram::pollUCIEngineAnalysis() const {
     return uciEngine->pollAnalysis();
 }
