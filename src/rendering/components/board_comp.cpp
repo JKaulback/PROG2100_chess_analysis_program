@@ -34,6 +34,9 @@ void BoardComp::draw() const {
 
     // Draw dragging piece
     drawDraggedPiece();
+
+    // Draw captured pieces
+    drawCapturedPieces();
 }
 
 Vector2 BoardComp::screenPosToBoardPos(const Vector2 pos) const {
@@ -139,10 +142,11 @@ void BoardComp::drawCapturedPieces() const {
             std::string pieceString = controller.pieceToTextureString(piece);
             std::pair<int, int> position;
 
-            if (controller.getPieceOwner(piece) == 'w') {
-                position = getCapturedPiecePosition(numWhite++);
+            char pieceOwner = controller.getPieceOwner(piece);
+            if (pieceOwner == 'w') {
+                position = getCapturedPiecePosition(numWhite++, pieceOwner);
             } else { // Do the same but for black
-                position = getCapturedPiecePosition(numBlack++);
+                position = getCapturedPiecePosition(numBlack++, pieceOwner);
             }
             // Calculate the x on screen position
             float xPos = PieceCfg::CAPTURED_OFFSET_X + 
@@ -155,7 +159,7 @@ void BoardComp::drawCapturedPieces() const {
     }
 }
 
-std::pair<int, int> BoardComp::getCapturedPiecePosition(const int numPieces) const {
+std::pair<int, int> BoardComp::getCapturedPiecePosition(const int numPieces, const char pieceOwner) const {
     // When drawing more than the config max number, move to next col
     int col = 
         (numPieces <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 
@@ -165,10 +169,12 @@ std::pair<int, int> BoardComp::getCapturedPiecePosition(const int numPieces) con
     float numStepsY = 
         (numPieces <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
         numPieces : 
-        numPieces - PieceCfg::MAX_CAPTURED_IN_ROW;
+        numPieces - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
     // Calculate the y on screen position
-    int yPos = PieceCfg::CAPTURED_OFFSET_Y_WHITE + 
-        (PieceCfg::CAPTURED_STEP * numStepsY);
-    
+    int yPos = 
+        (pieceOwner == 'w') ?
+        (PieceCfg::CAPTURED_OFFSET_Y_WHITE + PieceCfg::CAPTURED_STEP * numStepsY) :
+        (PieceCfg::CAPTURED_OFFSET_Y_BLACK - PieceCfg::CAPTURED_STEP * numStepsY);
+
     return {col, yPos};
 }

@@ -33,5 +33,5 @@ private:
     void drawDraggedPiece() const;
     void drawCapturedPieces() const;
 
-    std::pair<int, int> getCapturedPiecePosition(const int numPieces) const;
+    std::pair<int, int> getCapturedPiecePosition(const int numPieces, const char pieceOwner) const;
 };

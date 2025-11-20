@@ -76,7 +76,7 @@ namespace Config {
         constexpr float CAPTURED_OFFSET_X = Board::SIZE + Board::OFFSET_X + CAPTURED_SIZE;
         constexpr float CAPTURED_MARGIN = 50.0f;
         constexpr float CAPTURED_OFFSET_Y_WHITE = Board::OFFSET_Y + CAPTURED_MARGIN;
-        constexpr float CAPTURED_OFFSET_Y_BLACK = Board::SIZE + Board::OFFSET_Y - CAPTURED_MARGIN;
+        constexpr float CAPTURED_OFFSET_Y_BLACK = Board::SIZE + Board::OFFSET_Y - CAPTURED_MARGIN - CAPTURED_SIZE;
         constexpr float CAPTURED_STEP = CAPTURED_SIZE * 0.9f;
         constexpr int MAX_CAPTURED_IN_ROW = 7;
     }
@@ -103,8 +103,9 @@ namespace Config {
         constexpr int STATS_FONT_SPACING = 1;
         constexpr Color STATS_FONT_COLOR = BLACK;
 
-        constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4; // 3/4 over
-        constexpr int START_DRAW_Y = Window::HEIGHT / 8; // Start at top 1/4
+        // Position stats panel below engine analysis to avoid overlap
+        constexpr int START_DRAW_X = Window::WIDTH - 400; // Same X as engine for alignment
+        constexpr int START_DRAW_Y = Window::HEIGHT / 2; // Position lower on screen
         constexpr int DRAW_STEP_Y = STATS_FONT_SIZE_PX + 12; // Single spaced
     }
 
@@ -113,7 +114,8 @@ namespace Config {
         constexpr int FONT_SPACING = 1;
         constexpr Color FONT_COLOR = BLACK;
         
-        constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4 - 300;
+        // Position engine analysis further right to avoid captured pieces
+        constexpr int START_DRAW_X = Window::WIDTH - 400; // More space for captured pieces
         constexpr int START_DRAW_Y = Window::HEIGHT / 8;
         constexpr int DRAW_STEP_Y = FONT_SIZE_PX;
         
