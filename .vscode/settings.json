@@ -57,6 +57,14 @@
         "ostream": "cpp",
         "sstream": "cpp",
         "iostream": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "bitset": "cpp",
+        "condition_variable": "cpp",
+        "regex": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "stack": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     }
 }

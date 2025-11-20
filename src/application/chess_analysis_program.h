@@ -64,7 +64,7 @@ public:
     void disableUCIEngine();
     void toggleUCIEngine();
     bool isUCIEngineEnabled() const;
-    void setUCIEnginePosition(const std::string& startFen, const std::vector<std::string>& moves);
+    void setUCIEnginePosition();
     EngineAnalysis pollUCIEngineAnalysis();
 private:
     // Helper methods

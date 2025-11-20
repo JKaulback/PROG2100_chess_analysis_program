@@ -62,7 +62,13 @@ void UCIEngine::setPosition(const std::string& startFen, const std::vector<std::
         return;
     
     // Validate FEN
-    if (!UCIAnalysisParser::isValidFEN(startFen)) {
+    const std::string standardStartPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::string fenToUse = 
+        startFen.empty() ?
+        standardStartPos :
+        startFen;
+
+    if (!startFen.empty() && !UCIAnalysisParser::isValidFEN(startFen)) {
         std::cerr << "Invalid starting FEN string: " << startFen << std::endl;
         return;
     }
@@ -71,7 +77,9 @@ void UCIEngine::setPosition(const std::string& startFen, const std::vector<std::
     {
         std::lock_guard<std::mutex> lock(analysisMutex_);
         requestedStartFen_ = startFen;
-        requestedMoves_ = moves;
+        if (!moves.empty()) {
+            requestedMoves_ = moves;
+        }
     }
 }
 

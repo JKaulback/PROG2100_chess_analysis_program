@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class ChessMove {
 public:
     ChessMove(
@@ -12,6 +14,8 @@ public:
     int getSrcFile() const { return srcFile; };
     int getDestRank() const {return destRank; };
     int getDestFile() const { return destFile; };
+
+    std::string toAlgebraicNotation() const;
 
 private:
     int srcRank;

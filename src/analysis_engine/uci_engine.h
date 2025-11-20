@@ -51,6 +51,9 @@ public:
     UCIEngine(const UCIEngine&) = delete;
     UCIEngine& operator=(const UCIEngine&) = delete;
     
+
+
+
     /**
      * Set the position to analyze
      * This is non-blocking and returns immediately.
@@ -61,7 +64,6 @@ public:
      * @param moves The list of moves from startFen to the current position
      */
     void setPosition(const std::string& startFen, const std::vector<std::string>& moves);
-
     
     /**
      * Poll for current analysis state

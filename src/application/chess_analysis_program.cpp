@@ -11,6 +11,7 @@ ChessAnalysisProgram::ChessAnalysisProgram() :
     {
     // Try to load initial position from FEN file
     FENLoader::loadFromFile("initial_position.fen", *this);
+    fenStateHistory.setStartingPosition(getCurrentFENString());
 }
 
 ChessAnalysisProgram::~ChessAnalysisProgram() 
@@ -54,7 +55,7 @@ int ChessAnalysisProgram::getHalfmoveClock() const {
 }
 
 std::string ChessAnalysisProgram::getCurrentFENString() const {
-    return "temp"; // TODO: FEN string manager
+    return fenStateHistory.getCurrentPosition(); // TODO: FEN string manager
 }
 
 // Delegate methods to input handler
@@ -85,7 +86,6 @@ bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
 
     // 2. If valid move, execute the move and switch turns
     if (isValidMoveResult(validationResult)) {
-
         // Update ChessGameState
         gameState.makeMove(move);
 
@@ -101,6 +101,10 @@ bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
         
         // Update position tracker
         fenStateHistory.recordPosition(board, gameState);
+        fenStateHistory.recordMove(move.toAlgebraicNotation());
+
+        // Update UCI engine position
+        setUCIEnginePosition();
 
         // After successful move, analyze the new game state
         currentGameState = gameStateAnalyzer.analyzeGameState(board, gameState, fenStateHistory);
@@ -172,6 +176,8 @@ void ChessAnalysisProgram::setPieceAt(const int rank, const int file, const char
 
 void ChessAnalysisProgram::clearBoard() {
     board.clearBoard();
+    fenStateHistory.clearHistory();
+    fenStateHistory.setStartingPosition(getCurrentFENString());
 }
 
 void ChessAnalysisProgram::setCurrentPlayer(const char player) {
@@ -200,7 +206,12 @@ void ChessAnalysisProgram::setFullmoveClock(const int fullmoves) {
 
 void ChessAnalysisProgram::enableUCIEngine() {
     uciEngine->enable();
+    uciEngine->setPosition(
+        fenStateHistory.getStartPosition(),
+        fenStateHistory.getMoveHistory()
+    );
 }
+
 
 void ChessAnalysisProgram::disableUCIEngine() {
     uciEngine->disable();
@@ -221,8 +232,13 @@ bool ChessAnalysisProgram::isUCIEngineEnabled() const {
     return uciEngine->isEnabled();
 }
 
-void ChessAnalysisProgram::setUCIEnginePosition(const std::string& startFen, const std::vector<std::string>& moves) {
-    uciEngine->setPosition(startFen, moves);
+void ChessAnalysisProgram::setUCIEnginePosition() {
+    if (uciEngine && isUCIEngineEnabled()) {
+        std::string startFen = fenStateHistory.getStartPosition();
+        std::vector<std::string> moves = fenStateHistory.getMoveHistory();
+
+        uciEngine->setPosition(startFen, moves);
+    }
 }
 
 EngineAnalysis ChessAnalysisProgram::pollUCIEngineAnalysis() {

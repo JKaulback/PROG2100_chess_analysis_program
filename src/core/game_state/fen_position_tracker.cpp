@@ -1,6 +1,9 @@
 #include "fen_position_tracker.h"
 
-FENPositionTracker::FENPositionTracker() {}
+FENPositionTracker::FENPositionTracker() {
+    positionHistory = {};
+    moves = {};
+}
 
 void FENPositionTracker::recordPosition(const ChessBoard& board, const ChessGameState& gameState) {
     std::string newPosition = "";
@@ -30,7 +33,24 @@ std::vector<std::string> FENPositionTracker::getPositionHistory() const {
     return positionHistory;
 }
 
+std::string FENPositionTracker::getStartPosition() const {
+    return 
+        (positionHistory.empty()) ?
+        "" :
+        positionHistory.front();
+}
+
+std::string FENPositionTracker::getCurrentPosition() const {
+    return 
+        (positionHistory.empty()) ?
+        "" :
+        positionHistory.back();
+}
+
 bool FENPositionTracker::isThreefoldRepetition() const {
+    if (positionHistory.empty())
+        return false;
+
     // Only need to track the last move
     std::string currentPos = extractPositionKey(positionHistory.back());
     int count = 0;
@@ -43,6 +63,24 @@ bool FENPositionTracker::isThreefoldRepetition() const {
         }
     }
     return false;
+}
+
+void FENPositionTracker::recordMove(const std::string& algebraicMove) {
+    moves.push_back(algebraicMove);
+}
+
+void FENPositionTracker::setStartingPosition(const std::string& fen) {
+    positionHistory.clear();
+    positionHistory.push_back(fen);
+}
+
+void FENPositionTracker::clearHistory() {
+    positionHistory.clear();
+    moves.clear();
+}
+
+const std::vector<std::string>& FENPositionTracker::getMoveHistory() const {
+    return moves;
 }
 
 std::string FENPositionTracker::getBoardState(const ChessBoard& board) const {

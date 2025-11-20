@@ -13,12 +13,21 @@ public:
     // Position tracking
     void recordPosition(const ChessBoard& board, const ChessGameState& gameState);
     std::vector<std::string> getPositionHistory() const;
-    
+    std::string getStartPosition() const;
+    std::string getCurrentPosition() const;
+
+    // For UCI support
+    void recordMove(const std::string& algebraicMove);
+    void setStartingPosition(const std::string& fen);
+    void clearHistory();
+    const std::vector<std::string>& getMoveHistory() const;
+
     // Game state accessors
     bool isThreefoldRepetition() const;
 
 private:
     std::vector<std::string> positionHistory;
+    std::vector<std::string> moves;
 
     // Position tracking helpers
     std::string getBoardState(const ChessBoard& board) const;
