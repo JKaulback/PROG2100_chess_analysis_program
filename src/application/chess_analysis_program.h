@@ -80,7 +80,7 @@ private:
     ChessMoveValidator moveValidator; // Own the move validator object
     
     // Analysis & UI
-    ChessGUI gui; // Own the GUI object
+    std::unique_ptr<ChessGUI> gui; // Own the GUI object
     ChessInputHandler inputHandler; // Own the input handler object
     ChessGameStateAnalyzer gameStateAnalyzer; // Own the game state analyzer object
     std::unique_ptr<UCIEngine> uciEngine; // Own the Stockfish move analysis engine manager object

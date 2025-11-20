@@ -15,6 +15,7 @@
                 "src/core/game_state/*.cpp",
                 "src/core/*.cpp",
                 "src/rendering/chess_gui.cpp",
+                "src/rendering/components/*.cpp",
                 "src/input/chess_input_handler.cpp",
                 "-o",
                 "main.exe",

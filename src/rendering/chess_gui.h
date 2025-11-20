@@ -1,49 +1,41 @@
 #pragma once
 
 #include <raylib.h>
-#include <string>
-#include <vector>
-#include <map>
+#include <memory>
+#include "components/board_comp.h"
+#include "components/stats_panel.h"
+#include "components/engine_comp.h"
+#include "components/game_overlay.h"
 #include "../config/config.h"
 
-// Forward declarations to avoid circular dependencies
 class ChessAnalysisProgram;
-// This class is responsible for the graphical user interface of the chess program
+class BoardComp;
+class StatsPanel;
+class EngineComp;
+class GameOverlay;
+
 class ChessGUI {
 public:
-    ChessGUI(const ChessAnalysisProgram& controller); // Constructor with controller reference
-    ~ChessGUI(); // Destructor
+    ChessGUI(const ChessAnalysisProgram& controller);
+    ~ChessGUI();
 
-    void draw() const; // Draw GUI elements - pure rendering
+    void draw() const;
     
-    // Public methods for controller to access
-    Vector2 screenPosToBoardPos(const Vector2) const; // Translate screen position to board position
-    Vector2 boardPosToScreenPos(const Vector2) const; // Translate board position to screen position
+    // Board interaction methods
+    Vector2 screenPosToBoardPos(const Vector2 pos) const;
+    Vector2 boardPosToScreenPos(const Vector2 pos) const;
     float getSquareSize() const;
     float getPieceSize() const;
 
-    // Public setter for controller to update engine state
-    void setIsUCIEngineRunning(const bool isRunning);    
+    // Engine state updates
+    void setIsUCIEngineRunning(const bool isRunning);
 
 private:
-    // GUI Display elements
-    Texture2D boardTexture; // Texture for the chess board
-    std::map<std::string, Texture2D> pieceTextures;
-    const ChessAnalysisProgram& controller; // Reference to the controller (const for read-only access)
-
-    // Flags for displays
-    bool isUCIEngineRunning;
+    const ChessAnalysisProgram& controller;
     
-    // Helper methods (drag state moved to controller)
-    void initPieceTextures(); // Initialize all piece textures
-    void loadPieceTexture(const std::string& pieceString); // Load a single piece texture
-    void drawChessPieces() const; // Draw the chess pieces based on their logical position
-    void drawGameOverScreen() const; // Draw a game over screen to overlay UI
-    void drawStats() const;
-    void drawControls() const;
-    void drawStat(const char* text, const int statIndex) const;
-    void drawCurrentPlayer(const int statIndex) const;
-    void drawHalfMoveClock(const int statIndex) const; // Draw the half move clock
-    void drawBoardState(const int statIndex) const; // Draw the FEN representation of the board state
-    void drawEngineControls() const;
+    // GUI Components
+    std::unique_ptr<BoardComp> boardComp;
+    std::unique_ptr<StatsPanel> statsPanel;
+    std::unique_ptr<EngineComp> engineComp;
+    std::unique_ptr<GameOverlay> gameOverlay;
 };

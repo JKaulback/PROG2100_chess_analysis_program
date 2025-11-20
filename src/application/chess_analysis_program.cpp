@@ -7,7 +7,7 @@ ChessAnalysisProgram::ChessAnalysisProgram() :
     board{}, gameState{board}, fenStateHistory{}, moveValidator{},
     inputHandler{*this}, gameStateAnalyzer{}, 
     uciEngine{std::make_unique<UCIEngine>("src/analysis_engine/stockfish.exe")},
-    gui{*this}, currentGameState{GameState::IN_PROGRESS}
+    gui{std::make_unique<ChessGUI>(*this)}, currentGameState{GameState::IN_PROGRESS}
     {
     // Try to load initial position from FEN file
     FENLoader::loadFromFile("initial_position.fen", *this);
@@ -20,8 +20,8 @@ ChessAnalysisProgram::~ChessAnalysisProgram()
 void ChessAnalysisProgram::run() {
     // Main loop
     while (!WindowShouldClose()) { // Detect window close button or ESC key
-        inputHandler.handleInput(gui); // Input handler processes input through controller
-        gui.draw(); // GUI only renders
+        inputHandler.handleInput(*gui); // Input handler processes input through controller
+        gui->draw(); // GUI only renders
     }
 }
 
@@ -154,9 +154,6 @@ std::string ChessAnalysisProgram::getGameOverString() const {
         case GameState::DRAW_INSUFFICIENT_MATERIAL:
             gameOverText = GOCfg::DRAW_INSUFFICIENT_MATERIAL_STRING;
             break;
-        case GameState::IN_PROGRESS:
-            gameOverText = ""; // No game over message
-            break;
         default:
             gameOverText = GOCfg::ERROR_STRING;
             break;
@@ -166,7 +163,7 @@ std::string ChessAnalysisProgram::getGameOverString() const {
 
 // Update GUI state on change (reactive vs polling)
 void ChessAnalysisProgram::setUCIEngineStateInGUI(const bool isEnabled) {
-    gui.setIsUCIEngineRunning(isEnabled);
+    gui->setIsUCIEngineRunning(isEnabled);
 }
 
 // FEN loader support methods
