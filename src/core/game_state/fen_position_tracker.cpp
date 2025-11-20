@@ -87,7 +87,10 @@ std::string FENPositionTracker::getBoardState(const ChessBoard& board) const {
     std::string positionString = "";
     int emptyCount = 0;
 
-    for (int rank = BoardCfg::MIN_RANK; rank <= BoardCfg::MAX_RANK; rank++) {
+    // FEN notation goes from rank 8 to rank 1 (top to bottom)  
+    // Our internal representation: rank 7 = FEN rank 8, rank 0 = FEN rank 1
+    for (int rank = BoardCfg::MAX_RANK; rank >= BoardCfg::MIN_RANK; rank--) {
+        
         for (int file = BoardCfg::MIN_FILE; file <= BoardCfg::MAX_FILE; file++) {
             
             char piece = board.getPieceAt(rank, file);
@@ -104,11 +107,16 @@ std::string FENPositionTracker::getBoardState(const ChessBoard& board) const {
 
             positionString += std::string(1, piece);
         }
-        if (emptyCount > 0)
-            positionString += std::to_string(emptyCount);
         
-        if (rank != BoardCfg::MAX_RANK)
+        // Add remaining empty squares at end of rank
+        if (emptyCount > 0) {
+            positionString += std::to_string(emptyCount);
+        }
+        
+        // Add rank separator (except for the last rank)
+        if (rank != BoardCfg::MIN_RANK) {
             positionString += "/";
+        }
     }
 
     return positionString;
