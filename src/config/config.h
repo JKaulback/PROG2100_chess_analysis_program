@@ -105,7 +105,7 @@ namespace Config {
 
         constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4; // 3/4 over
         constexpr int START_DRAW_Y = Window::HEIGHT / 8; // Start at top 1/4
-        constexpr int DRAW_STEP_Y = STATS_FONT_SIZE_PX; // Single spaced
+        constexpr int DRAW_STEP_Y = STATS_FONT_SIZE_PX + 12; // Single spaced
     }
 
     namespace Controls {
