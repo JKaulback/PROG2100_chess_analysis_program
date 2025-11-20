@@ -222,7 +222,8 @@ void ChessGUI::setIsUCIEngineRunning(const bool isRunning) {
 }
 
 void ChessGUI::drawStats() const{
-    drawHalfMoveClock(0);
+    drawCurrentPlayer(0);
+    drawHalfMoveClock(1);
     // drawBoardState(12); // FOR DEBUGGING
 }
 
@@ -230,18 +231,22 @@ void ChessGUI::drawControls() const {
     drawEngineControls();
 }
 
-void ChessGUI::drawHalfMoveClock(const int statIndex) const {
-    DrawText(TextFormat("HALFMOVE CLOCK: %i", controller.getHalfmoveClock()),
-        StatsCfg::START_DRAW_X, 
+void ChessGUI::drawStat(const char* text, const int statIndex) const {
+    DrawText(text, StatsCfg::START_DRAW_X + 100,
         StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex),
         StatsCfg::STATS_FONT_SIZE_PX, StatsCfg::STATS_FONT_COLOR);
 }
 
+void ChessGUI::drawCurrentPlayer(const int statIndex) const {
+    drawStat(TextFormat("CURRENT PLAYER: %c", controller.getCurrentPlayer()), statIndex);
+}
+
+void ChessGUI::drawHalfMoveClock(const int statIndex) const {
+    drawStat(TextFormat("HALFMOVE CLOCK: %i", controller.getHalfmoveClock()), statIndex);
+}
+
 void ChessGUI::drawBoardState(const int statIndex) const {
-    DrawText(TextFormat("BOARD STATE:\n%s", controller.getCurrentFENString().c_str()),
-        StatsCfg::START_DRAW_X - 300,
-        StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex),
-        StatsCfg::STATS_FONT_SIZE_PX, StatsCfg::STATS_FONT_COLOR);
+    drawStat(TextFormat("BOARD STATE:\n%s", controller.getCurrentFENString().c_str()), statIndex);
 }
 
 void ChessGUI::drawEngineControls() const {

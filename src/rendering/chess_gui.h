@@ -41,6 +41,8 @@ private:
     void drawGameOverScreen() const; // Draw a game over screen to overlay UI
     void drawStats() const;
     void drawControls() const;
+    void drawStat(const char* text, const int statIndex) const;
+    void drawCurrentPlayer(const int statIndex) const;
     void drawHalfMoveClock(const int statIndex) const; // Draw the half move clock
     void drawBoardState(const int statIndex) const; // Draw the FEN representation of the board state
     void drawEngineControls() const;
