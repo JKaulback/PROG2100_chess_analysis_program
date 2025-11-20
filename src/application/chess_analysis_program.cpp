@@ -4,9 +4,11 @@
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
-    board{}, gameState{board}, fenStateHistory{}, gui{*this}, inputHandler{*this}, moveValidator{}, gameStateAnalyzer{},
+    board{}, gameState{board}, fenStateHistory{}, moveValidator{}, gui{*this},
+    inputHandler{*this}, gameStateAnalyzer{}, 
+    uciEngine{std::make_unique<UCIEngine>("src/analysis_engine/stockfish.exe")}, 
     currentGameState{GameState::IN_PROGRESS}
-{
+    {
     // Try to load initial position from FEN file
     FENLoader::loadFromFile("initial_position.fen", *this);
 }
@@ -189,4 +191,24 @@ void ChessAnalysisProgram::setHalfmoveClock(const int halfmoves) {
 
 void ChessAnalysisProgram::setFullmoveClock(const int fullmoves) {
     gameState.setFullmoveClock(fullmoves);
+}
+
+void ChessAnalysisProgram::enableUCIEngine() {
+    uciEngine->enable();
+}
+
+void ChessAnalysisProgram::disableUCIEngine() {
+    uciEngine->disable();
+}
+
+bool ChessAnalysisProgram::isUCIEngineEnabled() {
+    return uciEngine->isEnabled();
+}
+
+void ChessAnalysisProgram::setUCIEnginePosition(const std::string& startFen, const std::vector<std::string>& moves) {
+    uciEngine->setPosition(startFen, moves);
+}
+
+EngineAnalysis ChessAnalysisProgram::pollUCIEngineAnalysis() {
+    return uciEngine->pollAnalysis();
 }

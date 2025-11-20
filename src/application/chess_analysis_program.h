@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include <vector>
+#include "../analysis_engine/uci_engine.h"
 #include "../core/chess_move_validator.h"
 #include "../core/chess_move.h"
 #include "../core/board/chess_board.h"
@@ -57,6 +58,13 @@ public:
     void clearEnPassantTarget();
     void setHalfmoveClock(const int halfmoves);
     void setFullmoveClock(const int fullmoves);
+
+    // UCI Engine state access and processing
+    void enableUCIEngine();
+    void disableUCIEngine();
+    bool isUCIEngineEnabled();
+    void setUCIEnginePosition(const std::string& startFen, const std::vector<std::string>& moves);
+    EngineAnalysis pollUCIEngineAnalysis();
 private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
@@ -73,7 +81,8 @@ private:
     ChessGUI gui; // Own the GUI object
     ChessInputHandler inputHandler; // Own the input handler object
     ChessGameStateAnalyzer gameStateAnalyzer; // Own the game state analyzer object
-    
+    std::unique_ptr<UCIEngine> uciEngine; // Own the Stockfish move analysis engine manager object
+
     // Current state
     GameState currentGameState;
 };
