@@ -107,4 +107,15 @@ namespace Config {
         constexpr int START_DRAW_Y = Window::HEIGHT / 4; // Start at top 1/4
         constexpr int DRAW_STEP_Y = STATS_FONT_SIZE_PX; // Single spaced
     }
+
+    namespace Controls {
+        constexpr int FONT_SIZE_PX = 16;
+        constexpr int FONT_SPACING = 1;
+        constexpr Color FONT_COLOR = BLACK;
+        
+        constexpr int START_DRAW_X = Window::WIDTH - Window::WIDTH / 4;
+        constexpr int START_DRAW_Y = Window::HEIGHT / 2;
+        constexpr int DRAW_STEP_Y = FONT_SIZE_PX;
+        
+    }
 }

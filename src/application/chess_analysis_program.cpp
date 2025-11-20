@@ -4,10 +4,10 @@
 namespace GOCfg = Config::GameOver;
 
 ChessAnalysisProgram::ChessAnalysisProgram() : 
-    board{}, gameState{board}, fenStateHistory{}, moveValidator{}, gui{*this},
+    board{}, gameState{board}, fenStateHistory{}, moveValidator{},
     inputHandler{*this}, gameStateAnalyzer{}, 
-    uciEngine{std::make_unique<UCIEngine>("src/analysis_engine/stockfish.exe")}, 
-    currentGameState{GameState::IN_PROGRESS}
+    uciEngine{std::make_unique<UCIEngine>("src/analysis_engine/stockfish.exe")},
+    gui{*this}, currentGameState{GameState::IN_PROGRESS}
     {
     // Try to load initial position from FEN file
     FENLoader::loadFromFile("initial_position.fen", *this);
@@ -160,6 +160,11 @@ std::string ChessAnalysisProgram::getGameOverString() const {
     return gameOverText;
 }
 
+// Update GUI state on change (reactive vs polling)
+void ChessAnalysisProgram::setUCIEngineStateInGUI(const bool isEnabled) {
+    gui.setIsUCIEngineRunning(isEnabled);
+}
+
 // FEN loader support methods
 void ChessAnalysisProgram::setPieceAt(const int rank, const int file, const char piece) {
     board.setPieceAt(rank, file, piece);
@@ -201,7 +206,18 @@ void ChessAnalysisProgram::disableUCIEngine() {
     uciEngine->disable();
 }
 
-bool ChessAnalysisProgram::isUCIEngineEnabled() {
+void ChessAnalysisProgram::toggleUCIEngine() {
+    bool isEnabled = true;
+    if (isUCIEngineEnabled()) {
+        disableUCIEngine();
+        isEnabled = false;
+    } else
+        enableUCIEngine();
+    
+    setUCIEngineStateInGUI(isEnabled);
+}
+
+bool ChessAnalysisProgram::isUCIEngineEnabled() const {
     return uciEngine->isEnabled();
 }
 

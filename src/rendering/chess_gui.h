@@ -22,11 +22,17 @@ public:
     float getSquareSize() const;
     float getPieceSize() const;
 
+    // Public setter for controller to update engine state
+    void setIsUCIEngineRunning(const bool isRunning);    
+
 private:
     // GUI Display elements
     Texture2D boardTexture; // Texture for the chess board
     std::map<std::string, Texture2D> pieceTextures;
     const ChessAnalysisProgram& controller; // Reference to the controller (const for read-only access)
+
+    // Flags for displays
+    bool isUCIEngineRunning;
     
     // Helper methods (drag state moved to controller)
     void initPieceTextures(); // Initialize all piece textures
@@ -34,6 +40,8 @@ private:
     void drawChessPieces() const; // Draw the chess pieces based on their logical position
     void drawGameOverScreen() const; // Draw a game over screen to overlay UI
     void drawStats() const;
+    void drawControls() const;
     void drawHalfMoveClock(const int statIndex) const; // Draw the half move clock
     void drawBoardState(const int statIndex) const; // Draw the FEN representation of the board state
+    void drawEngineControls() const;
 };

@@ -7,6 +7,7 @@ namespace BoardCfg = Config::Board;
 namespace PieceCfg = Config::Pieces;
 namespace GOCfg = Config::GameOver;
 namespace StatsCfg = Config::GameStatistics;
+namespace CtrlCfg = Config::Controls;
 
 ChessGUI::ChessGUI(const ChessAnalysisProgram& ctrl) : controller(ctrl) {
     InitWindow(WinCfg::WIDTH, WinCfg::HEIGHT, WinCfg::TITLE);
@@ -21,6 +22,10 @@ ChessGUI::ChessGUI(const ChessAnalysisProgram& ctrl) : controller(ctrl) {
 
     // Toggle full screen
     ToggleFullscreen();
+
+    // Assume UCI engine not started on startup 
+    // (sync not available until engine is configured)
+    isUCIEngineRunning =  false;
 }
 
 ChessGUI::~ChessGUI() {
@@ -67,14 +72,15 @@ void ChessGUI::draw() const {
     // Draw the stats
     drawStats();
 
+    // Draw the controls
+    drawControls();
+
     // Check for game over
     if (controller.isGameOver())
         drawGameOverScreen();
 
     EndDrawing();
 }
-
-
 
 Vector2 ChessGUI::screenPosToBoardPos(const Vector2 screenPos) const {
     int file = static_cast<int>((screenPos.x - BoardCfg::OFFSET_X) / BoardCfg::SQUARE_SIZE);
@@ -211,9 +217,17 @@ float ChessGUI::getPieceSize() const {
     return PieceCfg::SIZE;
 }
 
+void ChessGUI::setIsUCIEngineRunning(const bool isRunning) {
+    isUCIEngineRunning = isRunning;
+}
+
 void ChessGUI::drawStats() const{
     drawHalfMoveClock(0);
     // drawBoardState(12); // FOR DEBUGGING
+}
+
+void ChessGUI::drawControls() const {
+    drawEngineControls();
 }
 
 void ChessGUI::drawHalfMoveClock(const int statIndex) const {
@@ -228,4 +242,16 @@ void ChessGUI::drawBoardState(const int statIndex) const {
         StatsCfg::START_DRAW_X - 300,
         StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex),
         StatsCfg::STATS_FONT_SIZE_PX, StatsCfg::STATS_FONT_COLOR);
+}
+
+void ChessGUI::drawEngineControls() const {
+    std::string engineControlsText =
+        (isUCIEngineRunning) ?
+        "Press (x) to stop move analysis" :
+        "Press (x) to start move analysis";
+    
+    DrawText(engineControlsText.c_str(),
+        CtrlCfg::START_DRAW_X - 300,
+        CtrlCfg::START_DRAW_Y,
+        CtrlCfg::FONT_SIZE_PX, CtrlCfg::FONT_COLOR);
 }

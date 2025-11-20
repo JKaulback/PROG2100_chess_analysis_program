@@ -21,6 +21,9 @@ public:
     int getDraggedPieceFile() const;
     Vector2 getDragOffset() const;
     char getDraggedPiece() const;
+
+    // Toggle UCIEngine (start and stop engine)
+    void toggleUCIEngine();
 private:
     // Drag and drop state
     bool isDragging; // Whether a piece is being dragged

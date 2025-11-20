@@ -57,6 +57,10 @@ void ChessInputHandler::handleInput(const ChessGUI& gui) {
         // Stop dragging regardless of move success
         resetDragState();
     }
+
+    if (IsKeyPressed(KEY_X)) {
+        controller.toggleUCIEngine();
+    }
 }
 
 void ChessInputHandler::resetDragState() {

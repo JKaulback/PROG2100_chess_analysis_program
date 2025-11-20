@@ -62,13 +62,15 @@ public:
     // UCI Engine state access and processing
     void enableUCIEngine();
     void disableUCIEngine();
-    bool isUCIEngineEnabled();
+    void toggleUCIEngine();
+    bool isUCIEngineEnabled() const;
     void setUCIEnginePosition(const std::string& startFen, const std::vector<std::string>& moves);
     EngineAnalysis pollUCIEngineAnalysis();
 private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
-private:
+    void setUCIEngineStateInGUI(const bool isEnabled);
+
     // Game State Management
     ChessBoard board;
     ChessGameState gameState;    
