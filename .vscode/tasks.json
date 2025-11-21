@@ -14,6 +14,7 @@
                 "src/core/board/chess_board.cpp",
                 "src/core/game_state/*.cpp",
                 "src/core/*.cpp",
+                "src/core/validators/*.cpp",
                 "src/rendering/chess_gui.cpp",
                 "src/rendering/components/*.cpp",
                 "src/input/chess_input_handler.cpp",

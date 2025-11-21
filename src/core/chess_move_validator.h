@@ -6,6 +6,10 @@
 #include "board/chess_board.h"
 #include "game_state/chess_game_state.h"
 #include "chess_move.h"
+#include "validators/basic_move_validator.h"
+#include "validators/piece_movement_validator.h"
+#include "validators/special_move_validator.h"
+#include "validators/check_validator.h"
 
 class ChessMoveValidator {
 public:
@@ -27,35 +31,24 @@ public:
     ChessMoveValidator() = default;
     ~ChessMoveValidator() = default;
 
-    // Main validation function - currently only checks board boundaries
+    // Main validation function
     MoveResult validateMove(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
 
-    // Helper function for move and state validation
-    bool isSquareUnderAttack(const ChessBoard& board, const ChessGameState& gameState, const int defRank, const int defFile, const char attackingPlayer) const;
-    bool wouldLeaveKingInCheck(const ChessBoard& board, const ChessGameState& gameState ,const ChessMove& move) const;
+    // Helper functions for result validation
     bool isValidMoveResult(const MoveResult result) const;
     bool isInvalidMoveResult(const MoveResult result) const;
-private:    
-    // Chess rule validation
-    bool validatePieceMovement(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
-    bool checkDestinationSquare(const ChessBoard& board, const ChessMove& move) const;
-    
-    // Helper function for sliding pieces (rook, bishop, queen)
-    bool isPathClearForSlidingPiece(const ChessBoard& board, const ChessMove& move) const;
-    
-    // Helper functions for check detection
-    bool validateBasicPieceMovement(const ChessBoard& board, const ChessGameState& gameState, const char piece, const ChessMove& move) const;
 
-    // Piece specific validation (only pawn needs special handling)
-    bool validatePawnMove(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
+    // Delegate methods for backward compatibility (if needed)
+    bool isSquareUnderAttack(const ChessBoard& board, const ChessGameState& gameState, const int defRank, const int defFile, const char attackingPlayer) const;
+    bool wouldLeaveKingInCheck(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
 
-    // Castling validation methods
-    bool validateCastling(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
-    bool canCastle(const ChessBoard& board, const ChessGameState& gameState, const char player, const bool isKingside) const;
+private:
+    // Specialized validators
+    BasicMoveValidator basicValidator;
+    PieceMovementValidator pieceValidator;
+    SpecialMoveValidator specialValidator;
+    CheckValidator checkValidator;
     
-    // En passant validation method
-    bool validateEnPassant(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
-
-    // Promotion validation method
-    bool validatePromotion(const ChessBoard& board, const ChessGameState& gameState, const ChessMove& move) const;
+    // Helper method to convert BasicMoveValidator result to MoveResult
+    MoveResult convertBasicResult(BasicMoveValidator::ValidationResult result) const;
 };
