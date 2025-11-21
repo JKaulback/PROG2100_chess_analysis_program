@@ -71,6 +71,10 @@ public:
     
     // Game reset functionality
     void resetToInitialPosition();
+    
+    // Board display options
+    void toggleBoardFlip() { isBoardFlipped = !isBoardFlipped; }
+    bool getBoardFlipped() const { return isBoardFlipped; }
 private:
     // Helper methods
     bool isValidMoveResult(MoveResult result) const; // Check if move result indicates success
@@ -92,4 +96,7 @@ private:
 
     // Current state
     GameState currentGameState;
+    
+    // Display options
+    bool isBoardFlipped = false;
 };

@@ -19,6 +19,12 @@ void PieceRenderer::draw() const {
 Vector2 PieceRenderer::screenPosToBoardPos(const Vector2 pos) const {
     int file = static_cast<int>((pos.x - BoardCfg::OFFSET_X) / BoardCfg::SQUARE_SIZE);
     int rank = BoardCfg::MAX_RANK - static_cast<int>((pos.y - BoardCfg::OFFSET_Y) / BoardCfg::SQUARE_SIZE);
+    
+    // Flip coordinates if board is flipped (viewing from black's perspective)
+    if (controller.getBoardFlipped()) {
+        file = BoardCfg::MAX_FILE - file;
+        rank = BoardCfg::MAX_RANK - rank;
+    }
 
     return {
         static_cast<float>(file), 
@@ -27,9 +33,18 @@ Vector2 PieceRenderer::screenPosToBoardPos(const Vector2 pos) const {
 }
 
 Vector2 PieceRenderer::boardPosToScreenPos(const Vector2 pos) const {
+    float displayFile = pos.x;
+    float displayRank = pos.y;
+    
+    // Flip coordinates if board is flipped (viewing from black's perspective)
+    if (controller.getBoardFlipped()) {
+        displayFile = BoardCfg::MAX_FILE - pos.x;
+        displayRank = BoardCfg::MAX_RANK - pos.y;
+    }
+    
     return {
-        BoardCfg::OFFSET_X + (pos.x * BoardCfg::SQUARE_SIZE) + PieceCfg::CENTER_OFFSET,
-        BoardCfg::OFFSET_Y + ((BoardCfg::MAX_RANK - pos.y) * BoardCfg::SQUARE_SIZE) + PieceCfg::CENTER_OFFSET,
+        BoardCfg::OFFSET_X + (displayFile * BoardCfg::SQUARE_SIZE) + PieceCfg::CENTER_OFFSET,
+        BoardCfg::OFFSET_Y + ((BoardCfg::MAX_RANK - displayRank) * BoardCfg::SQUARE_SIZE) + PieceCfg::CENTER_OFFSET,
     };
 }
 

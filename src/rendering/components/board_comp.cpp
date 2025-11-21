@@ -10,7 +10,7 @@ BoardComp::BoardComp(const ChessAnalysisProgram& controller) :
     // Initialize all rendering components
     textureManager = std::make_unique<TextureManager>(controller);
     boardRenderer = std::make_unique<BoardRenderer>(*textureManager);
-    coordinateRenderer = std::make_unique<CoordinateRenderer>();
+    coordinateRenderer = std::make_unique<CoordinateRenderer>(controller);
     pieceRenderer = std::make_unique<PieceRenderer>(controller, *textureManager);
 }
 

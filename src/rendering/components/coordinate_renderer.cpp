@@ -1,7 +1,11 @@
 #include "coordinate_renderer.h"
 #include "../../config/config.h"
+#include "../../application/chess_analysis_program.h"
 
 namespace BoardCfg = Config::Board;
+
+CoordinateRenderer::CoordinateRenderer(const ChessAnalysisProgram& controller) : controller(controller) {
+}
 
 void CoordinateRenderer::draw() const {
     drawCoordinates();
@@ -15,7 +19,8 @@ void CoordinateRenderer::drawCoordinates() const {
     
     // Draw file letters (a-h) at bottom and top
     for (int file = 0; file < 8; file++) {
-        char fileLetter = 'a' + file;
+        // Choose the correct file letter based on board orientation
+        char fileLetter = controller.getBoardFlipped() ? ('h' - file) : ('a' + file);
         const float xPos = BoardCfg::OFFSET_X + (file * BoardCfg::SQUARE_SIZE) + (BoardCfg::SQUARE_SIZE / 2) - (fontSize / 3);
         
         // Bottom labels with enhanced contrast
@@ -45,7 +50,8 @@ void CoordinateRenderer::drawCoordinates() const {
     
     // Draw rank numbers (1-8) at left and right
     for (int rank = 0; rank < 8; rank++) {
-        int rankNumber = rank + 1;
+        // Choose the correct rank number based on board orientation
+        int rankNumber = controller.getBoardFlipped() ? (8 - rank) : (rank + 1);
         const float yPos = BoardCfg::OFFSET_Y + ((7 - rank) * BoardCfg::SQUARE_SIZE) + (BoardCfg::SQUARE_SIZE / 2) - (fontSize / 2);
         
         // Left labels with enhanced contrast
