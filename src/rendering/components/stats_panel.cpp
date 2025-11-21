@@ -1,6 +1,8 @@
 #include "stats_panel.h"
 #include "../../config/config.h"
 
+namespace StatsPanelCfg = Config::StatsPanel;
+
 StatsPanel::StatsPanel(const ChessAnalysisProgram& controller) :
     controller(controller) {}
 
@@ -11,10 +13,10 @@ void StatsPanel::draw() const {
 Rectangle StatsPanel::getPanelBounds() const {
     // Position below the engine analysis panel
     return Rectangle{
-        Config::Window::WIDTH - PANEL_WIDTH,  // Align to right edge
+        Config::Window::WIDTH - StatsPanelCfg::PANEL_WIDTH,  // Align to right edge
         350,  // Position below engine analysis (which ends around 350px)
-        PANEL_WIDTH,
-        PANEL_HEIGHT
+        StatsPanelCfg::PANEL_WIDTH,
+        StatsPanelCfg::PANEL_HEIGHT
     };
 }
 
@@ -40,7 +42,7 @@ void StatsPanel::drawStatsPanel() const {
     drawPanelTitle();
     
     // Draw statistics with dynamic positioning
-    int currentY = panelBounds.y + TITLE_HEIGHT + 8 + PANEL_PADDING;
+    int currentY = panelBounds.y + StatsPanelCfg::TITLE_HEIGHT + 8 + StatsPanelCfg::PANEL_PADDING;
     drawCurrentPlayer(currentY);
     drawHalfMoveClock(currentY);
     drawGameStatus(currentY);
@@ -55,7 +57,7 @@ void StatsPanel::drawPanelTitle() const {
         panelBounds.x,
         panelBounds.y,
         panelBounds.width,
-        TITLE_HEIGHT + 4
+        StatsPanelCfg::TITLE_HEIGHT + 4
     };
     DrawRectangle(titleRect.x, titleRect.y, titleRect.width, titleRect.height, 
                   Color{225, 230, 235, 255});
@@ -65,8 +67,8 @@ void StatsPanel::drawPanelTitle() const {
                   Color{180, 185, 190, 255});
     
     // Draw title text
-    const char* title = "GAME STATISTICS";
-    int titleX = panelBounds.x + PANEL_PADDING;
+    const char* title = StatsPanelCfg::TITLE_TEXT;
+    int titleX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
     int titleY = panelBounds.y + 10;
     
     drawText(title, titleX, titleY, 20, Color{70, 75, 80, 255});
@@ -75,8 +77,8 @@ void StatsPanel::drawPanelTitle() const {
 void StatsPanel::drawStat(const std::string& label, const std::string& value, int& currentY) const {
     Rectangle panelBounds = getPanelBounds();
     
-    int labelX = panelBounds.x + PANEL_PADDING;
-    int valueX = panelBounds.x + PANEL_PADDING + 140; // Fixed offset for alignment
+    int labelX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
+    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + 140; // Fixed offset for alignment
     
     // Draw label
     drawText(label, labelX, currentY, 17, Color{90, 95, 100, 255});
@@ -84,7 +86,7 @@ void StatsPanel::drawStat(const std::string& label, const std::string& value, in
     // Draw value
     drawText(value, valueX, currentY, 17, Color{40, 45, 50, 255});
     
-    currentY += LINE_HEIGHT + 4;
+    currentY += StatsPanelCfg::LINE_HEIGHT + 4;
 }
 
 void StatsPanel::drawCurrentPlayer(int& currentY) const {
@@ -93,13 +95,13 @@ void StatsPanel::drawCurrentPlayer(int& currentY) const {
     Color playerColor = (player == 'w') ? Color{100, 100, 100, 255} : Color{60, 60, 60, 255};
     
     Rectangle panelBounds = getPanelBounds();
-    int labelX = panelBounds.x + PANEL_PADDING;
-    int valueX = panelBounds.x + PANEL_PADDING + 140;
+    int labelX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
+    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + 140;
     
     drawText("Current Player:", labelX, currentY, 17, Color{90, 95, 100, 255});
     drawText(playerName, valueX, currentY, 17, playerColor);
     
-    currentY += LINE_HEIGHT + 4;
+    currentY += StatsPanelCfg::LINE_HEIGHT + 4;
 }
 
 void StatsPanel::drawHalfMoveClock(int& currentY) const {
@@ -120,13 +122,13 @@ void StatsPanel::drawGameStatus(int& currentY) const {
     }
     
     Rectangle panelBounds = getPanelBounds();
-    int labelX = panelBounds.x + PANEL_PADDING;
-    int valueX = panelBounds.x + PANEL_PADDING + 140;
+    int labelX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
+    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + 140;
     
     drawText("Game Status:", labelX, currentY, 17, Color{90, 95, 100, 255});
     drawText(status, valueX, currentY, 17, statusColor);
     
-    currentY += LINE_HEIGHT + 4;
+    currentY += StatsPanelCfg::LINE_HEIGHT + 4;
 }
 
 void StatsPanel::drawCapturedPieces(int& currentY) const {

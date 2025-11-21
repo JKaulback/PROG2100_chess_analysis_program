@@ -123,4 +123,68 @@ namespace Config {
         constexpr int DRAW_STEP_Y = FONT_SIZE_PX;
         
     }
+
+    // UI Component Configuration
+    namespace EngineDialog {
+        constexpr int DIALOG_WIDTH = 450;
+        constexpr int DIALOG_HEIGHT = 350;
+        constexpr int DIALOG_PADDING = 20;
+        constexpr int LINE_HEIGHT = 28;
+        constexpr int TITLE_HEIGHT = 38;
+        constexpr const char* TITLE_TEXT = "ENGINE ANALYSIS";
+    }
+
+    namespace StatsPanel {
+        constexpr int PANEL_WIDTH = 450;
+        constexpr int PANEL_HEIGHT = 200;
+        constexpr int PANEL_PADDING = 20;
+        constexpr int LINE_HEIGHT = 24;
+        constexpr int TITLE_HEIGHT = 36;
+        constexpr const char* TITLE_TEXT = "GAME STATISTICS";
+    }
+
+    namespace Coordinates {
+        constexpr int FONT_SIZE = 24;
+        constexpr float TOP_OFFSET = 35.0f;
+        constexpr float LEFT_OFFSET = 35.0f;
+        constexpr Color LABEL_COLOR = {220, 220, 220, 255};  // Light gray for high contrast
+        constexpr Color SHADOW_COLOR = {20, 25, 35, 200};    // Dark shadow matching background
+        constexpr Color OUTLINE_COLOR = {40, 50, 65, 255};   // Dark outline for definition
+    }
+
+    namespace CapturedPieces {
+        constexpr int LABEL_FONT_SIZE = 16;
+        constexpr float LABEL_OFFSET = 15.0f;
+        constexpr Color LABEL_COLOR = {139, 69, 19, 255}; // Same brown as border
+        constexpr Color WHITE_BACKGROUND = {240, 228, 210, 255};  // Light cream for white pieces
+        constexpr Color BLACK_BACKGROUND = {139, 114, 85, 255};   // Darker brown for black pieces
+    }
+
+    // Visual styling constants
+    namespace Borders {
+        constexpr float BOARD_BORDER_WIDTH = 8.0f;
+        constexpr float CAPTURED_BORDER_WIDTH = 6.0f;
+        constexpr float SHADOW_OFFSET_BOARD = 6.0f;
+        constexpr float SHADOW_OFFSET_CAPTURED = 4.0f;
+        constexpr float ACCENT_WIDTH_BOARD = 2.0f;
+        constexpr float ACCENT_WIDTH_CAPTURED = 1.5f;
+        constexpr float HIGHLIGHT_WIDTH = 1.0f;
+        
+        // Colors
+        constexpr Color BORDER_COLOR = {139, 69, 19, 255};      // Saddle brown - elegant wood color
+        constexpr Color INNER_BORDER = {160, 82, 45, 255};      // Lighter brown accent
+        constexpr Color SHADOW_COLOR = {0, 0, 0, 60};           // Subtle shadow
+        constexpr Color HIGHLIGHT_COLOR = {205, 133, 63, 255};  // Peru - lighter highlight
+    }
+
+    namespace Decorations {
+        constexpr float CORNER_SIZE_BOARD = 16.0f;
+        constexpr float CORNER_SIZE_CAPTURED = 12.0f;
+        constexpr float CORNER_OFFSET_BOARD = 4.0f;
+        constexpr float CORNER_OFFSET_CAPTURED = 3.0f;
+        constexpr float CORNER_INSET_BOARD = 12.0f;
+        constexpr float CORNER_INSET_CAPTURED = 9.0f;
+        constexpr Color DECOR_COLOR = {205, 133, 63, 180};  // Semi-transparent peru
+        constexpr Color ACCENT_COLOR = {139, 69, 19, 255};  // Saddle brown
+    }
 }

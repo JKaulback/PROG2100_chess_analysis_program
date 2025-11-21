@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <array>
 #include <vector>
+#include "../../config/config.h"
 #include "../../application/chess_analysis_program.h"
 
 class ChessAnalysisProgram;
@@ -16,12 +17,7 @@ public:
 private:
     const ChessAnalysisProgram& controller;
 
-    // Panel properties
-    static constexpr int PANEL_WIDTH = 450;
-    static constexpr int PANEL_HEIGHT = 200;
-    static constexpr int PANEL_PADDING = 20;
-    static constexpr int LINE_HEIGHT = 24;
-    static constexpr int TITLE_HEIGHT = 36;
+    // Use Config::StatsPanel constants
     
     void drawStatsPanel() const;
     void drawPanelTitle() const;

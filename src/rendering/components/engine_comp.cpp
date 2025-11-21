@@ -1,5 +1,8 @@
 #include "engine_comp.h"
+#include "../../config/config.h"
 #include "../../analysis_engine/uci_engine.h"
+
+namespace EngineDialogCfg = Config::EngineDialog;
 
 EngineComp::EngineComp(const ChessAnalysisProgram& controller) :
     controller(controller) {
@@ -18,10 +21,10 @@ void EngineComp::setEngineRunning(bool isRunning) {
 Rectangle EngineComp::getDialogBounds() const {
     // Position as a built-in panel on the right side
     return Rectangle{
-        Config::Window::WIDTH - DIALOG_WIDTH,  // Align to right edge
+        Config::Window::WIDTH - EngineDialogCfg::DIALOG_WIDTH,  // Align to right edge
         0,  // Start from top edge
-        DIALOG_WIDTH,
-        DIALOG_HEIGHT
+        EngineDialogCfg::DIALOG_WIDTH,
+        EngineDialogCfg::DIALOG_HEIGHT
     };
 }
 
@@ -58,7 +61,7 @@ void EngineComp::drawDialogTitle() const {
         panelBounds.x,
         panelBounds.y,
         panelBounds.width,
-        TITLE_HEIGHT + 4
+        EngineDialogCfg::TITLE_HEIGHT + 4
     };
     DrawRectangle(titleRect.x, titleRect.y, titleRect.width, titleRect.height, 
                   Color{220, 225, 230, 255});
@@ -68,9 +71,9 @@ void EngineComp::drawDialogTitle() const {
                   Color{180, 185, 190, 255});
     
     // Draw title text
-    const char* title = "ENGINE ANALYSIS";
+    const char* title = EngineDialogCfg::TITLE_TEXT;
     int titleWidth = MeasureText(title, 22);
-    int titleX = panelBounds.x + DIALOG_PADDING;
+    int titleX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING;
     int titleY = panelBounds.y + 12;
     
     drawText(title, titleX, titleY, 22, Color{70, 75, 80, 255});
@@ -83,8 +86,8 @@ void EngineComp::drawEngineControls() const {
         "Press (X) to stop analysis" : 
         "Press (X) to start analysis";
     
-    int textX = panelBounds.x + DIALOG_PADDING;
-    int textY = panelBounds.y + TITLE_HEIGHT + 8 + DIALOG_PADDING;
+    int textX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING;
+    int textY = panelBounds.y + EngineDialogCfg::TITLE_HEIGHT + 8 + EngineDialogCfg::DIALOG_PADDING;
     
     drawText(controlText, textX, textY, 18, Color{90, 95, 100, 255});
 }
@@ -100,8 +103,8 @@ void EngineComp::drawEngineStatus() const {
         Color{46, 160, 67, 255} :  // Success green
         Color{220, 53, 69, 255};   // Danger red
     
-    int textX = panelBounds.x + DIALOG_PADDING;
-    int textY = panelBounds.y + TITLE_HEIGHT + 8 + DIALOG_PADDING + LINE_HEIGHT + 8;
+    int textX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING;
+    int textY = panelBounds.y + EngineDialogCfg::TITLE_HEIGHT + 8 + EngineDialogCfg::DIALOG_PADDING + EngineDialogCfg::LINE_HEIGHT + 8;
     
     drawText(statusText, textX, textY, 18, statusColor);
 }
@@ -110,19 +113,19 @@ void EngineComp::drawEngineAnalysis() const {
     Rectangle panelBounds = getDialogBounds();
     
     if (!isEngineRunning) {
-        int textX = panelBounds.x + DIALOG_PADDING;
-        int textY = panelBounds.y + TITLE_HEIGHT + 8 + DIALOG_PADDING + (LINE_HEIGHT * 3) + 10;
+        int textX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING;
+        int textY = panelBounds.y + EngineDialogCfg::TITLE_HEIGHT + 8 + EngineDialogCfg::DIALOG_PADDING + (EngineDialogCfg::LINE_HEIGHT * 3) + 10;
         
         drawText("Engine is not running.", textX, textY, 18, Color{128, 128, 128, 255});
-        drawText("Start the engine to see analysis.", textX, textY + LINE_HEIGHT, 18, Color{128, 128, 128, 255});
+        drawText("Start the engine to see analysis.", textX, textY + EngineDialogCfg::LINE_HEIGHT, 18, Color{128, 128, 128, 255});
         return;
     }
     
     EngineAnalysis analysis = controller.pollUCIEngineAnalysis();
     
     // Draw analysis header
-    int textX = panelBounds.x + DIALOG_PADDING;
-    int currentY = panelBounds.y + TITLE_HEIGHT + 8 + DIALOG_PADDING + (LINE_HEIGHT * 3) + 10;
+    int textX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING;
+    int currentY = panelBounds.y + EngineDialogCfg::TITLE_HEIGHT + 8 + EngineDialogCfg::DIALOG_PADDING + (EngineDialogCfg::LINE_HEIGHT * 3) + 10;
     
     // Convert state to readable text
     std::string stateText;
@@ -140,20 +143,18 @@ void EngineComp::drawEngineAnalysis() const {
     
     std::string engineStateText = "Engine State: " + stateText;
     drawText(engineStateText, textX, currentY, 19, stateColor);
-    currentY += LINE_HEIGHT + 5;
-    
-    // Draw separator line
-    DrawLine(textX, currentY, panelBounds.x + panelBounds.width - DIALOG_PADDING, currentY,
+    currentY += EngineDialogCfg::LINE_HEIGHT + 5;
+    DrawLine(textX, currentY, panelBounds.x + panelBounds.width - EngineDialogCfg::DIALOG_PADDING, currentY,
              Color{200, 200, 200, 255});
     currentY += 10;
     
     if (analysis.hasResult && !analysis.lines.empty()) {
         drawText("Analysis Results:", textX, currentY, 19, Color{60, 60, 60, 255});
-        currentY += LINE_HEIGHT + 5;
+        currentY += EngineDialogCfg::LINE_HEIGHT + 5;
         
         // Draw analysis lines
         for (const AnalysisLine& line : analysis.lines) {
-            if (!line.text.empty() && currentY < panelBounds.y + panelBounds.height - DIALOG_PADDING) {
+            if (!line.text.empty() && currentY < panelBounds.y + panelBounds.height - EngineDialogCfg::DIALOG_PADDING) {
                 drawAnalysisLine(line.text, line.multipv, currentY);
             }
         }
@@ -179,11 +180,11 @@ void EngineComp::drawEngineAnalysis() const {
 void EngineComp::drawAnalysisLine(const std::string& text, const int multipv, int& currentY) const {
     Rectangle panelBounds = getDialogBounds();
     
-    int textX = panelBounds.x + DIALOG_PADDING + 8; // Slight indent for analysis lines
+    int textX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING + 8; // Slight indent for analysis lines
     
     // Truncate text if it's too long to fit in the panel
     std::string displayText = text;
-    int maxWidth = DIALOG_WIDTH - (DIALOG_PADDING * 2) - 16;
+    int maxWidth = EngineDialogCfg::DIALOG_WIDTH - (EngineDialogCfg::DIALOG_PADDING * 2) - 16;
     
     while (MeasureText(displayText.c_str(), 16) > maxWidth && displayText.length() > 10) {
         displayText = displayText.substr(0, displayText.length() - 4) + "...";
@@ -199,7 +200,7 @@ void EngineComp::drawAnalysisLine(const std::string& text, const int multipv, in
     }
     
     drawText(displayText, textX, currentY, 16, lineColor);
-    currentY += LINE_HEIGHT;
+    currentY += EngineDialogCfg::LINE_HEIGHT;
 }
 
 void EngineComp::drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const {

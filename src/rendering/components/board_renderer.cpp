@@ -3,6 +3,8 @@
 #include "../../config/config.h"
 
 namespace BoardCfg = Config::Board;
+namespace DecorCfg = Config::Decorations;
+namespace BorderCfg = Config::Borders;
 
 BoardRenderer::BoardRenderer(const TextureManager& textureManager) :
     textureManager(textureManager) {
@@ -22,7 +24,7 @@ void BoardRenderer::drawBoard() const {
 }
 
 void BoardRenderer::drawBoardBorder() const {
-    const float borderWidth = 8.0f;
+    const float borderWidth = BorderCfg::BOARD_BORDER_WIDTH;
     
     // Calculate border rectangle (slightly larger than board)
     const float borderX = BoardCfg::OFFSET_X - borderWidth;
@@ -36,11 +38,11 @@ void BoardRenderer::drawBoardBorder() const {
 }
 
 void BoardRenderer::drawBorderLayers(float borderX, float borderY, float borderSize) const {
-    const float shadowOffset = 6.0f;
-    const Color borderColor = {139, 69, 19, 255};      // Saddle brown - elegant wood color
-    const Color innerBorder = {160, 82, 45, 255};      // Lighter brown accent
-    const Color shadowColor = {0, 0, 0, 60};           // Subtle shadow
-    const float accentWidth = 2.0f;
+    const float shadowOffset = BorderCfg::SHADOW_OFFSET_BOARD;
+    const Color borderColor = BorderCfg::BORDER_COLOR;
+    const Color innerBorder = BorderCfg::INNER_BORDER;
+    const Color shadowColor = BorderCfg::SHADOW_COLOR;
+    const float accentWidth = BorderCfg::ACCENT_WIDTH_BOARD;
     
     // Draw shadow (offset behind the border)
     DrawRectangle(
@@ -71,9 +73,9 @@ void BoardRenderer::drawBorderLayers(float borderX, float borderY, float borderS
 }
 
 void BoardRenderer::drawBorderHighlights(float borderX, float borderY, float borderSize) const {
-    const Color highlightColor = {205, 133, 63, 255};  // Peru - lighter highlight
-    const float accentWidth = 2.0f;
-    const float highlightWidth = 1.0f;
+    const Color highlightColor = BorderCfg::HIGHLIGHT_COLOR;
+    const float accentWidth = BorderCfg::ACCENT_WIDTH_BOARD;
+    const float highlightWidth = BorderCfg::HIGHLIGHT_WIDTH;
     
     // Top highlight
     DrawRectangle(
@@ -112,11 +114,11 @@ void BoardRenderer::drawSingleCornerDecoration(float x, float y, float cornerSiz
 }
 
 void BoardRenderer::drawCornerDecorations(float borderX, float borderY, float borderSize) const {
-    const float cornerSize = 16.0f;
-    const float cornerOffset = 4.0f;
-    const float cornerInset = 12.0f;
-    const Color decorColor = {205, 133, 63, 180};  // Semi-transparent peru
-    const Color accentColor = {139, 69, 19, 255};  // Saddle brown
+    const float cornerSize = DecorCfg::CORNER_SIZE_BOARD;
+    const float cornerOffset = DecorCfg::CORNER_OFFSET_BOARD;
+    const float cornerInset = DecorCfg::CORNER_INSET_BOARD;
+    const Color decorColor = DecorCfg::DECOR_COLOR;
+    const Color accentColor = DecorCfg::ACCENT_COLOR;
     
     // Draw all four corners using the helper method
     drawSingleCornerDecoration(borderX - cornerOffset, borderY - cornerOffset, cornerSize, decorColor, accentColor);  // Top-left

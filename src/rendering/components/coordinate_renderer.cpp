@@ -3,6 +3,7 @@
 #include "../../application/chess_analysis_program.h"
 
 namespace BoardCfg = Config::Board;
+namespace CoordCfg = Config::Coordinates;
 
 CoordinateRenderer::CoordinateRenderer(const ChessAnalysisProgram& controller) : controller(controller) {
 }
@@ -12,10 +13,10 @@ void CoordinateRenderer::draw() const {
 }
 
 void CoordinateRenderer::drawCoordinates() const {
-    const int fontSize = 24;
-    const Color labelColor = {220, 220, 220, 255};  // Light gray for high contrast
-    const Color shadowColor = {20, 25, 35, 200};    // Dark shadow matching background
-    const Color outlineColor = {40, 50, 65, 255};   // Dark outline for definition
+    const int fontSize = CoordCfg::FONT_SIZE;
+    const Color labelColor = CoordCfg::LABEL_COLOR;
+    const Color shadowColor = CoordCfg::SHADOW_COLOR;
+    const Color outlineColor = CoordCfg::OUTLINE_COLOR;
     
     // Draw file letters (a-h) at bottom and top
     for (int file = 0; file < 8; file++) {
@@ -24,7 +25,7 @@ void CoordinateRenderer::drawCoordinates() const {
         const float xPos = BoardCfg::OFFSET_X + (file * BoardCfg::SQUARE_SIZE) + (BoardCfg::SQUARE_SIZE / 2) - (fontSize / 3);
           
         // Top labels with enhanced contrast
-        const float topY = BoardCfg::OFFSET_Y - 35;
+        const float topY = BoardCfg::OFFSET_Y - CoordCfg::TOP_OFFSET;
         // Draw outline for better definition
         DrawText(TextFormat("%c", fileLetter), static_cast<int>(xPos - 1), static_cast<int>(topY), fontSize, outlineColor);
         DrawText(TextFormat("%c", fileLetter), static_cast<int>(xPos + 1), static_cast<int>(topY), fontSize, outlineColor);
@@ -43,7 +44,7 @@ void CoordinateRenderer::drawCoordinates() const {
         const float yPos = BoardCfg::OFFSET_Y + ((7 - rank) * BoardCfg::SQUARE_SIZE) + (BoardCfg::SQUARE_SIZE / 2) - (fontSize / 2);
         
         // Left labels with enhanced contrast
-        const float leftX = BoardCfg::OFFSET_X - 35;
+        const float leftX = BoardCfg::OFFSET_X - CoordCfg::LEFT_OFFSET;
         // Draw outline for better definition
         DrawText(TextFormat("%d", rankNumber), static_cast<int>(leftX - 1), static_cast<int>(yPos), fontSize, outlineColor);
         DrawText(TextFormat("%d", rankNumber), static_cast<int>(leftX + 1), static_cast<int>(yPos), fontSize, outlineColor);

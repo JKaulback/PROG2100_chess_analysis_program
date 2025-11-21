@@ -4,6 +4,9 @@
 #include "../../config/config.h"
 
 namespace BoardCfg = Config::Board;
+namespace BorderCfg = Config::Borders;
+namespace CapturedCfg = Config::CapturedPieces;
+namespace DecorCfg = Config::Decorations;
 namespace PieceCfg = Config::Pieces;
 
 CapturedPiecesRenderer::CapturedPiecesRenderer(const ChessAnalysisProgram& controller, const TextureManager& textureManager) :
@@ -89,7 +92,7 @@ void CapturedPiecesRenderer::drawCapturedPieces() const {
 }
 
 void CapturedPiecesRenderer::drawCapturedPiecesBackground(float x, float y, float width, float height, bool isWhite) const {
-    const float borderWidth = 6.0f;
+    const float borderWidth = BorderCfg::CAPTURED_BORDER_WIDTH;
     
     // Calculate border rectangle  
     const float borderX = x - borderWidth;
@@ -104,8 +107,8 @@ void CapturedPiecesRenderer::drawCapturedPiecesBackground(float x, float y, floa
     
     // Draw background for pieces (slightly different color based on side)
     Color backgroundColor = isWhite ? 
-        Color{240, 228, 210, 255} :  // Light cream for white pieces
-        Color{139, 114, 85, 255};    // Darker brown for black pieces
+        CapturedCfg::WHITE_BACKGROUND :
+        CapturedCfg::BLACK_BACKGROUND;
     
     DrawRectangle(
         static_cast<int>(x), 
@@ -117,11 +120,11 @@ void CapturedPiecesRenderer::drawCapturedPiecesBackground(float x, float y, floa
 }
 
 void CapturedPiecesRenderer::drawBorderLayers(float borderX, float borderY, float borderWidth, float borderHeight) const {
-    const float shadowOffset = 4.0f;
-    const Color borderColor = {139, 69, 19, 255};      // Saddle brown - elegant wood color
-    const Color innerBorder = {160, 82, 45, 255};      // Lighter brown accent
-    const Color shadowColor = {0, 0, 0, 60};           // Subtle shadow
-    const float accentWidth = 1.5f;
+    const float shadowOffset = BorderCfg::SHADOW_OFFSET_CAPTURED;
+    const Color borderColor = BorderCfg::BORDER_COLOR;
+    const Color innerBorder = BorderCfg::INNER_BORDER;
+    const Color shadowColor = BorderCfg::SHADOW_COLOR;
+    const float accentWidth = BorderCfg::ACCENT_WIDTH_CAPTURED;
     
     // Draw shadow (offset behind the border)
     DrawRectangle(
@@ -152,9 +155,9 @@ void CapturedPiecesRenderer::drawBorderLayers(float borderX, float borderY, floa
 }
 
 void CapturedPiecesRenderer::drawBorderHighlights(float borderX, float borderY, float borderWidth, float borderHeight) const {
-    const Color highlightColor = {205, 133, 63, 255};  // Peru - lighter highlight
-    const float accentWidth = 1.5f;
-    const float highlightWidth = 1.0f;
+    const Color highlightColor = BorderCfg::HIGHLIGHT_COLOR;
+    const float accentWidth = BorderCfg::ACCENT_WIDTH_CAPTURED;
+    const float highlightWidth = BorderCfg::HIGHLIGHT_WIDTH;
     
     // Top highlight
     DrawRectangle(
@@ -176,11 +179,11 @@ void CapturedPiecesRenderer::drawBorderHighlights(float borderX, float borderY, 
 }
 
 void CapturedPiecesRenderer::drawCornerDecorations(float borderX, float borderY, float borderWidth, float borderHeight) const {
-    const float cornerSize = 12.0f;
-    const float cornerOffset = 3.0f;
-    const float cornerInset = 9.0f;
-    const Color decorColor = {205, 133, 63, 180};  // Semi-transparent peru
-    const Color accentColor = {139, 69, 19, 255};  // Saddle brown
+    const float cornerSize = DecorCfg::CORNER_SIZE_CAPTURED;
+    const float cornerOffset = DecorCfg::CORNER_OFFSET_CAPTURED;
+    const float cornerInset = DecorCfg::CORNER_INSET_CAPTURED;
+    const Color decorColor = DecorCfg::DECOR_COLOR;
+    const Color accentColor = DecorCfg::ACCENT_COLOR;
     
     // Draw all four corners using the helper method
     drawSingleCornerDecoration(borderX - cornerOffset, borderY - cornerOffset, cornerSize, decorColor, accentColor);  // Top-left
@@ -223,9 +226,9 @@ std::pair<int, int> CapturedPiecesRenderer::getCapturedPiecePosition(const int n
 }
 
 void CapturedPiecesRenderer::drawCapturedPiecesLabels(float whiteX, float whiteY, float blackX, float blackY, float width, bool isFlipped) const {
-    const int labelFontSize = 16;
-    const Color labelColor = {139, 69, 19, 255}; // Same brown as border
-    const float labelOffset = 15.0f; // Increased from 5.0f to 15.0f for more space
+    const int labelFontSize = CapturedCfg::LABEL_FONT_SIZE;
+    const Color labelColor = CapturedCfg::LABEL_COLOR;
+    const float labelOffset = CapturedCfg::LABEL_OFFSET;
     
     // Determine which labels go where based on flip state
     const char* topLabel = isFlipped ? "Black Captured" : "White Captured";

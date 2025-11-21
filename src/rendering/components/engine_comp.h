@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include "../../config/config.h"
 #include "../../application/chess_analysis_program.h"
 
 class ChessAnalysisProgram;
@@ -15,13 +16,6 @@ public:
 private:
     const ChessAnalysisProgram& controller;
     bool isEngineRunning;
-    
-    // Dialog window properties
-    static constexpr int DIALOG_WIDTH = 450;
-    static constexpr int DIALOG_HEIGHT = 350;
-    static constexpr int DIALOG_PADDING = 20;
-    static constexpr int LINE_HEIGHT = 28;
-    static constexpr int TITLE_HEIGHT = 38;
     
     void drawDialogWindow() const;
     void drawDialogTitle() const;
