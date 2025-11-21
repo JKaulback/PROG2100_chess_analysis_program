@@ -199,4 +199,13 @@ namespace Config {
         constexpr Color DECOR_COLOR = {205, 133, 63, 180};  // Semi-transparent peru
         constexpr Color ACCENT_COLOR = {139, 69, 19, 255};  // Saddle brown
     }
+
+    namespace MovesPanel {
+        constexpr int PANEL_WIDTH = 400;
+        constexpr int PANEL_HEIGHT = 750;
+        constexpr int PANEL_PADDING = 20;
+        constexpr int LINE_HEIGHT = 22;
+        constexpr int TITLE_HEIGHT = 36;
+        constexpr const char* TITLE_TEXT = "MOVE HISTORY";
+    }
 }

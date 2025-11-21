@@ -1,4 +1,5 @@
 #include "engine_comp.h"
+#include "ui_renderer.h"
 #include "../../config/config.h"
 #include "../../analysis_engine/uci_engine.h"
 
@@ -33,20 +34,10 @@ Rectangle EngineComp::getDialogBounds() const {
 void EngineComp::drawDialogWindow() const {
     Rectangle panelBounds = getDialogBounds();
     
-    // Draw main panel background with subtle gradient effect
-    DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
-                  Color{240, 242, 245, 255});
-    
-    // Draw right border to separate from main content
-    DrawRectangle(panelBounds.x + panelBounds.width - 2, panelBounds.y, 2, panelBounds.height, 
-                  Color{200, 205, 210, 255});
-    
-    // Draw subtle inner shadow along the right edge
-    for (int i = 0; i < 8; i++) {
-        unsigned char alpha = static_cast<unsigned char>(20 - (i * 2));
-        DrawRectangle(panelBounds.x + panelBounds.width - 10 + i, panelBounds.y, 1, panelBounds.height, 
-                      Color{0, 0, 0, alpha});
-    }
+    // Draw panel using UIRenderer
+    UIRenderer::drawPanelBackground(panelBounds, UIRenderer::PanelStyle::Engine);
+    UIRenderer::drawPanelBorder(panelBounds);
+    UIRenderer::drawPanelShadowRight(panelBounds, 8);
     
     // Draw content
     drawDialogTitle();
@@ -57,28 +48,8 @@ void EngineComp::drawDialogWindow() const {
 
 void EngineComp::drawDialogTitle() const {
     Rectangle panelBounds = getDialogBounds();
-    
-    // Draw title bar background
-    Rectangle titleRect = {
-        panelBounds.x,
-        panelBounds.y,
-        panelBounds.width,
-        EngineDialogCfg::TITLE_HEIGHT + 4
-    };
-    DrawRectangle(titleRect.x, titleRect.y, titleRect.width, titleRect.height, 
-                  Color{220, 225, 230, 255});
-    
-    // Draw bottom border of title bar
-    DrawRectangle(titleRect.x, titleRect.y + titleRect.height - 1, titleRect.width, 1, 
-                  Color{180, 185, 190, 255});
-    
-    // Draw title text
-    const char* title = EngineDialogCfg::TITLE_TEXT;
-    int titleWidth = MeasureText(title, 22);
-    int titleX = panelBounds.x + EngineDialogCfg::DIALOG_PADDING;
-    int titleY = panelBounds.y + 12;
-    
-    drawText(title, titleX, titleY, 22, Color{70, 75, 80, 255});
+    UIRenderer::drawPanelTitle(panelBounds, EngineDialogCfg::TITLE_TEXT, 
+                              EngineDialogCfg::TITLE_HEIGHT, EngineDialogCfg::DIALOG_PADDING);
 }
 
 void EngineComp::drawEngineControls() const {
@@ -206,7 +177,5 @@ void EngineComp::drawAnalysisLine(const std::string& text, const int multipv, in
 }
 
 void EngineComp::drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const {
-    // Draw text with subtle shadow for better readability
-    DrawText(text.c_str(), x + 1, y + 1, fontSize, Color{0, 0, 0, 30});
-    DrawText(text.c_str(), x, y, fontSize, textColor);
+    UIRenderer::drawTextWithShadow(text, x, y, fontSize, textColor);
 }

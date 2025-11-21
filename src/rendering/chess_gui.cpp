@@ -4,11 +4,12 @@
 namespace WinCfg = Config::Window;
 
 ChessGUI::ChessGUI(const ChessAnalysisProgram& controller): 
-    controller(controller), boardComp(std::make_unique<BoardComp>(controller)), 
-    statsPanel(std::make_unique<StatsPanel>(controller)), 
+    controller(controller), boardComp(std::make_unique<BoardComp>(controller)),
+    controlsComp(std::make_unique<ControlsComp>(controller)),
     engineComp(std::make_unique<EngineComp>(controller)), 
-    controlsComp(std::make_unique<ControlsComp>(controller)), 
-    gameOverlay(std::make_unique<GameOverlay>(controller))
+    gameOverlay(std::make_unique<GameOverlay>(controller)),
+    movesComp(std::make_unique<MovesComp>(controller)),
+    statsPanel(std::make_unique<StatsPanel>(controller))
 {
     InitWindow(WinCfg::WIDTH, WinCfg::HEIGHT, WinCfg::TITLE);
 
@@ -33,6 +34,7 @@ void ChessGUI::draw() const {
     statsPanel->draw();
     engineComp->draw();
     controlsComp->draw();
+    movesComp->draw();
     gameOverlay->draw();  // Last to overlay on top
     
     EndDrawing();

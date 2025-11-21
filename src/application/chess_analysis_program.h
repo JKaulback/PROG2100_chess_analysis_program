@@ -53,9 +53,11 @@ public:
     bool isGameOver() const { return currentGameState != GameState::IN_PROGRESS; }
     std::string getGameOverString() const; // Get a game over string mapped to a game state
     
-    // FEN position tracking undo/redo methods
+    // FEN position tracking support methods
     void undoMove();
     void redoMove();
+    const std::vector<PositionState>& getPositionHistory() const { return fenStateHistory.getPositionHistory(); }
+    const std::vector<PositionState>& getRedoPositions() const {return fenStateHistory.getRedoPositions(); }
 
     // FEN loader support methods
     void setPieceAt(const int rank, const int file, const char piece) { board.setPieceAt(rank, file, piece); }

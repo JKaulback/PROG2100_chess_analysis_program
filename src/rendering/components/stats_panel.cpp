@@ -1,4 +1,5 @@
 #include "stats_panel.h"
+#include "ui_renderer.h"
 #include "../../config/config.h"
 
 namespace StatsPanelCfg = Config::StatsPanel;
@@ -25,20 +26,10 @@ Rectangle StatsPanel::getPanelBounds() const {
 void StatsPanel::drawStatsPanel() const {
     Rectangle panelBounds = getPanelBounds();
     
-    // Draw main panel background
-    DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
-                  Color{245, 247, 250, 255});
-    
-    // Draw right border to separate from main content
-    DrawRectangle(panelBounds.x + panelBounds.width - 2, panelBounds.y, 2, panelBounds.height, 
-                  Color{200, 205, 210, 255});
-    
-    // Draw subtle inner shadow along the right edge
-    for (int i = 0; i < 6; i++) {
-        unsigned char alpha = static_cast<unsigned char>(15 - (i * 2));
-        DrawRectangle(panelBounds.x + panelBounds.width - 8 + i, panelBounds.y, 1, panelBounds.height, 
-                      Color{0, 0, 0, alpha});
-    }
+    // Draw panel using UIRenderer
+    UIRenderer::drawPanelBackground(panelBounds, UIRenderer::PanelStyle::Stats);
+    UIRenderer::drawPanelBorder(panelBounds);
+    UIRenderer::drawPanelShadowRight(panelBounds, 6);
     
     // Draw content
     drawPanelTitle();
@@ -53,27 +44,8 @@ void StatsPanel::drawStatsPanel() const {
 
 void StatsPanel::drawPanelTitle() const {
     Rectangle panelBounds = getPanelBounds();
-    
-    // Draw title bar background
-    Rectangle titleRect = {
-        panelBounds.x,
-        panelBounds.y,
-        panelBounds.width,
-        StatsPanelCfg::TITLE_HEIGHT + 4
-    };
-    DrawRectangle(titleRect.x, titleRect.y, titleRect.width, titleRect.height, 
-                  Color{225, 230, 235, 255});
-    
-    // Draw bottom border of title bar
-    DrawRectangle(titleRect.x, titleRect.y + titleRect.height - 1, titleRect.width, 1, 
-                  Color{180, 185, 190, 255});
-    
-    // Draw title text
-    const char* title = StatsPanelCfg::TITLE_TEXT;
-    int titleX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
-    int titleY = panelBounds.y + 10;
-    
-    drawText(title, titleX, titleY, 20, Color{70, 75, 80, 255});
+    UIRenderer::drawPanelTitle(panelBounds, StatsPanelCfg::TITLE_TEXT, 
+                              StatsPanelCfg::TITLE_HEIGHT, StatsPanelCfg::PANEL_PADDING);
 }
 
 void StatsPanel::drawStat(const std::string& label, const std::string& value, int& currentY) const {
@@ -140,7 +112,5 @@ void StatsPanel::drawCapturedPieces(int& currentY) const {
 }
 
 void StatsPanel::drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const {
-    // Draw text with subtle shadow for better readability
-    DrawText(text.c_str(), x + 1, y + 1, fontSize, Color{0, 0, 0, 20});
-    DrawText(text.c_str(), x, y, fontSize, textColor);
+    UIRenderer::drawTextWithShadow(text, x, y, fontSize, textColor);
 }
