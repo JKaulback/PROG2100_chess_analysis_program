@@ -131,9 +131,14 @@ std::pair<int, int> PieceRenderer::getCapturedPiecePosition(const int numPieces,
         (numPieces <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
         numPieces : 
         numPieces - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
+    
     // Calculate the y on screen position
+    // When board is flipped, swap the positions of white and black captured pieces
+    bool isFlipped = controller.getBoardFlipped();
+    bool useWhitePosition = (isFlipped) ? (pieceOwner == 'b') : (pieceOwner == 'w');
+    
     int yPos = 
-        (pieceOwner == 'w') ?
+        (useWhitePosition) ?
         (PieceCfg::CAPTURED_OFFSET_Y_WHITE + PieceCfg::CAPTURED_STEP * numStepsY) :
         (PieceCfg::CAPTURED_OFFSET_Y_BLACK - PieceCfg::CAPTURED_STEP * numStepsY);
 
