@@ -5,6 +5,7 @@
 #include "components/board_comp.h"
 #include "components/stats_panel.h"
 #include "components/engine_comp.h"
+#include "components/controls_comp.h"
 #include "components/game_overlay.h"
 #include "../config/config.h"
 
@@ -12,6 +13,7 @@ class ChessAnalysisProgram;
 class BoardComp;
 class StatsPanel;
 class EngineComp;
+class ControlsComp;
 class GameOverlay;
 
 class ChessGUI {
@@ -41,5 +43,6 @@ private:
     std::unique_ptr<BoardComp> boardComp;
     std::unique_ptr<StatsPanel> statsPanel;
     std::unique_ptr<EngineComp> engineComp;
+    std::unique_ptr<ControlsComp> controlsComp;
     std::unique_ptr<GameOverlay> gameOverlay;
 };

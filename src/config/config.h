@@ -143,6 +143,15 @@ namespace Config {
         constexpr const char* TITLE_TEXT = "GAME STATISTICS";
     }
 
+    namespace ControlsPanel {
+        constexpr int PANEL_WIDTH = 450;
+        constexpr int PANEL_HEIGHT = 320;
+        constexpr int PANEL_PADDING = 20;
+        constexpr int LINE_HEIGHT = 22;
+        constexpr int TITLE_HEIGHT = 36;
+        constexpr const char* TITLE_TEXT = "CONTROLS";
+    }
+
     namespace Coordinates {
         constexpr int FONT_SIZE = 24;
         constexpr float TOP_OFFSET = 35.0f;

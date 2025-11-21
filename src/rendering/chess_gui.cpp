@@ -7,6 +7,7 @@ ChessGUI::ChessGUI(const ChessAnalysisProgram& controller):
     controller(controller), boardComp(std::make_unique<BoardComp>(controller)), 
     statsPanel(std::make_unique<StatsPanel>(controller)), 
     engineComp(std::make_unique<EngineComp>(controller)), 
+    controlsComp(std::make_unique<ControlsComp>(controller)), 
     gameOverlay(std::make_unique<GameOverlay>(controller))
 {
     InitWindow(WinCfg::WIDTH, WinCfg::HEIGHT, WinCfg::TITLE);
@@ -27,10 +28,11 @@ void ChessGUI::draw() const {
     // Draw modern background first
     drawModernBackground();
     
-    // Draw components in order
+    // Draw components in order: StatsPanel at top, EngineComp below StatsPanel, ControlsComp below EngineComp
     boardComp->draw();
     statsPanel->draw();
     engineComp->draw();
+    controlsComp->draw();
     gameOverlay->draw();  // Last to overlay on top
     
     EndDrawing();

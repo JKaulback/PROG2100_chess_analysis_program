@@ -11,10 +11,10 @@ void StatsPanel::draw() const {
 }
 
 Rectangle StatsPanel::getPanelBounds() const {
-    // Position below the engine analysis panel
+    // Position at the top of the right panel area
     return Rectangle{
         Config::Window::WIDTH - StatsPanelCfg::PANEL_WIDTH,  // Align to right edge
-        350,  // Position below engine analysis (which ends around 350px)
+        0,  // Start from top edge
         StatsPanelCfg::PANEL_WIDTH,
         StatsPanelCfg::PANEL_HEIGHT
     };

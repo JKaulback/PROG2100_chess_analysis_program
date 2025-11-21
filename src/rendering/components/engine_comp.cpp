@@ -19,10 +19,10 @@ void EngineComp::setEngineRunning(bool isRunning) {
 }
 
 Rectangle EngineComp::getDialogBounds() const {
-    // Position as a built-in panel on the right side
+    // Position as a built-in panel on the right side, below StatsPanel
     return Rectangle{
         Config::Window::WIDTH - EngineDialogCfg::DIALOG_WIDTH,  // Align to right edge
-        0,  // Start from top edge
+        Config::StatsPanel::PANEL_HEIGHT,  // Start below StatsPanel
         EngineDialogCfg::DIALOG_WIDTH,
         EngineDialogCfg::DIALOG_HEIGHT
     };
