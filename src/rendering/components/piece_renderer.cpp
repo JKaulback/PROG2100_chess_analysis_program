@@ -13,7 +13,6 @@ PieceRenderer::PieceRenderer(const ChessAnalysisProgram& controller, const Textu
 void PieceRenderer::draw() const {
     drawPieces();
     drawDraggedPiece();
-    drawCapturedPieces();
 }
 
 Vector2 PieceRenderer::screenPosToBoardPos(const Vector2 pos) const {
@@ -92,55 +91,3 @@ void PieceRenderer::drawDraggedPiece() const {
     }
 }
 
-void PieceRenderer::drawCapturedPieces() const {
-    // Draw captured pieces (white at top, black at bottom)
-    std::vector<char> capturedPieces = controller.getCapturedPieces();
-    if (!capturedPieces.empty()) {
-        int numBlack = 0, numWhite = 0; // To track which column to draw in
-        for (int pieceIndex = 0; pieceIndex < capturedPieces.size(); pieceIndex++) {
-            // Set up variables to draw the piece
-            char piece = capturedPieces[pieceIndex];
-            std::string pieceString = controller.pieceToTextureString(piece);
-            std::pair<int, int> position;
-
-            char pieceOwner = controller.getPieceOwner(piece);
-            if (pieceOwner == 'w') {
-                position = getCapturedPiecePosition(numWhite++, pieceOwner);
-            } else { // Do the same but for black
-                position = getCapturedPiecePosition(numBlack++, pieceOwner);
-            }
-            // Calculate the x on screen position
-            float xPos = PieceCfg::CAPTURED_OFFSET_X + 
-                (PieceCfg::CAPTURED_STEP * position.first);
-            float yPos = static_cast<float>(position.second);
-            // Draw the captured piece
-            DrawTextureEx(textureManager.getPieceTexture(pieceString), {xPos, yPos}, 0.0f, 
-                PieceCfg::CAPTURED_SCALE, WHITE);
-        }
-    }
-}
-
-std::pair<int, int> PieceRenderer::getCapturedPiecePosition(const int numPieces, const char pieceOwner) const {
-    // When drawing more than the config max number, move to next col
-    int col = 
-        (numPieces <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 
-        0 : 
-        1;
-    // Determine the y grid location
-    float numStepsY = 
-        (numPieces <= PieceCfg::MAX_CAPTURED_IN_ROW) ?
-        numPieces : 
-        numPieces - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
-    
-    // Calculate the y on screen position
-    // When board is flipped, swap the positions of white and black captured pieces
-    bool isFlipped = controller.getBoardFlipped();
-    bool useWhitePosition = (isFlipped) ? (pieceOwner == 'b') : (pieceOwner == 'w');
-    
-    int yPos = 
-        (useWhitePosition) ?
-        (PieceCfg::CAPTURED_OFFSET_Y_WHITE + PieceCfg::CAPTURED_STEP * numStepsY) :
-        (PieceCfg::CAPTURED_OFFSET_Y_BLACK - PieceCfg::CAPTURED_STEP * numStepsY);
-
-    return {col, yPos};
-}

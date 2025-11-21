@@ -29,6 +29,8 @@ public:
     std::string pieceToTextureString(const char piece) const { return board.getPieceTextureString(piece); }
     char getCurrentPlayer() const { return gameState.getCurrentPlayer(); }
     std::vector<char> getCapturedPieces() const { return board.getCapturedPieces(); }
+    std::vector<char> getWhiteCapturedPieces() const { return board.getWhiteCapturedPieces(); }
+    std::vector<char> getBlackCapturedPieces() const { return board.getBlackCapturedPieces(); }
     char getPieceOwner(const int rank, const int file) const { return board.getPieceOwner(rank, file); }
     char getPieceOwner(const char piece) const { return board.getPieceOwner(piece); }
     int getHalfmoveClock() const { return gameState.getHalfmoveClock(); }

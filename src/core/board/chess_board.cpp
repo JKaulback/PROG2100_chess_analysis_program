@@ -51,9 +51,22 @@ std::pair<int, int> ChessBoard::getKingPosition(const char player) const {
     return {-1, -1}; // Shouldn't happen in a valid game
 }
 
-// Return a vector of all captured pieces
+// Return a vector of all captured pieces (combines white and black)
 std::vector<char> ChessBoard::getCapturedPieces() const {
-    return capturedPieces;
+    std::vector<char> allCaptured;
+    allCaptured.insert(allCaptured.end(), whiteCapturedPieces.begin(), whiteCapturedPieces.end());
+    allCaptured.insert(allCaptured.end(), blackCapturedPieces.begin(), blackCapturedPieces.end());
+    return allCaptured;
+}
+
+// Return a vector of white captured pieces
+std::vector<char> ChessBoard::getWhiteCapturedPieces() const {
+    return whiteCapturedPieces;
+}
+
+// Return a vector of black captured pieces
+std::vector<char> ChessBoard::getBlackCapturedPieces() const {
+    return blackCapturedPieces;
 }
 
 bool ChessBoard::isValidSquare(const int rank, const int file) const {
@@ -68,6 +81,15 @@ void ChessBoard::setPieceAt(const int rank, const int file, const char piece) {
        board[rank][file] = piece; 
 }
 
+// Helper function to add captured pieces to color-specific vectors
+void ChessBoard::addToCapturedPieces(const char capturedPiece) {
+    if (getPieceOwner(capturedPiece) == 'w') {
+        whiteCapturedPieces.push_back(capturedPiece);
+    } else {
+        blackCapturedPieces.push_back(capturedPiece);
+    }
+}
+
 // Executes a basic move (with capture if applicable)
 void ChessBoard::executeBasicMove(const ChessMove& move) {
     // Load movement values
@@ -77,8 +99,9 @@ void ChessBoard::executeBasicMove(const ChessMove& move) {
     int destFile = move.getDestFile();
 
     // Check for capture
-    if (board[destRank][destFile] != BoardCfg::EMPTY)
-        capturedPieces.push_back(board[destRank][destFile]);
+    if (board[destRank][destFile] != BoardCfg::EMPTY) {
+        addToCapturedPieces(board[destRank][destFile]);
+    }
 
     // Execute move
     board[destRank][destFile] = board[srcRank][srcFile];
@@ -131,7 +154,7 @@ void ChessBoard::executeEnPassant(const ChessMove& move) {
         BoardCfg::BLACK_EN_PASSANT_CAPTURE_RANK;
 
     // Capture the en passant pawn
-    capturedPieces.push_back(board[enPassantCaptureRank][destFile]);
+    addToCapturedPieces(board[enPassantCaptureRank][destFile]);
     board[enPassantCaptureRank][destFile] = BoardCfg::EMPTY;
 }
 
@@ -144,8 +167,9 @@ void ChessBoard::executePromotion(const ChessMove& move, const char promoteTo) {
     int destFile = move.getDestFile();
 
     // Check for capture
-    if (board[destRank][destFile] != BoardCfg::EMPTY)
-        capturedPieces.push_back(board[destRank][destFile]);
+    if (board[destRank][destFile] != BoardCfg::EMPTY) {
+        addToCapturedPieces(board[destRank][destFile]);
+    }
 
     // Move promoted piece to promotion square
     board[destRank][destFile] = promoteTo;
@@ -248,7 +272,8 @@ void ChessBoard::clearBoard() {
             board[rank][file] = BoardCfg::EMPTY;
         }
     }
-    capturedPieces.clear();
+    whiteCapturedPieces.clear();
+    blackCapturedPieces.clear();
 }
 
 void ChessBoard::resetToStartingPosition() {

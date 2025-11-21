@@ -7,7 +7,7 @@ class ChessAnalysisProgram;
 class TextureManager;
 
 /**
- * Handles rendering chess pieces on the board, including drag & drop and captured pieces
+ * Handles rendering chess pieces on the board and drag & drop functionality
  */
 class PieceRenderer {
 public:
@@ -25,7 +25,4 @@ private:
     
     void drawPieces() const;
     void drawDraggedPiece() const;
-    void drawCapturedPieces() const;
-    
-    std::pair<int, int> getCapturedPiecePosition(const int numPieces, const char pieceOwner) const;
 };

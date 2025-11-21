@@ -6,6 +6,7 @@
 #include "board_renderer.h"
 #include "coordinate_renderer.h"
 #include "piece_renderer.h"
+#include "captured_pieces_renderer.h"
 
 class ChessAnalysisProgram;
 
@@ -33,4 +34,5 @@ private:
     std::unique_ptr<BoardRenderer> boardRenderer;
     std::unique_ptr<CoordinateRenderer> coordinateRenderer;
     std::unique_ptr<PieceRenderer> pieceRenderer;
+    std::unique_ptr<CapturedPiecesRenderer> capturedPiecesRenderer;
 };

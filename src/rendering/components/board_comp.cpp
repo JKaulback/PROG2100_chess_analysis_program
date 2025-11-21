@@ -12,6 +12,7 @@ BoardComp::BoardComp(const ChessAnalysisProgram& controller) :
     boardRenderer = std::make_unique<BoardRenderer>(*textureManager);
     coordinateRenderer = std::make_unique<CoordinateRenderer>(controller);
     pieceRenderer = std::make_unique<PieceRenderer>(controller, *textureManager);
+    capturedPiecesRenderer = std::make_unique<CapturedPiecesRenderer>(controller, *textureManager);
 }
 
 void BoardComp::draw() const {
@@ -24,6 +25,7 @@ void BoardComp::draw() const {
     boardRenderer->draw();
     coordinateRenderer->draw();
     pieceRenderer->draw();
+    capturedPiecesRenderer->draw();
 }
 
 Vector2 BoardComp::screenPosToBoardPos(const Vector2 pos) const {

@@ -18,6 +18,8 @@ class ChessBoard {
         char getPieceOwner(const char piece) const;
         std::pair<int, int> getKingPosition(const char player) const;
         std::vector<char> getCapturedPieces() const;
+        std::vector<char> getWhiteCapturedPieces() const;
+        std::vector<char> getBlackCapturedPieces() const;
         bool isValidSquare(const int rank, const int file) const;
         
         // Board manipulation
@@ -45,10 +47,12 @@ class ChessBoard {
 
     private:
         std::array<std::array<char, BoardCfg::BOARD_DIMENSION>, BoardCfg::BOARD_DIMENSION> board;
-        std::vector<char> capturedPieces;
+        std::vector<char> whiteCapturedPieces;
+        std::vector<char> blackCapturedPieces;
         
         // Helper functions
         void boardInit();
+        void addToCapturedPieces(const char capturedPiece);
         bool isValidBoardPosition(const int rank, const int file) const;
         bool isValidPiece(const char piece) const;
 
