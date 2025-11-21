@@ -21,9 +21,11 @@ namespace Config {
         constexpr float TEXTURE_SIZE = 1600.0f;
         constexpr float SIZE = TEXTURE_SIZE * SCALE;
         constexpr float SQUARE_SIZE = SIZE / 8.0f;
-        constexpr float MARGIN = 50.0f;  // Add margin around board
-        constexpr float OFFSET_X = MARGIN;
-        constexpr float OFFSET_Y = MARGIN;
+        constexpr float COORDINATE_MARGIN = 40.0f;  // Space for coordinate labels
+        constexpr float AESTHETIC_MARGIN = 30.0f;   // Additional aesthetic spacing
+        constexpr float TOTAL_MARGIN = COORDINATE_MARGIN + AESTHETIC_MARGIN;
+        constexpr float OFFSET_X = TOTAL_MARGIN;
+        constexpr float OFFSET_Y = TOTAL_MARGIN;
         constexpr int MIN_RANK = 0;
         constexpr int MAX_RANK = 7;
         constexpr int MIN_FILE = 0;

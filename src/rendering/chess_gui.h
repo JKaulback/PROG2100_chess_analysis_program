@@ -31,6 +31,10 @@ public:
     void setIsUCIEngineRunning(const bool isRunning);
 
 private:
+    // Background rendering
+    void drawModernBackground() const;
+    void drawGeometricPattern() const;
+    void drawAmbientLighting() const;
     const ChessAnalysisProgram& controller;
     
     // GUI Components

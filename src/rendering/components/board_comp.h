@@ -1,16 +1,21 @@
 #pragma once
 
 #include <raylib.h>
-#include <map>
-#include <string>
-#include "../../application/chess_analysis_program.h"
+#include <memory>
+#include "texture_manager.h"
+#include "board_renderer.h"
+#include "coordinate_renderer.h"
+#include "piece_renderer.h"
 
 class ChessAnalysisProgram;
 
+/**
+ * Main board component that orchestrates all board rendering sub-components
+ */
 class BoardComp {
 public:
     BoardComp(const ChessAnalysisProgram& controller);
-    ~BoardComp();
+    ~BoardComp() = default;
     
     void draw() const;
     
@@ -22,17 +27,10 @@ public:
 
 private:
     const ChessAnalysisProgram& controller;
-    Texture2D boardTexture;
-    std::map<std::string, Texture2D> pieceTextures;
-    bool texturesLoaded;
     
-    void initTextures();
-    void initPieceTexture(const char piece);
-    void drawBoard() const;
-    void drawCoordinates() const;
-    void drawPieces() const;
-    void drawDraggedPiece() const;
-    void drawCapturedPieces() const;
-
-    std::pair<int, int> getCapturedPiecePosition(const int numPieces, const char pieceOwner) const;
+    // Rendering components
+    std::unique_ptr<TextureManager> textureManager;
+    std::unique_ptr<BoardRenderer> boardRenderer;
+    std::unique_ptr<CoordinateRenderer> coordinateRenderer;
+    std::unique_ptr<PieceRenderer> pieceRenderer;
 };
