@@ -83,8 +83,8 @@ void BoardComp::initPieceTexture(const char piece) {
 }
 
 void BoardComp::drawBoard() const {
-    // Draw the chess board
-    DrawTextureEx(boardTexture, {0, 0}, 0.0f, BoardCfg::SCALE, WHITE);
+    // Draw the chess board with proper offset for margins
+    DrawTextureEx(boardTexture, {BoardCfg::OFFSET_X, BoardCfg::OFFSET_Y}, 0.0f, BoardCfg::SCALE, WHITE);
 }
 
 void BoardComp::drawPieces() const {

@@ -43,16 +43,38 @@ bool FENLoader::applyFEN(const std::string& fenString, ChessAnalysisProgram& con
 }
 
 bool FENLoader::parseBoardPosition(const std::string& piecePositions, ChessAnalysisProgram& controller) {
-    // Clear the current board first
-    controller.clearBoard();
-    
-    // Split board into ranks (rows)
+    // Split board into ranks (rows) and validate first
     std::vector<std::string> ranks = splitString(piecePositions, '/');
     
     if (ranks.size() != 8)
         return false; // Must have exactly 8 ranks
     
+    // Validate all ranks before clearing the board
+    for (int fenRank = 0; fenRank < 8; fenRank++) {
+        int file = 0;
+        for (char c : ranks[fenRank]) {
+            if (isDigit(c)) {
+                int emptySquares = charToInt(c);
+                if (emptySquares < 1 || emptySquares > 8 || file + emptySquares > 8)
+                    return false; // Invalid number of empty squares
+                file += emptySquares;
+            } else if (isValidFENChar(c)) {
+                if (file >= 8)
+                    return false; // Too many pieces in rank
+                file++;
+            } else {
+                return false; // Invalid character
+            }
+        }
+        if (file != 8)
+            return false; // Rank doesn't have exactly 8 squares
+    }
+    
+    // Only clear the board after validation passes
+    controller.clearBoard();
+    
     // Process each rank (FEN rank 8 = board rank 7, FEN rank 1 = board rank 0)
+    // Validation already done above, so we can safely place pieces
     for (int fenRank = 0; fenRank < 8; fenRank++) {
         int boardRank = 7 - fenRank; // Convert FEN rank to board rank
         int file = 0;
@@ -61,23 +83,13 @@ bool FENLoader::parseBoardPosition(const std::string& piecePositions, ChessAnaly
             if (isDigit(c)) {
                 // Number represents empty squares
                 int emptySquares = charToInt(c);
-                if (emptySquares < 1 || emptySquares > 8 || file + emptySquares > 8) 
-                    return false; // Invalid number of empty squares
                 file += emptySquares; // Skip empty squares
             } else if (isValidFENChar(c)) {
-                // Valid piece character
-                if (file >= 8)
-                    return false; // Too many pieces in rank
-                
+                // Valid piece character - place it
                 controller.setPieceAt(boardRank, file, c);
-                
                 file++;
-            } else 
-                return false; // Invalid character
+            }
         }
-        
-        if (file != 8) 
-            return false; // Rank doesn't have exactly 8 squares
     }
     
     return true;
