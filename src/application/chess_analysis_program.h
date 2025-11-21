@@ -16,6 +16,8 @@
 using MoveResult = ChessMoveValidator::MoveResult;
 using GameState = ChessGameStateAnalyzer::GameState;
 
+class FENLoader;
+
 // This class manages the overall chess analysis program
 class ChessAnalysisProgram {
 public:
@@ -51,9 +53,16 @@ public:
     bool isGameOver() const { return currentGameState != GameState::IN_PROGRESS; }
     std::string getGameOverString() const; // Get a game over string mapped to a game state
     
+    // FEN position tracking undo/redo methods
+    void undoMove();
+    void redoMove();
+
     // FEN loader support methods
     void setPieceAt(const int rank, const int file, const char piece) { board.setPieceAt(rank, file, piece); }
     void clearBoard();
+    void clearBoardOnly(); // Clear board without affecting history
+    void applyFenDirect(const std::string& fenString); // Direct FEN application for undo/redo
+    void applyPositionState(const PositionState& state); // Apply complete position state including captured pieces
     void setCurrentPlayer(const char player) { gameState.setCurrentPlayer(player); }
     void setCastlingRights(bool whiteKingside, bool whiteQueenside, bool blackKingside, bool blackQueenside) {
         gameState.setCastlingRights(whiteKingside, whiteQueenside, blackKingside, blackQueenside);
@@ -62,6 +71,7 @@ public:
     void clearEnPassantTarget() { gameState.clearEnPassantState(); }
     void setHalfmoveClock(const int halfmoves) { gameState.setHalfmoveClock(halfmoves); }
     void setFullmoveClock(const int fullmoves) { gameState.setFullmoveClock(fullmoves); }
+    void applyFen(const std::string& fenString);
 
     // UCI Engine state access and processing
     void enableUCIEngine();

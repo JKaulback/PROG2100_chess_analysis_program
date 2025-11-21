@@ -20,6 +20,10 @@ bool FENLoader::loadFromFile(const std::string& filename, ChessAnalysisProgram& 
 }
 
 bool FENLoader::applyFEN(const std::string& fenString, ChessAnalysisProgram& controller) {
+    return applyFEN(fenString, controller, false);
+}
+
+bool FENLoader::applyFEN(const std::string& fenString, ChessAnalysisProgram& controller, bool preserveHistory) {
     // Split FEN string into its components
     std::vector<std::string> parts = splitString(fenString, ' ');
     
@@ -28,7 +32,7 @@ bool FENLoader::applyFEN(const std::string& fenString, ChessAnalysisProgram& con
         return false; // No data at all
 
     // Parse and apply board position - this is mandatory
-    if (!parseBoardPosition(parts[0], controller))
+    if (!parseBoardPosition(parts[0], controller, preserveHistory))
         return false; // Invalid board position - fail completely
     
     // If we have additional parts, try to parse game state
@@ -42,7 +46,7 @@ bool FENLoader::applyFEN(const std::string& fenString, ChessAnalysisProgram& con
     return true; // Successfully loaded at least the board position
 }
 
-bool FENLoader::parseBoardPosition(const std::string& piecePositions, ChessAnalysisProgram& controller) {
+bool FENLoader::parseBoardPosition(const std::string& piecePositions, ChessAnalysisProgram& controller, bool preserveHistory) {
     // Split board into ranks (rows) and validate first
     std::vector<std::string> ranks = splitString(piecePositions, '/');
     
@@ -71,7 +75,12 @@ bool FENLoader::parseBoardPosition(const std::string& piecePositions, ChessAnaly
     }
     
     // Only clear the board after validation passes
-    controller.clearBoard();
+    // Use appropriate clear method based on preserveHistory flag
+    if (preserveHistory) {
+        controller.clearBoardOnly();
+    } else {
+        controller.clearBoard();
+    }
     
     // Process each rank (FEN rank 8 = board rank 7, FEN rank 1 = board rank 0)
     // Validation already done above, so we can safely place pieces

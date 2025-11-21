@@ -69,6 +69,12 @@ std::vector<char> ChessBoard::getBlackCapturedPieces() const {
     return blackCapturedPieces;
 }
 
+// Set captured pieces for both colors
+void ChessBoard::setCapturedPieces(const std::vector<char>& whiteCaptured, const std::vector<char>& blackCaptured) {
+    whiteCapturedPieces = whiteCaptured;
+    blackCapturedPieces = blackCaptured;
+}
+
 bool ChessBoard::isValidSquare(const int rank, const int file) const {
     return
         (rank >= BoardCfg::MIN_RANK && rank <= BoardCfg::MAX_RANK &&

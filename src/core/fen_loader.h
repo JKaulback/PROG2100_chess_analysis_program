@@ -14,10 +14,12 @@ public:
     
     // Parse and apply FEN string to the chess program  
     static bool applyFEN(const std::string& fenString, ChessAnalysisProgram& controller);
+    static bool applyFEN(const std::string& fenString, ChessAnalysisProgram& controller, bool preserveHistory);
+    
+    // Helper methods for parsing FEN components (public for direct access)
+    static bool parseBoardPosition(const std::string& piecePositions, ChessAnalysisProgram& controller, bool preserveHistory = false);
 
 private:
-    // Helper methods for parsing FEN components
-    static bool parseBoardPosition(const std::string& piecePositions, ChessAnalysisProgram& controller);
     static bool parseGameState(const std::string& activeColor, const std::string& castlingRights,
                               const std::string& enPassant, const std::string& halfmove,
                               const std::string& fullmove, ChessAnalysisProgram& controller);

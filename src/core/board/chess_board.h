@@ -20,6 +20,7 @@ class ChessBoard {
         std::vector<char> getCapturedPieces() const;
         std::vector<char> getWhiteCapturedPieces() const;
         std::vector<char> getBlackCapturedPieces() const;
+        void setCapturedPieces(const std::vector<char>& whiteCaptured, const std::vector<char>& blackCaptured);
         bool isValidSquare(const int rank, const int file) const;
         
         // Board manipulation
