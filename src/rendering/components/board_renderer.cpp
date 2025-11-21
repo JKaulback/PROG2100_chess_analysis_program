@@ -23,16 +23,24 @@ void BoardRenderer::drawBoard() const {
 
 void BoardRenderer::drawBoardBorder() const {
     const float borderWidth = 8.0f;
-    const float shadowOffset = 6.0f;
-    const Color borderColor = {139, 69, 19, 255};      // Saddle brown - elegant wood color
-    const Color innerBorder = {160, 82, 45, 255};      // Lighter brown accent
-    const Color shadowColor = {0, 0, 0, 60};           // Subtle shadow
-    const Color highlightColor = {205, 133, 63, 255};  // Peru - lighter highlight
     
     // Calculate border rectangle (slightly larger than board)
     const float borderX = BoardCfg::OFFSET_X - borderWidth;
     const float borderY = BoardCfg::OFFSET_Y - borderWidth;
     const float borderSize = BoardCfg::SIZE + (borderWidth * 2);
+    
+    // Draw all border layers efficiently
+    drawBorderLayers(borderX, borderY, borderSize);
+    drawBorderHighlights(borderX, borderY, borderSize);
+    drawCornerDecorations(borderX, borderY, borderSize);
+}
+
+void BoardRenderer::drawBorderLayers(float borderX, float borderY, float borderSize) const {
+    const float shadowOffset = 6.0f;
+    const Color borderColor = {139, 69, 19, 255};      // Saddle brown - elegant wood color
+    const Color innerBorder = {160, 82, 45, 255};      // Lighter brown accent
+    const Color shadowColor = {0, 0, 0, 60};           // Subtle shadow
+    const float accentWidth = 2.0f;
     
     // Draw shadow (offset behind the border)
     DrawRectangle(
@@ -53,7 +61,6 @@ void BoardRenderer::drawBoardBorder() const {
     );
     
     // Draw inner accent border (lighter brown)
-    const float accentWidth = 2.0f;
     DrawRectangle(
         static_cast<int>(borderX + accentWidth), 
         static_cast<int>(borderY + accentWidth), 
@@ -61,8 +68,11 @@ void BoardRenderer::drawBoardBorder() const {
         static_cast<int>(borderSize - accentWidth * 2), 
         innerBorder
     );
-    
-    // Draw highlight border (top and left edges for 3D effect)
+}
+
+void BoardRenderer::drawBorderHighlights(float borderX, float borderY, float borderSize) const {
+    const Color highlightColor = {205, 133, 63, 255};  // Peru - lighter highlight
+    const float accentWidth = 2.0f;
     const float highlightWidth = 1.0f;
     
     // Top highlight
@@ -82,77 +92,35 @@ void BoardRenderer::drawBoardBorder() const {
         static_cast<int>(borderSize - accentWidth * 2), 
         highlightColor
     );
-    
-    // Draw corner decorations
-    drawCornerDecorations(borderX, borderY, borderSize);
+}
+
+void BoardRenderer::drawSingleCornerDecoration(float x, float y, float cornerSize, const Color& decorColor, const Color& accentColor) const {
+    DrawRectangle(
+        static_cast<int>(x), 
+        static_cast<int>(y), 
+        static_cast<int>(cornerSize), 
+        static_cast<int>(cornerSize), 
+        decorColor
+    );
+    DrawRectangleLines(
+        static_cast<int>(x), 
+        static_cast<int>(y), 
+        static_cast<int>(cornerSize), 
+        static_cast<int>(cornerSize), 
+        accentColor
+    );
 }
 
 void BoardRenderer::drawCornerDecorations(float borderX, float borderY, float borderSize) const {
     const float cornerSize = 16.0f;
+    const float cornerOffset = 4.0f;
+    const float cornerInset = 12.0f;
     const Color decorColor = {205, 133, 63, 180};  // Semi-transparent peru
     const Color accentColor = {139, 69, 19, 255};  // Saddle brown
     
-    // Top-left corner
-    DrawRectangle(
-        static_cast<int>(borderX - 4), 
-        static_cast<int>(borderY - 4), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        decorColor
-    );
-    DrawRectangleLines(
-        static_cast<int>(borderX - 4), 
-        static_cast<int>(borderY - 4), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        accentColor
-    );
-    
-    // Top-right corner
-    DrawRectangle(
-        static_cast<int>(borderX + borderSize - 12), 
-        static_cast<int>(borderY - 4), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        decorColor
-    );
-    DrawRectangleLines(
-        static_cast<int>(borderX + borderSize - 12), 
-        static_cast<int>(borderY - 4), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        accentColor
-    );
-    
-    // Bottom-left corner
-    DrawRectangle(
-        static_cast<int>(borderX - 4), 
-        static_cast<int>(borderY + borderSize - 12), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        decorColor
-    );
-    DrawRectangleLines(
-        static_cast<int>(borderX - 4), 
-        static_cast<int>(borderY + borderSize - 12), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        accentColor
-    );
-    
-    // Bottom-right corner
-    DrawRectangle(
-        static_cast<int>(borderX + borderSize - 12), 
-        static_cast<int>(borderY + borderSize - 12), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        decorColor
-    );
-    DrawRectangleLines(
-        static_cast<int>(borderX + borderSize - 12), 
-        static_cast<int>(borderY + borderSize - 12), 
-        static_cast<int>(cornerSize), 
-        static_cast<int>(cornerSize), 
-        accentColor
-    );
+    // Draw all four corners using the helper method
+    drawSingleCornerDecoration(borderX - cornerOffset, borderY - cornerOffset, cornerSize, decorColor, accentColor);  // Top-left
+    drawSingleCornerDecoration(borderX + borderSize - cornerInset, borderY - cornerOffset, cornerSize, decorColor, accentColor);  // Top-right
+    drawSingleCornerDecoration(borderX - cornerOffset, borderY + borderSize - cornerInset, cornerSize, decorColor, accentColor);  // Bottom-left
+    drawSingleCornerDecoration(borderX + borderSize - cornerInset, borderY + borderSize - cornerInset, cornerSize, decorColor, accentColor);  // Bottom-right
 }
