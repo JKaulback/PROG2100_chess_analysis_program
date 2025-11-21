@@ -56,6 +56,22 @@ bool UCIEngine::isEnabled() const {
     return enabled_;
 }
 
+void UCIEngine::clearAnalysis() {
+    if (!enabled_)
+        return;
+    
+    // Stop current analysis if running
+    if (state_ == EngineState::Analyzing)
+        stopCurrentAnalysis();
+    
+    // Clear analysis results
+    {
+        std::lock_guard<std::mutex> lock(analysisMutex_);
+        currentAnalysis_ = EngineAnalysis();
+        currentAnalysis_.state = state_.load();
+    }
+}
+
 void UCIEngine::setPosition(const std::string& startFen, const std::vector<std::string>& moves) {
     // Check if engine is enabled
     if (!enabled_)

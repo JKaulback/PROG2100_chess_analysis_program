@@ -96,6 +96,12 @@ public:
      */
     bool isEnabled() const;
     
+    /**
+     * Clear current analysis output
+     * Stops current analysis and clears all displayed results
+     */
+    void clearAnalysis();
+    
 private:
     // Engine components
     std::string enginePath_;

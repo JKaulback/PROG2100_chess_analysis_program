@@ -25,59 +25,7 @@ void ChessAnalysisProgram::run() {
     }
 }
 
-// Delegate methods to logic
-char ChessAnalysisProgram::getPieceAt(int rank, int file) const {
-    return board.getPieceAt(rank, file); // char at board rank and file
-}
 
-std::string ChessAnalysisProgram::pieceToTextureString(char piece) const {
-    return board.getPieceTextureString(piece); // String in form "wk" for texture rendering
-}
-
-char ChessAnalysisProgram::getCurrentPlayer() const {
-    return gameState.getCurrentPlayer(); // char for current player
-}
-
-std::vector<char> ChessAnalysisProgram::getCapturedPieces() const {
-    return board.getCapturedPieces(); // Vector of chars for currently captured pieces
-}
-
-char ChessAnalysisProgram::getPieceOwner(int rank, int file) const {
-    return board.getPieceOwner(rank, file); // char for the current piece owner
-}
-
-char ChessAnalysisProgram::getPieceOwner(char piece) const {
-    return board.getPieceOwner(piece);
-}
-
-int ChessAnalysisProgram::getHalfmoveClock() const {
-    return gameState.getHalfmoveClock(); // Integer representing the halfmove clock
-}
-
-std::string ChessAnalysisProgram::getCurrentFENString() const {
-    return fenStateHistory.getCurrentPosition(); // TODO: FEN string manager
-}
-
-// Delegate methods to input handler
-bool ChessAnalysisProgram::getIsDragging() const {
-    return inputHandler.getIsDragging(); // Whether the user is dragging a piece
-}
-
-int ChessAnalysisProgram::getDraggedPieceRank() const {
-    return inputHandler.getDraggedPieceRank(); // The original rank of a currently dragged piece
-}
-
-int ChessAnalysisProgram::getDraggedPieceFile() const {
-    return inputHandler.getDraggedPieceFile(); // The original file of a currently dragged piece
-}
-
-Vector2 ChessAnalysisProgram::getDragOffset() const {
-    return inputHandler.getDragOffset(); // Offset coords to prevent the piece from "jumping" to mouse position
-}
-
-char ChessAnalysisProgram::getDraggedPiece() const {
-    return inputHandler.getDraggedPiece(); // char for the piece being dragged
-}
 
 // Move validation and execution methods (Controller coordination)
 bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
@@ -120,13 +68,7 @@ bool ChessAnalysisProgram::attemptMove(const ChessMove& move) {
     return false;
 }
 
-GameState ChessAnalysisProgram::getGameState() const {
-    return currentGameState;
-}
 
-bool ChessAnalysisProgram::isGameOver() const {
-    return currentGameState != GameState::IN_PROGRESS;
-}
 
 // All valid moves from MoveResult
 bool ChessAnalysisProgram::isValidMoveResult(MoveResult result) const  {
@@ -172,38 +114,10 @@ void ChessAnalysisProgram::setUCIEngineStateInGUI(const bool isEnabled) {
 }
 
 // FEN loader support methods
-void ChessAnalysisProgram::setPieceAt(const int rank, const int file, const char piece) {
-    board.setPieceAt(rank, file, piece);
-}
-
 void ChessAnalysisProgram::clearBoard() {
     board.clearBoard();
     fenStateHistory.clearHistory();
     fenStateHistory.setStartingPosition(getCurrentFENString());
-}
-
-void ChessAnalysisProgram::setCurrentPlayer(const char player) {
-    gameState.setCurrentPlayer(player);
-}
-
-void ChessAnalysisProgram::setCastlingRights(bool whiteKingside, bool whiteQueenside, bool blackKingside, bool blackQueenside) {
-    gameState.setCastlingRights(whiteKingside, whiteQueenside, blackKingside, blackQueenside);
-}
-
-void ChessAnalysisProgram::setEnPassantTarget(const int rank, const int file) {
-    gameState.setEnPassantTarget(rank, file);
-}
-
-void ChessAnalysisProgram::clearEnPassantTarget() {
-    gameState.clearEnPassantState();
-}
-
-void ChessAnalysisProgram::setHalfmoveClock(const int halfmoves) {
-    gameState.setHalfmoveClock(halfmoves);
-}
-
-void ChessAnalysisProgram::setFullmoveClock(const int fullmoves) {
-    gameState.setFullmoveClock(fullmoves);
 }
 
 void ChessAnalysisProgram::enableUCIEngine() {
@@ -237,10 +151,6 @@ void ChessAnalysisProgram::toggleUCIEngine() {
     setUCIEngineStateInGUI(isEnabled);
 }
 
-bool ChessAnalysisProgram::isUCIEngineEnabled() const {
-    return uciEngine->isEnabled();
-}
-
 void ChessAnalysisProgram::setUCIEnginePosition() {
     if (uciEngine && isUCIEngineEnabled()) {
         // Primary approach: Use start position + moves (better for engine understanding)
@@ -256,6 +166,29 @@ void ChessAnalysisProgram::setUCIEnginePosition() {
     }
 }
 
-EngineAnalysis ChessAnalysisProgram::pollUCIEngineAnalysis() const {
-    return uciEngine->pollAnalysis();
+void ChessAnalysisProgram::resetToInitialPosition() {
+    // Reset the board to starting position
+    board.resetToStartingPosition();
+    
+    // Reset game state
+    setCurrentPlayer('w');
+    setCastlingRights(true, true, true, true);
+    clearEnPassantTarget();
+    setHalfmoveClock(0);
+    setFullmoveClock(1);
+    currentGameState = GameState::IN_PROGRESS;
+
+    // Attempt to load from file
+    FENLoader::loadFromFile("initial_position.fen", *this);
+
+    // Clear position history and set starting position
+    fenStateHistory.clearHistory();
+    fenStateHistory.setStartingPosition(getCurrentFENString());
+
+    
+    // Clear and update engine with new position if enabled
+    if (isUCIEngineEnabled()) {
+        uciEngine->clearAnalysis();
+        setUCIEnginePosition();
+    }
 }

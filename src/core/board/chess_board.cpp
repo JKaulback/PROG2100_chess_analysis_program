@@ -248,6 +248,11 @@ void ChessBoard::clearBoard() {
             board[rank][file] = BoardCfg::EMPTY;
         }
     }
+    capturedPieces.clear();
+}
+
+void ChessBoard::resetToStartingPosition() {
+    boardInit();
 }
 
 bool ChessBoard::isValidBoardPosition(const int rank, const int file) const {

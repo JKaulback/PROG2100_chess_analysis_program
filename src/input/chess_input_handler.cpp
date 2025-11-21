@@ -61,6 +61,10 @@ void ChessInputHandler::handleInput(const ChessGUI& gui) {
     if (IsKeyPressed(KEY_X)) {
         controller.toggleUCIEngine();
     }
+    
+    if (IsKeyPressed(KEY_R)) {
+        controller.resetToInitialPosition();
+    }
 }
 
 void ChessInputHandler::resetDragState() {

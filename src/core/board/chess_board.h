@@ -23,6 +23,7 @@ class ChessBoard {
         // Board manipulation
         void setPieceAt(const int rank, const int file, const char piece);
         void clearBoard();
+        void resetToStartingPosition();
         void executeBasicMove(const ChessMove& move);
         void executeCastling(const ChessMove& move);
         void executeEnPassant(const ChessMove& move);
