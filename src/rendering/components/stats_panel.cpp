@@ -1,89 +1,142 @@
 #include "stats_panel.h"
 #include "../../config/config.h"
 
-namespace PieceCfg = Config::Pieces;
-namespace StatsCfg = Config::GameStatistics;
-
 StatsPanel::StatsPanel(const ChessAnalysisProgram& controller) :
     controller(controller) {}
 
 void StatsPanel::draw() const {
-    // Draw title panel
-    drawTextWithBackground("GAME STATISTICS", 
-                          StatsCfg::START_DRAW_X, 
-                          StatsCfg::START_DRAW_Y - 30, 
-                          StatsCfg::STATS_FONT_SIZE_PX + 2, 
-                          Color{60, 80, 120, 255}, 
-                          Color{200, 220, 240, 220});
+    drawStatsPanel();
+}
+
+Rectangle StatsPanel::getPanelBounds() const {
+    // Position below the engine analysis panel
+    return Rectangle{
+        Config::Window::WIDTH - PANEL_WIDTH,  // Align to right edge
+        350,  // Position below engine analysis (which ends around 350px)
+        PANEL_WIDTH,
+        PANEL_HEIGHT
+    };
+}
+
+void StatsPanel::drawStatsPanel() const {
+    Rectangle panelBounds = getPanelBounds();
     
-    drawCurrentPlayer(0);
-    drawHalfMoveClock(1);
-    drawGameStatus(2);
-    drawCapturedPieces(3);
-}
-
-void StatsPanel::drawStat(const std::string text, const int statIndex) const {
-    drawTextWithBackground(text, 
-                          StatsCfg::START_DRAW_X, 
-                          StatsCfg::START_DRAW_Y + (StatsCfg::DRAW_STEP_Y * statIndex) + 10, 
-                          StatsCfg::STATS_FONT_SIZE_PX, 
-                          StatsCfg::STATS_FONT_COLOR);
-}
-
-void StatsPanel::drawCurrentPlayer(const int statIndex) const {
-    drawStat(TextFormat("CURRENT PLAYER: %c", controller.getCurrentPlayer()), statIndex);
-}
-
-void StatsPanel::drawHalfMoveClock(const int statIndex) const {
-    drawStat(TextFormat("HALFMOVE CLOCK: %i", controller.getHalfmoveClock()), statIndex);
-}
-
-void StatsPanel::drawGameStatus(const int statIndex) const {
-    std::string statusText = "GAME STATUS: ";
-    if (controller.isGameOver()) {
-        statusText += "GAME OVER";
-    } else {
-        statusText += "IN PROGRESS";
+    // Draw main panel background
+    DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
+                  Color{245, 247, 250, 255});
+    
+    // Draw left border to separate from main content
+    DrawRectangle(panelBounds.x, panelBounds.y, 2, panelBounds.height, 
+                  Color{200, 205, 210, 255});
+    
+    // Draw subtle inner shadow along the left edge
+    for (int i = 0; i < 6; i++) {
+        unsigned char alpha = static_cast<unsigned char>(15 - (i * 2));
+        DrawRectangle(panelBounds.x + 2 + i, panelBounds.y, 1, panelBounds.height, 
+                      Color{0, 0, 0, alpha});
     }
-    drawStat(statusText, statIndex);
+    
+    // Draw content
+    drawPanelTitle();
+    
+    // Draw statistics with dynamic positioning
+    int currentY = panelBounds.y + TITLE_HEIGHT + 8 + PANEL_PADDING;
+    drawCurrentPlayer(currentY);
+    drawHalfMoveClock(currentY);
+    drawGameStatus(currentY);
+    drawCapturedPieces(currentY);
 }
 
-void StatsPanel::drawCapturedPieces(const int statIndex) const {
+void StatsPanel::drawPanelTitle() const {
+    Rectangle panelBounds = getPanelBounds();
+    
+    // Draw title bar background
+    Rectangle titleRect = {
+        panelBounds.x,
+        panelBounds.y,
+        panelBounds.width,
+        TITLE_HEIGHT + 4
+    };
+    DrawRectangle(titleRect.x, titleRect.y, titleRect.width, titleRect.height, 
+                  Color{225, 230, 235, 255});
+    
+    // Draw bottom border of title bar
+    DrawRectangle(titleRect.x, titleRect.y + titleRect.height - 1, titleRect.width, 1, 
+                  Color{180, 185, 190, 255});
+    
+    // Draw title text
+    const char* title = "GAME STATISTICS";
+    int titleX = panelBounds.x + PANEL_PADDING;
+    int titleY = panelBounds.y + 10;
+    
+    drawText(title, titleX, titleY, 20, Color{70, 75, 80, 255});
+}
+
+void StatsPanel::drawStat(const std::string& label, const std::string& value, int& currentY) const {
+    Rectangle panelBounds = getPanelBounds();
+    
+    int labelX = panelBounds.x + PANEL_PADDING;
+    int valueX = panelBounds.x + PANEL_PADDING + 140; // Fixed offset for alignment
+    
+    // Draw label
+    drawText(label, labelX, currentY, 17, Color{90, 95, 100, 255});
+    
+    // Draw value
+    drawText(value, valueX, currentY, 17, Color{40, 45, 50, 255});
+    
+    currentY += LINE_HEIGHT + 4;
+}
+
+void StatsPanel::drawCurrentPlayer(int& currentY) const {
+    char player = controller.getCurrentPlayer();
+    std::string playerName = (player == 'w') ? "White" : "Black";
+    Color playerColor = (player == 'w') ? Color{100, 100, 100, 255} : Color{60, 60, 60, 255};
+    
+    Rectangle panelBounds = getPanelBounds();
+    int labelX = panelBounds.x + PANEL_PADDING;
+    int valueX = panelBounds.x + PANEL_PADDING + 140;
+    
+    drawText("Current Player:", labelX, currentY, 17, Color{90, 95, 100, 255});
+    drawText(playerName, valueX, currentY, 17, playerColor);
+    
+    currentY += LINE_HEIGHT + 4;
+}
+
+void StatsPanel::drawHalfMoveClock(int& currentY) const {
+    std::string clockValue = std::to_string(controller.getHalfmoveClock());
+    drawStat("Halfmove Clock:", clockValue, currentY);
+}
+
+void StatsPanel::drawGameStatus(int& currentY) const {
+    std::string status;
+    Color statusColor;
+    
+    if (controller.isGameOver()) {
+        status = "Game Over";
+        statusColor = Color{220, 53, 69, 255}; // Danger red
+    } else {
+        status = "In Progress";
+        statusColor = Color{46, 160, 67, 255}; // Success green
+    }
+    
+    Rectangle panelBounds = getPanelBounds();
+    int labelX = panelBounds.x + PANEL_PADDING;
+    int valueX = panelBounds.x + PANEL_PADDING + 140;
+    
+    drawText("Game Status:", labelX, currentY, 17, Color{90, 95, 100, 255});
+    drawText(status, valueX, currentY, 17, statusColor);
+    
+    currentY += LINE_HEIGHT + 4;
+}
+
+void StatsPanel::drawCapturedPieces(int& currentY) const {
     std::vector<char> captured = controller.getCapturedPieces();
-    std::string capturedText = TextFormat("CAPTURED PIECES: %i", static_cast<int>(captured.size()));
-    drawStat(capturedText, statIndex);
+    std::string capturedCount = std::to_string(captured.size());
+    drawStat("Captured Pieces:", capturedCount, currentY);
 }
 
-void StatsPanel::drawTextWithBackground(const std::string& text, int x, int y, int fontSize, Color textColor, Color bgColor) const {
-    // Calculate text dimensions
-    int textWidth = MeasureText(text.c_str(), fontSize);
-    int padding = 10;
-    
-    Rectangle rect = {
-        static_cast<float>(x - padding), 
-        static_cast<float>(y - padding), 
-        static_cast<float>(textWidth + padding * 2), 
-        static_cast<float>(fontSize + padding * 2)
-    };
-    
-    Rectangle shadowRect = {
-        rect.x + 2, rect.y + 2, rect.width, rect.height
-    };
-    
-    // Draw shadow for depth effect
-    DrawRectangleRounded(shadowRect, 0.15f, 6, Color{0, 0, 0, 40});
-    
-    // Draw main background with rounded corners
-    DrawRectangleRounded(rect, 0.15f, 6, bgColor);
-    
-    // Draw subtle border
-    DrawRectangleLinesEx(rect, 1, Color{150, 170, 190, 120});
-    
-    // Add inner highlight for polish
-    Rectangle innerRect = {rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2};
-    DrawRectangleLinesEx(innerRect, 0.5f, Color{255, 255, 255, 80});
-    
-    // Draw the text with slight shadow
+void StatsPanel::drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const {
+    // Draw text with subtle shadow for better readability
     DrawText(text.c_str(), x + 1, y + 1, fontSize, Color{0, 0, 0, 20});
     DrawText(text.c_str(), x, y, fontSize, textColor);
 }

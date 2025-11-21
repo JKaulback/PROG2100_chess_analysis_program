@@ -16,11 +16,21 @@ public:
 private:
     const ChessAnalysisProgram& controller;
 
-    void drawStat(const std::string text, const int statIndex) const;
-    void drawTextWithBackground(const std::string& text, int x, int y, int fontSize, Color textColor, Color bgColor = Color{220, 230, 240, 200}) const;
+    // Panel properties
+    static constexpr int PANEL_WIDTH = 450;
+    static constexpr int PANEL_HEIGHT = 200;
+    static constexpr int PANEL_PADDING = 20;
+    static constexpr int LINE_HEIGHT = 24;
+    static constexpr int TITLE_HEIGHT = 36;
     
-    void drawCurrentPlayer(const int statIndex) const;
-    void drawHalfMoveClock(const int statIndex) const;
-    void drawGameStatus(const int statIndex) const;
-    void drawCapturedPieces(const int statIndex) const;
+    void drawStatsPanel() const;
+    void drawPanelTitle() const;
+    void drawStat(const std::string& label, const std::string& value, int& currentY) const;
+    void drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const;
+    
+    Rectangle getPanelBounds() const;
+    void drawCurrentPlayer(int& currentY) const;
+    void drawHalfMoveClock(int& currentY) const;
+    void drawGameStatus(int& currentY) const;
+    void drawCapturedPieces(int& currentY) const;
 };
