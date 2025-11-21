@@ -12,9 +12,11 @@ void ControlsComp::draw() const {
 
 Rectangle ControlsComp::getPanelBounds() const {
     // Position below the engine component
+    float totalPanelHeight = Config::StatsPanel::PANEL_HEIGHT + Config::EngineDialog::DIALOG_HEIGHT + ControlsPanelCfg::PANEL_HEIGHT;
+    float verticalCenterOffset = (Config::Window::HEIGHT - totalPanelHeight) / 2.0f;
     return Rectangle{
-        Config::Window::WIDTH - ControlsPanelCfg::PANEL_WIDTH,  // Align to right edge
-        Config::StatsPanel::PANEL_HEIGHT + Config::EngineDialog::DIALOG_HEIGHT,  // Position below both StatsPanel and EngineComp
+        0,  // Align to left edge
+        verticalCenterOffset + Config::StatsPanel::PANEL_HEIGHT + Config::EngineDialog::DIALOG_HEIGHT,  // Position below both StatsPanel and EngineComp
         ControlsPanelCfg::PANEL_WIDTH,
         ControlsPanelCfg::PANEL_HEIGHT
     };
@@ -27,14 +29,14 @@ void ControlsComp::drawControlsPanel() const {
     DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
                   Color{250, 252, 255, 255});
     
-    // Draw left border to separate from main content
-    DrawRectangle(panelBounds.x, panelBounds.y, 2, panelBounds.height, 
+    // Draw right border to separate from main content
+    DrawRectangle(panelBounds.x + panelBounds.width - 2, panelBounds.y, 2, panelBounds.height, 
                   Color{200, 205, 210, 255});
     
-    // Draw subtle inner shadow along the left edge
+    // Draw subtle inner shadow along the right edge
     for (int i = 0; i < 6; i++) {
         unsigned char alpha = static_cast<unsigned char>(15 - (i * 2));
-        DrawRectangle(panelBounds.x + 2 + i, panelBounds.y, 1, panelBounds.height, 
+        DrawRectangle(panelBounds.x + panelBounds.width - 8 + i, panelBounds.y, 1, panelBounds.height, 
                       Color{0, 0, 0, alpha});
     }
     
@@ -50,6 +52,7 @@ void ControlsComp::drawControlsPanel() const {
         "Right Click - Cancel selection",
         "Left Arrow - Undo move",
         "Right Arrow - Redo move",
+        "F - Flip board",
         "R - Reset board"
     }, currentY);
     

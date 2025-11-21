@@ -19,10 +19,12 @@ void EngineComp::setEngineRunning(bool isRunning) {
 }
 
 Rectangle EngineComp::getDialogBounds() const {
-    // Position as a built-in panel on the right side, below StatsPanel
+    // Position as a built-in panel on the left side, below StatsPanel
+    float totalPanelHeight = Config::StatsPanel::PANEL_HEIGHT + EngineDialogCfg::DIALOG_HEIGHT + Config::ControlsPanel::PANEL_HEIGHT;
+    float verticalCenterOffset = (Config::Window::HEIGHT - totalPanelHeight) / 2.0f;
     return Rectangle{
-        Config::Window::WIDTH - EngineDialogCfg::DIALOG_WIDTH,  // Align to right edge
-        Config::StatsPanel::PANEL_HEIGHT,  // Start below StatsPanel
+        0,  // Align to left edge
+        verticalCenterOffset + Config::StatsPanel::PANEL_HEIGHT,  // Start below StatsPanel
         EngineDialogCfg::DIALOG_WIDTH,
         EngineDialogCfg::DIALOG_HEIGHT
     };
@@ -35,14 +37,14 @@ void EngineComp::drawDialogWindow() const {
     DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
                   Color{240, 242, 245, 255});
     
-    // Draw left border to separate from main content
-    DrawRectangle(panelBounds.x, panelBounds.y, 2, panelBounds.height, 
+    // Draw right border to separate from main content
+    DrawRectangle(panelBounds.x + panelBounds.width - 2, panelBounds.y, 2, panelBounds.height, 
                   Color{200, 205, 210, 255});
     
-    // Draw subtle inner shadow along the left edge
+    // Draw subtle inner shadow along the right edge
     for (int i = 0; i < 8; i++) {
         unsigned char alpha = static_cast<unsigned char>(20 - (i * 2));
-        DrawRectangle(panelBounds.x + 2 + i, panelBounds.y, 1, panelBounds.height, 
+        DrawRectangle(panelBounds.x + panelBounds.width - 10 + i, panelBounds.y, 1, panelBounds.height, 
                       Color{0, 0, 0, alpha});
     }
     

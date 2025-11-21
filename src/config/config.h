@@ -24,8 +24,11 @@ namespace Config {
         constexpr float COORDINATE_MARGIN = 40.0f;  // Space for coordinate labels
         constexpr float AESTHETIC_MARGIN = 30.0f;   // Additional aesthetic spacing
         constexpr float TOTAL_MARGIN = COORDINATE_MARGIN + AESTHETIC_MARGIN;
-        constexpr float OFFSET_X = TOTAL_MARGIN;
-        constexpr float OFFSET_Y = TOTAL_MARGIN;
+        constexpr float PANEL_SPACE = 450.0f;      // Space for left-side panels
+        constexpr float BOARD_WITH_MARGINS = SIZE + (2 * TOTAL_MARGIN);  // Board + margins
+        constexpr float VERTICAL_CENTER_OFFSET = (Window::HEIGHT - BOARD_WITH_MARGINS) / 2.0f;
+        constexpr float OFFSET_X = PANEL_SPACE + TOTAL_MARGIN;  // Move board to right
+        constexpr float OFFSET_Y = VERTICAL_CENTER_OFFSET + TOTAL_MARGIN;
         constexpr int MIN_RANK = 0;
         constexpr int MAX_RANK = 7;
         constexpr int MIN_FILE = 0;
@@ -76,7 +79,7 @@ namespace Config {
         constexpr float CAPTURED_SIZE_RATIO = 0.4f;
         constexpr float CAPTURED_SIZE = Board::SQUARE_SIZE * CAPTURED_SIZE_RATIO;
         constexpr float CAPTURED_SCALE = CAPTURED_SIZE / TEXTURE_SIZE;
-        constexpr float CAPTURED_OFFSET_X = Board::SIZE + Board::OFFSET_X + CAPTURED_SIZE;
+        constexpr float CAPTURED_OFFSET_X = Board::SIZE + Board::OFFSET_X + 50.0f;  // Position right of board
         constexpr float CAPTURED_MARGIN = 50.0f;
         constexpr float CAPTURED_OFFSET_Y_WHITE = Board::OFFSET_Y + CAPTURED_MARGIN;
         constexpr float CAPTURED_OFFSET_Y_BLACK = Board::SIZE + Board::OFFSET_Y - CAPTURED_MARGIN - CAPTURED_SIZE;
@@ -145,7 +148,7 @@ namespace Config {
 
     namespace ControlsPanel {
         constexpr int PANEL_WIDTH = 450;
-        constexpr int PANEL_HEIGHT = 320;
+        constexpr int PANEL_HEIGHT = 340;
         constexpr int PANEL_PADDING = 20;
         constexpr int LINE_HEIGHT = 22;
         constexpr int TITLE_HEIGHT = 36;

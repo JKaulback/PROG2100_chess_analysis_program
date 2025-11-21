@@ -11,10 +11,12 @@ void StatsPanel::draw() const {
 }
 
 Rectangle StatsPanel::getPanelBounds() const {
-    // Position at the top of the right panel area
+    // Position at the top of the vertically centered left panel area
+    float totalPanelHeight = StatsPanelCfg::PANEL_HEIGHT + Config::EngineDialog::DIALOG_HEIGHT + Config::ControlsPanel::PANEL_HEIGHT;
+    float verticalCenterOffset = (Config::Window::HEIGHT - totalPanelHeight) / 2.0f;
     return Rectangle{
-        Config::Window::WIDTH - StatsPanelCfg::PANEL_WIDTH,  // Align to right edge
-        0,  // Start from top edge
+        0,  // Align to left edge
+        verticalCenterOffset,  // Start from vertically centered position
         StatsPanelCfg::PANEL_WIDTH,
         StatsPanelCfg::PANEL_HEIGHT
     };
@@ -27,14 +29,14 @@ void StatsPanel::drawStatsPanel() const {
     DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
                   Color{245, 247, 250, 255});
     
-    // Draw left border to separate from main content
-    DrawRectangle(panelBounds.x, panelBounds.y, 2, panelBounds.height, 
+    // Draw right border to separate from main content
+    DrawRectangle(panelBounds.x + panelBounds.width - 2, panelBounds.y, 2, panelBounds.height, 
                   Color{200, 205, 210, 255});
     
-    // Draw subtle inner shadow along the left edge
+    // Draw subtle inner shadow along the right edge
     for (int i = 0; i < 6; i++) {
         unsigned char alpha = static_cast<unsigned char>(15 - (i * 2));
-        DrawRectangle(panelBounds.x + 2 + i, panelBounds.y, 1, panelBounds.height, 
+        DrawRectangle(panelBounds.x + panelBounds.width - 8 + i, panelBounds.y, 1, panelBounds.height, 
                       Color{0, 0, 0, alpha});
     }
     
