@@ -29,6 +29,7 @@ private:
     void initTextures();
     void initPieceTexture(const char piece);
     void drawBoard() const;
+    void drawCoordinates() const;
     void drawPieces() const;
     void drawDraggedPiece() const;
     void drawCapturedPieces() const;

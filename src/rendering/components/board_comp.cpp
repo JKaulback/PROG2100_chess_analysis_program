@@ -28,6 +28,9 @@ void BoardComp::draw() const {
     
     // Draw the chess board
     drawBoard();
+    
+    // Draw coordinate labels
+    drawCoordinates();
 
     // Draw all chess pieces in play
     drawPieces();
@@ -85,6 +88,40 @@ void BoardComp::initPieceTexture(const char piece) {
 void BoardComp::drawBoard() const {
     // Draw the chess board with proper offset for margins
     DrawTextureEx(boardTexture, {BoardCfg::OFFSET_X, BoardCfg::OFFSET_Y}, 0.0f, BoardCfg::SCALE, WHITE);
+}
+
+void BoardComp::drawCoordinates() const {
+    const int fontSize = 20;
+    const int labelOffset = 25;
+    const Color labelColor = DARKGRAY;
+    
+    // Draw file letters (a-h) at bottom and top
+    for (int file = 0; file < 8; file++) {
+        char fileLetter = 'a' + file;
+        const float xPos = BoardCfg::OFFSET_X + (file * BoardCfg::SQUARE_SIZE) + (BoardCfg::SQUARE_SIZE / 2) - (fontSize / 4);
+        
+        // Bottom labels
+        const float bottomY = BoardCfg::OFFSET_Y + BoardCfg::SIZE + 5;
+        DrawText(TextFormat("%c", fileLetter), static_cast<int>(xPos), static_cast<int>(bottomY), fontSize, labelColor);
+        
+        // Top labels
+        const float topY = BoardCfg::OFFSET_Y - labelOffset;
+        DrawText(TextFormat("%c", fileLetter), static_cast<int>(xPos), static_cast<int>(topY), fontSize, labelColor);
+    }
+    
+    // Draw rank numbers (1-8) at left and right
+    for (int rank = 0; rank < 8; rank++) {
+        int rankNumber = rank + 1;
+        const float yPos = BoardCfg::OFFSET_Y + ((7 - rank) * BoardCfg::SQUARE_SIZE) + (BoardCfg::SQUARE_SIZE / 2) - (fontSize / 2);
+        
+        // Left labels
+        const float leftX = BoardCfg::OFFSET_X - labelOffset;
+        DrawText(TextFormat("%d", rankNumber), static_cast<int>(leftX), static_cast<int>(yPos), fontSize, labelColor);
+        
+        // Right labels
+        const float rightX = BoardCfg::OFFSET_X + BoardCfg::SIZE + 5;
+        DrawText(TextFormat("%d", rankNumber), static_cast<int>(rightX), static_cast<int>(yPos), fontSize, labelColor);
+    }
 }
 
 void BoardComp::drawPieces() const {
