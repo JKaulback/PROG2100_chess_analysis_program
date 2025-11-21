@@ -20,7 +20,7 @@ ChessAnalysisProgram::ChessAnalysisProgram() :
     
     // Generate the starting FEN and set it as the starting position
     FENPositionTracker tempTracker;
-    tempTracker.recordPosition(board, gameState);
+    tempTracker.record(board, gameState);
     std::string startingFEN = tempTracker.getCurrentPosition();
     
     // Ensure we have a valid starting position before setting it
@@ -321,7 +321,7 @@ void ChessAnalysisProgram::resetToInitialPosition() {
 
     // Generate starting FEN position
     FENPositionTracker tempTracker;
-    tempTracker.recordPosition(board, gameState);
+    tempTracker.record(board, gameState);
     std::string startingFEN = tempTracker.getCurrentPosition();
 
     // Clear position history and set starting position

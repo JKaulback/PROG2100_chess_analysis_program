@@ -1,4 +1,5 @@
 #include "controls_comp.h"
+#include "ui_renderer.h"
 #include "../../config/config.h"
 
 namespace ControlsPanelCfg = Config::ControlsPanel;
@@ -25,20 +26,10 @@ Rectangle ControlsComp::getPanelBounds() const {
 void ControlsComp::drawControlsPanel() const {
     Rectangle panelBounds = getPanelBounds();
     
-    // Draw main panel background
-    DrawRectangle(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height, 
-                  Color{250, 252, 255, 255});
-    
-    // Draw right border to separate from main content
-    DrawRectangle(panelBounds.x + panelBounds.width - 2, panelBounds.y, 2, panelBounds.height, 
-                  Color{200, 205, 210, 255});
-    
-    // Draw subtle inner shadow along the right edge
-    for (int i = 0; i < 6; i++) {
-        unsigned char alpha = static_cast<unsigned char>(15 - (i * 2));
-        DrawRectangle(panelBounds.x + panelBounds.width - 8 + i, panelBounds.y, 1, panelBounds.height, 
-                      Color{0, 0, 0, alpha});
-    }
+    // Draw panel using UIRenderer
+    UIRenderer::drawPanelBackground(panelBounds, UIRenderer::PanelStyle::Controls);
+    UIRenderer::drawPanelBorder(panelBounds);
+    UIRenderer::drawPanelShadowRight(panelBounds, 6);
     
     // Draw content
     drawPanelTitle();
@@ -73,27 +64,8 @@ void ControlsComp::drawControlsPanel() const {
 
 void ControlsComp::drawPanelTitle() const {
     Rectangle panelBounds = getPanelBounds();
-    
-    // Draw title bar background
-    Rectangle titleRect = {
-        panelBounds.x,
-        panelBounds.y,
-        panelBounds.width,
-        ControlsPanelCfg::TITLE_HEIGHT + 4
-    };
-    DrawRectangle(titleRect.x, titleRect.y, titleRect.width, titleRect.height, 
-                  Color{225, 230, 235, 255});
-    
-    // Draw bottom border of title bar
-    DrawRectangle(titleRect.x, titleRect.y + titleRect.height - 1, titleRect.width, 1, 
-                  Color{180, 185, 190, 255});
-    
-    // Draw title text
-    const char* title = ControlsPanelCfg::TITLE_TEXT;
-    int titleX = panelBounds.x + ControlsPanelCfg::PANEL_PADDING;
-    int titleY = panelBounds.y + 12;
-    
-    drawText(title, titleX, titleY, 22, Color{70, 75, 80, 255});
+    UIRenderer::drawPanelTitle(panelBounds, ControlsPanelCfg::TITLE_TEXT, 
+                              ControlsPanelCfg::TITLE_HEIGHT, ControlsPanelCfg::PANEL_PADDING);
 }
 
 void ControlsComp::drawControlGroup(const std::string& title, const std::vector<std::string>& controls, int& currentY) const {
@@ -138,7 +110,6 @@ void ControlsComp::drawText(const std::string& text, int x, int y, int fontSize,
         displayText = displayText.substr(0, displayText.length() - 4) + "...";
     }
     
-    // Draw text with subtle shadow for better readability
-    DrawText(displayText.c_str(), x + 1, y + 1, fontSize, Color{0, 0, 0, 30});
-    DrawText(displayText.c_str(), x, y, fontSize, textColor);
+    // Use UIRenderer for text with shadow
+    UIRenderer::drawTextWithShadow(displayText, x, y, fontSize, textColor);
 }

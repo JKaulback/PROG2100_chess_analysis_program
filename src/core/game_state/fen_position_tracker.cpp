@@ -6,50 +6,10 @@ namespace BoardCfg = Config::Board;
 FENPositionTracker::FENPositionTracker() {
     positionHistory = {};
     positionRedo = {};
-    moves = {};
-    movesRedo = {};
 }
 
-void FENPositionTracker::recordPosition(const ChessBoard& board, const ChessGameState& gameState) {
-    std::string newPosition = "";
-
-    newPosition += getBoardState(board);
-    newPosition += " ";
-
-    newPosition += std::string(1, gameState.getCurrentPlayer());
-    newPosition += " ";
-
-    newPosition += getCastlingRights(gameState);
-    newPosition += " ";
-
-    newPosition += getEnPassantTarget(gameState);
-    newPosition += " ";
-
-    newPosition += std::to_string(gameState.getHalfmoveClock());
-    newPosition += " ";
-    
-    newPosition += std::to_string(gameState.getFullmoveClock());
-
-    // Create PositionState with FEN and captured pieces
-    PositionState newState(newPosition, board.getWhiteCapturedPieces(), board.getBlackCapturedPieces());
-    positionHistory.push_back(newState);
-
-    if (!positionRedo.empty()) {
-        if (newPosition == positionRedo.back().fenString)
-            positionRedo.pop_back(); // Pop position redone from stack
-        else
-            positionRedo.clear(); // Clear stack; different future
-    }
-}
-
-const std::vector<std::string>& FENPositionTracker::getPositionHistory() const {
-    // Need to create a static vector to return
-    static std::vector<std::string> fenHistory;
-    fenHistory.clear();
-    for (const auto& state : positionHistory) {
-        fenHistory.push_back(state.fenString);
-    }
-    return fenHistory;
+const std::vector<PositionState>& FENPositionTracker::getPositionHistory() const {
+    return positionHistory;
 }
 
 std::string FENPositionTracker::getStartPosition() const {
@@ -70,32 +30,57 @@ void FENPositionTracker::record(
     const ChessBoard& board, 
     const ChessGameState& gameState, 
     const std::string& algebraicMove) {
+
+    std::string newPosition = "";
+
+    newPosition += getBoardState(board);
+    newPosition += " ";
+
+    newPosition += std::string(1, gameState.getCurrentPlayer());
+    newPosition += " ";
+
+    newPosition += getCastlingRights(gameState);
+    newPosition += " ";
+
+    newPosition += getEnPassantTarget(gameState);
+    newPosition += " ";
+
+    newPosition += std::to_string(gameState.getHalfmoveClock());
+    newPosition += " ";
     
-    recordPosition(board, gameState);
-    recordMove(algebraicMove);
+    newPosition += std::to_string(gameState.getFullmoveClock());
+
+    // Create PositionState with FEN, captured pieces, and algebraic move
+    PositionState newState(newPosition, board.getWhiteCapturedPieces(), board.getBlackCapturedPieces(), algebraicMove);
+    positionHistory.push_back(newState);
+
+    if (!positionRedo.empty()) {
+        if (newPosition == positionRedo.back().fenString)
+            positionRedo.pop_back(); // Pop position redone from stack
+        else
+            positionRedo.clear(); // Clear stack; different future
+    }
+}
+
+void FENPositionTracker::record(const ChessBoard& board, const ChessGameState& gameState) {
+    record(board, gameState, "");
 }
 
 void FENPositionTracker::undoMove() {
-    if (!moves.empty()) {
+    if (positionHistory.size() > 1) { // Need at least 2 positions to undo
         PositionState lastPosition = positionHistory.back();
+        lastPosition.isActive = false;
         positionHistory.pop_back();
         positionRedo.push_back(lastPosition);
-
-        std::string lastMove = moves.back();
-        moves.pop_back();
-        movesRedo.push_back(lastMove);
     }
 }
 
 void FENPositionTracker::redoMove() {
-    if (!movesRedo.empty()) {
+    if (!positionRedo.empty()) {
         PositionState nextPosition = positionRedo.back();
+        nextPosition.isActive = true;
         positionRedo.pop_back();
         positionHistory.push_back(nextPosition);
-
-        std::string nextMove = movesRedo.back();
-        movesRedo.pop_back();
-        moves.push_back(nextMove);
     }
 }
 
@@ -105,7 +90,7 @@ const bool FENPositionTracker::isUndoAvailable() const {
 }
 
 const bool FENPositionTracker::isRedoAvailable() const {
-    return !movesRedo.empty();
+    return !positionRedo.empty();
 }
 
 const std::string FENPositionTracker::getRedoPosition() const {
@@ -117,49 +102,32 @@ const std::string FENPositionTracker::getRedoPosition() const {
 
 const std::string FENPositionTracker::getRedoMove() const {
     return
-        (movesRedo.empty()) ?
+        (positionRedo.empty()) ?
         "" :
-        moves.back();
+        positionRedo.back().algebraicMove;
 }
 
-const std::vector<std::string>& FENPositionTracker::getRedoPositions() const {
-    // Need to create a static vector to return
-    static std::vector<std::string> redoFenHistory;
-    redoFenHistory.clear();
-    for (const auto& state : positionRedo) {
-        redoFenHistory.push_back(state.fenString);
-    }
-    return redoFenHistory;
-}
-
-const std::vector<std::string>& FENPositionTracker::getRedoMoves() const {
-    return movesRedo;
-}
-
-void FENPositionTracker::recordMove(const std::string& algebraicMove) {
-    moves.push_back(algebraicMove);
-
-    if (!movesRedo.empty()){
-        if (algebraicMove == movesRedo.back())
-            movesRedo.pop_back(); // Pop move being redone from stack
-        else
-            movesRedo.clear(); // Clear stack; different future
-    }
+const std::vector<PositionState>& FENPositionTracker::getRedoPositions() const {
+    return positionRedo;
 }
 
 void FENPositionTracker::setStartingPosition(const std::string& fen) {
     positionHistory.clear();
-    // Starting position has no captured pieces
-    PositionState startState(fen, {}, {});
+    // Starting position has no captured pieces and no move (empty string)
+    PositionState startState(fen, {}, {}, "");
     positionHistory.push_back(startState);
 }
 
 void FENPositionTracker::clearHistory() {
     positionHistory.clear();
-    moves.clear();
+    positionRedo.clear();
 }
 
-const std::vector<std::string>& FENPositionTracker::getMoveHistory() const {
+const std::vector<std::string> FENPositionTracker::getMoveHistory() const {
+    std::vector<std::string> moves;
+    for (auto position : positionHistory) {
+        moves.push_back(position.algebraicMove);
+    }
     return moves;
 }
 
@@ -187,6 +155,10 @@ PositionState FENPositionTracker::getCurrentPositionState() const {
 
 PositionState FENPositionTracker::getRedoPositionState() const {
     return positionRedo.empty() ? PositionState() : positionRedo.back();
+}
+
+std::string FENPositionTracker::getCurrentMove() const {
+    return positionHistory.empty() ? "" : positionHistory.back().algebraicMove;
 }
 
 std::string FENPositionTracker::getBoardState(const ChessBoard& board) const {

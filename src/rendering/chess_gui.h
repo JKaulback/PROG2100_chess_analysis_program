@@ -3,18 +3,20 @@
 #include <raylib.h>
 #include <memory>
 #include "components/board_comp.h"
-#include "components/stats_panel.h"
-#include "components/engine_comp.h"
 #include "components/controls_comp.h"
+#include "components/engine_comp.h"
 #include "components/game_overlay.h"
+#include "components/moves_comp.h"
+#include "components/stats_panel.h"
 #include "../config/config.h"
 
 class ChessAnalysisProgram;
 class BoardComp;
-class StatsPanel;
-class EngineComp;
 class ControlsComp;
+class EngineComp;
 class GameOverlay;
+class MovesComp;
+class StatsPanel;
 
 class ChessGUI {
 public:
@@ -41,8 +43,9 @@ private:
     
     // GUI Components
     std::unique_ptr<BoardComp> boardComp;
-    std::unique_ptr<StatsPanel> statsPanel;
-    std::unique_ptr<EngineComp> engineComp;
     std::unique_ptr<ControlsComp> controlsComp;
+    std::unique_ptr<EngineComp> engineComp;
     std::unique_ptr<GameOverlay> gameOverlay;
+    std::unique_ptr<MovesComp> movesComp;
+    std::unique_ptr<StatsPanel> statsPanel;
 };
