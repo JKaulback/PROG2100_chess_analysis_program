@@ -32,10 +32,20 @@ ChessMoveValidator::MoveResult ChessMoveValidator::validateMove(
     char movingPiece = board.getPieceAt(srcRank, srcFile);
     
     // Check for castling (king-specific move)
-    if (board.isKing(movingPiece) && 
-            specialValidator.validateCastling(board, gameState, move)) {
-        bool isKingside = (destFile > srcFile);
-        return isKingside ? MoveResult::VALID_CASTLE_KINGSIDE : MoveResult::VALID_CASTLE_QUEENSIDE;
+    if (board.isKing(movingPiece)) {
+        // If king is trying to move 2 squares horizontally, it MUST be castling
+        int rankDiff = abs(move.getDestRank() - move.getSrcRank());
+        int fileDiff = abs(move.getDestFile() - move.getSrcFile());
+        if (rankDiff == 0 && fileDiff == 2) {
+            // This is a castling attempt - validate it
+            if (specialValidator.validateCastling(board, gameState, move)) {
+                bool isKingside = (destFile > srcFile);
+                return isKingside ? MoveResult::VALID_CASTLE_KINGSIDE : MoveResult::VALID_CASTLE_QUEENSIDE;
+            } else {
+                // Castling attempt failed - this is not a valid move
+                return MoveResult::INVALID_ILLEGAL_MOVE;
+            }
+        }
     }
 
     // Check for en passant (pawn-specific move)
