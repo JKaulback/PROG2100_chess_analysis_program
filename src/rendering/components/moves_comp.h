@@ -19,9 +19,8 @@ private:
     void drawDialogWindow() const;
     void drawDialogTitle(const Rectangle& panelBounds) const;
     void drawMoves(const Rectangle& panelBounds) const;
-    void drawMove(const PositionState& moveData) const;
+    void drawHistoricalMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount, const bool isCurrentSet) const;
 
     // Helper functions
     Rectangle getDialogBounds() const;
-    void drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const;
 };

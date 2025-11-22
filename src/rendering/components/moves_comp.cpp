@@ -46,17 +46,59 @@ void MovesComp::drawMoves(const Rectangle& panelBounds) const {
         return;
     }
 
-    std::string text = "Moves found!";
-        
-        int textX = panelBounds.x + MoveCFG::PANEL_PADDING;
-        int textY = panelBounds.y + MoveCFG::TITLE_HEIGHT + 8 + MoveCFG::PANEL_PADDING;
+    int movesCount = 0;
+    // The current set of moves (white then black) is either the last index of
+    // positionHistory, or the second last index of positionHistory
+    // (Note: If program gets here, positionHistory size >= 2)
+    int currentSetStartIndex =
+        (positionHistory.size() % 2 == 0 ) ?
+        positionHistory.size() - 1 :
+        positionHistory.size() - 1;
 
-        UIRenderer::drawTextWithShadow(text, textX, textY + MoveCFG::LINE_HEIGHT, 
-                                        18, Color{128, 128, 128, 255});
+    for (int i = 1; i < positionHistory.size(); i++) {
+        drawHistoricalMove(panelBounds, positionHistory.at(i), movesCount++, i >= currentSetStartIndex);
+    }
 }
 
-void MovesComp::drawMove(const PositionState& moveData) const {
+void MovesComp::drawHistoricalMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount, const bool isCurrentSet) const {
+    // If white's move, add numeric identifier. Don't add for black
+    std::string moveText =
+        (moveData.movedBy == 'w') ?
+        "" :
+        std::to_string(movesCount / 2 + 1) + ". ";
+    // Get the rest of the move text
+    moveText += moveData.algebraicMove;
 
+    // Determine x position of move in 6x8 grid (font size 18px) 
+    int movePerCol = 6;
+    int gridRows = 8;
+
+    // textX and textY were handwritten to test my understanding
+    int textX = 
+        panelBounds.x + MoveCFG::PANEL_PADDING + // First index can start here 
+        (movesCount % movePerCol) * // Index in the grid
+        (MoveCFG::PANEL_WIDTH - (2 * MoveCFG::PANEL_PADDING)) /  
+        movePerCol; // Break the drawable panel area into moves per col
+    
+    int textY = 
+        panelBounds.y + MoveCFG::PANEL_PADDING + MoveCFG::TITLE_HEIGHT + // First index can start here
+        (movesCount / movePerCol) * // Check index in the grid
+        (MoveCFG::PANEL_HEIGHT - (2 * MoveCFG::PANEL_PADDING) - MoveCFG::TITLE_HEIGHT) / 
+        gridRows; // Break the drawable panel area into number of rows
+
+
+    // Determine color
+    Color moveColor =
+        isCurrentSet ?
+        Color{0, 0, 139, 255} :
+        Color{45, 45, 45, 255};
+    // Draw the text
+    UIRenderer::drawTextWithShadow(
+            moveText, 
+            textX, 
+            textY, 
+            18, 
+            moveColor);
 }
 
 Rectangle MovesComp::getDialogBounds() const {
@@ -69,8 +111,4 @@ Rectangle MovesComp::getDialogBounds() const {
         MoveCFG::PANEL_WIDTH,
         MoveCFG::PANEL_HEIGHT
     };
-}
-
-void MovesComp::drawText(const std::string& text, int x, int y, int fontSize, Color textColor) const {
-
 }

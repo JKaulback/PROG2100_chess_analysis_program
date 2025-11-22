@@ -201,8 +201,8 @@ namespace Config {
     }
 
     namespace MovesPanel {
-        constexpr int PANEL_WIDTH = 400;
-        constexpr int PANEL_HEIGHT = 750;
+        constexpr int PANEL_WIDTH = 425;
+        constexpr int PANEL_HEIGHT = 450;
         constexpr int PANEL_PADDING = 20;
         constexpr int LINE_HEIGHT = 22;
         constexpr int TITLE_HEIGHT = 36;

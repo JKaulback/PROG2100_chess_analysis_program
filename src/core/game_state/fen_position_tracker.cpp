@@ -50,8 +50,14 @@ void FENPositionTracker::record(
     
     newPosition += std::to_string(gameState.getFullmoveClock());
 
-    // Create PositionState with FEN, captured pieces, and algebraic move
-    PositionState newState(newPosition, board.getWhiteCapturedPieces(), board.getBlackCapturedPieces(), algebraicMove);
+    // Create PositionState with FEN, captured pieces, algebraic move, and move owner
+    PositionState newState(
+        newPosition, 
+        board.getWhiteCapturedPieces(), 
+        board.getBlackCapturedPieces(), 
+        algebraicMove,
+        gameState.getCurrentPlayer());
+    
     positionHistory.push_back(newState);
 
     if (!positionRedo.empty()) {
@@ -69,7 +75,6 @@ void FENPositionTracker::record(const ChessBoard& board, const ChessGameState& g
 void FENPositionTracker::undoMove() {
     if (positionHistory.size() > 1) { // Need at least 2 positions to undo
         PositionState lastPosition = positionHistory.back();
-        lastPosition.isActive = false;
         positionHistory.pop_back();
         positionRedo.push_back(lastPosition);
     }
@@ -78,7 +83,6 @@ void FENPositionTracker::undoMove() {
 void FENPositionTracker::redoMove() {
     if (!positionRedo.empty()) {
         PositionState nextPosition = positionRedo.back();
-        nextPosition.isActive = true;
         positionRedo.pop_back();
         positionHistory.push_back(nextPosition);
     }

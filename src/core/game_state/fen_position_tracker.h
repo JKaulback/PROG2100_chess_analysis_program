@@ -12,11 +12,11 @@ struct PositionState {
     std::vector<char> whiteCapturedPieces;
     std::vector<char> blackCapturedPieces;
     std::string algebraicMove; // The move that led to this position (empty for initial position)
-    bool isActive = true;
+    char movedBy; // The player who made the move (empty for initial position)
 
     PositionState() = default;
-    PositionState(const std::string& fen, const std::vector<char>& whiteCaptured, const std::vector<char>& blackCaptured, const std::string& move = "")
-        : fenString(fen), whiteCapturedPieces(whiteCaptured), blackCapturedPieces(blackCaptured), algebraicMove(move) {}
+    PositionState(const std::string& fen, const std::vector<char>& whiteCaptured, const std::vector<char>& blackCaptured, const std::string& move = "", const char movedBy = ' ')
+        : fenString(fen), whiteCapturedPieces(whiteCaptured), blackCapturedPieces(blackCaptured), algebraicMove(move), movedBy(movedBy) {}
 };
 
 class FENPositionTracker {
