@@ -35,7 +35,7 @@ void StatsPanel::drawStatsPanel() const {
     drawPanelTitle();
     
     // Draw statistics with dynamic positioning
-    int currentY = panelBounds.y + StatsPanelCfg::TITLE_HEIGHT + 8 + StatsPanelCfg::PANEL_PADDING;
+    int currentY = panelBounds.y + StatsPanelCfg::TITLE_HEIGHT + 12 + StatsPanelCfg::PANEL_PADDING;
     drawCurrentPlayer(currentY);
     drawHalfMoveClock(currentY);
     drawGameStatus(currentY);
@@ -52,7 +52,10 @@ void StatsPanel::drawStat(const std::string& label, const std::string& value, in
     Rectangle panelBounds = getPanelBounds();
     
     int labelX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
-    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + 140; // Fixed offset for alignment
+    
+    // Calculate dynamic alignment based on the longest expected label
+    int labelWidth = UIRenderer::measureMonospaceText("Captured Pieces:", 17);
+    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + labelWidth + 20; // 20px spacing
     
     // Draw label
     drawText(label, labelX, currentY, 17, Color{90, 95, 100, 255});
@@ -60,7 +63,7 @@ void StatsPanel::drawStat(const std::string& label, const std::string& value, in
     // Draw value
     drawText(value, valueX, currentY, 17, Color{40, 45, 50, 255});
     
-    currentY += StatsPanelCfg::LINE_HEIGHT + 4;
+    currentY += StatsPanelCfg::LINE_HEIGHT + 2; // Reduced spacing from 4 to 2
 }
 
 void StatsPanel::drawCurrentPlayer(int& currentY) const {
@@ -70,12 +73,15 @@ void StatsPanel::drawCurrentPlayer(int& currentY) const {
     
     Rectangle panelBounds = getPanelBounds();
     int labelX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
-    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + 140;
+    
+    // Calculate dynamic alignment based on the longest expected label
+    int labelWidth = UIRenderer::measureMonospaceText("Captured Pieces:", 17);
+    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + labelWidth + 20; // 20px spacing
     
     drawText("Current Player:", labelX, currentY, 17, Color{90, 95, 100, 255});
     drawText(playerName, valueX, currentY, 17, playerColor);
     
-    currentY += StatsPanelCfg::LINE_HEIGHT + 4;
+    currentY += StatsPanelCfg::LINE_HEIGHT + 2; // Reduced spacing from 4 to 2
 }
 
 void StatsPanel::drawHalfMoveClock(int& currentY) const {
@@ -97,12 +103,15 @@ void StatsPanel::drawGameStatus(int& currentY) const {
     
     Rectangle panelBounds = getPanelBounds();
     int labelX = panelBounds.x + StatsPanelCfg::PANEL_PADDING;
-    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + 140;
+    
+    // Calculate dynamic alignment based on the longest expected label
+    int labelWidth = UIRenderer::measureMonospaceText("Captured Pieces:", 17);
+    int valueX = panelBounds.x + StatsPanelCfg::PANEL_PADDING + labelWidth + 20; // 20px spacing
     
     drawText("Game Status:", labelX, currentY, 17, Color{90, 95, 100, 255});
     drawText(status, valueX, currentY, 17, statusColor);
     
-    currentY += StatsPanelCfg::LINE_HEIGHT + 4;
+    currentY += StatsPanelCfg::LINE_HEIGHT + 2; // Reduced spacing from 4 to 2
 }
 
 void StatsPanel::drawCapturedPieces(int& currentY) const {
