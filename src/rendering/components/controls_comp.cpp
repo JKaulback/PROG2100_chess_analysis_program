@@ -39,8 +39,7 @@ void ControlsComp::drawControlsPanel() const {
     
     // Game Controls
     drawControlGroup("Game Controls:", {
-        "Left Click - Select/Move piece",
-        "Right Click - Cancel selection",
+        "Left Click - Drag and drop piece",
         "Left Arrow - Undo move",
         "Right Arrow - Redo move",
         "F - Flip board",

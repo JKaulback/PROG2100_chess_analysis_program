@@ -148,7 +148,7 @@ namespace Config {
 
     namespace ControlsPanel {
         constexpr int PANEL_WIDTH = 450;
-        constexpr int PANEL_HEIGHT = 340;
+        constexpr int PANEL_HEIGHT = 320;
         constexpr int PANEL_PADDING = 20;
         constexpr int LINE_HEIGHT = 22;
         constexpr int TITLE_HEIGHT = 36;
@@ -208,6 +208,13 @@ namespace Config {
         constexpr int TITLE_HEIGHT = 36;
         constexpr const char* TITLE_TEXT = "MOVE HISTORY";
         constexpr int MOVE_FONT_SIZE = 18;
+
+        // Grid layout configuration
+        constexpr int MOVES_PER_ROW = 6;
+        constexpr int GRID_ROWS = 8;
+        constexpr int MAX_MOVES_DISPLAYED = MOVES_PER_ROW * GRID_ROWS; // 54 moves
+        constexpr int PIVOT_MOVE_INDEX = 19;
+        constexpr const char* ELLIPSIS = "...";
     }
 
     namespace Fonts {

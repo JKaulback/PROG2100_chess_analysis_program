@@ -31,6 +31,7 @@ public:
     // Record once
     void record(const ChessBoard& board, const ChessGameState& gameState, const std::string& algebraicMove);
     void record(const ChessBoard& board, const ChessGameState& gameState);
+    void record(const PositionState& state);
 
     // Manage undo/redo state
     void undoMove();

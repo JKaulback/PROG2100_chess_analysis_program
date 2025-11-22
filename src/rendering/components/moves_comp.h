@@ -19,11 +19,12 @@ private:
     void drawDialogWindow() const;
     void drawDialogTitle(const Rectangle& panelBounds) const;
     void drawMoves(const Rectangle& panelBounds) const;
-    void drawHistoricalMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount, const bool isCurrentSet) const;
-    void drawRedoMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount) const;
+    void drawHistoricalMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount, const bool isLastMove, const int index) const;
+    void drawRedoMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount, const int index) const;
+    void drawEllipsis(const Rectangle& panelBounds, const int movesCount) const;
 
     // Helper functions
     Rectangle getDialogBounds() const;
     Vector2 calcMoveTextPos(const Rectangle& panelBounds, const std::string& moveText, const int movesCount, const int fontSize) const;
-    std::string getMoveText(const PositionState& moveData, const int movesCount) const;
+    std::string getMoveText(const PositionState& moveData, const int movesCount, const int index) const;
 };

@@ -68,6 +68,16 @@ void FENPositionTracker::record(
     }
 }
 
+void FENPositionTracker::record(const PositionState& state) {
+    positionHistory.push_back(state);
+    if (!positionRedo.empty()) {
+        if (state.fenString == positionRedo.back().fenString)
+            positionRedo.pop_back(); // Pop position redone from stack
+        else
+            positionRedo.clear(); // Clear stack; different future
+    }
+}
+
 void FENPositionTracker::record(const ChessBoard& board, const ChessGameState& gameState) {
     record(board, gameState, "");
 }
