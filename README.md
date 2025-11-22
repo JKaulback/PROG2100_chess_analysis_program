@@ -1,10 +1,10 @@
 # Chess Analysis Program
 
-A complete chess implementation in C++ featuring advanced rule validation, game state analysis, and professional graphical interface. This project demonstrates sophisticated programming concepts including complex algorithms, design patterns, and modern C++ practices with full chess rule compliance.
+A comprehensive chess analysis platform in C++ featuring complete rule validation, game state analysis, UCI chess engine integration, and a professional graphical interface. This project demonstrates sophisticated programming concepts including complex algorithms, design patterns, modern C++ practices, and chess engine communication protocols.
 
 ## 🎯 Overview
 
-This chess analysis program is a comprehensive implementation of chess with complete rule validation, game ending detection, and position analysis. The application showcases advanced programming techniques including algorithmic game state analysis, complex move validation systems, and professional software architecture patterns.
+This chess analysis program is a full-featured chess platform with complete rule validation, game ending detection, position analysis, and **UCI chess engine integration with Stockfish**. The application showcases advanced programming techniques including algorithmic game state analysis, complex move validation systems, professional software architecture patterns, and external process communication for chess engine analysis.
 
 ## ✨ Features
 
@@ -14,106 +14,169 @@ This chess analysis program is a comprehensive implementation of chess with comp
 - **Threefold Repetition**: Position history tracking with FEN-based position hashing
 - **Move Generation**: Legal move detection and validation for all piece types
 - **Game State Analysis**: Comprehensive end-game condition detection
+- **Undo/Redo System**: Full position history with move reversal capabilities
+
+### **UCI Chess Engine Integration**
+- **Stockfish Integration**: Embedded Stockfish chess engine for position analysis
+- **UCI Protocol**: Full Universal Chess Interface communication protocol implementation
+- **Real-time Analysis**: Live engine evaluation with best move suggestions
+- **Engine Management**: Start, stop, and configure chess engine analysis
+- **Position Communication**: FEN-based position sharing with the engine
 
 ### **Professional User Interface**
-- **Interactive Chess Board**: High-quality 8x8 visual board with piece textures
+- **Interactive Chess Board**: High-quality 8x8 visual board with coordinate labels
 - **Drag & Drop Gameplay**: Smooth piece movement with visual feedback
+- **Component-Based Rendering**: Modular UI components for different interface elements
 - **Game Statistics Display**: Half-move clock, current board state (FEN notation)
-- **Game Over Detection**: Visual game ending notifications with result display
+- **Move History Panel**: Complete game notation with navigation support
+- **Engine Analysis Display**: Real-time engine evaluation and move suggestions
 - **Captured Pieces Display**: Visual tracking of captured pieces for both players
+- **Board Flip Feature**: Toggle board orientation for different player perspectives
 
 ### **Advanced Architecture**
-- **MVC Design Pattern**: Clean separation between Model, View, and Controller
-- **Move Validation System**: Dedicated validation layer with comprehensive rule checking
-- **Game State Analyzer**: Separate component for game ending condition detection
-- **Position History Tracking**: Efficient threefold repetition detection using hash maps
-- **Configuration Management**: Centralized configuration system with namespace organization
-- **Modular Design**: Clean component separation with no circular dependencies
+- **Component-Based Design**: Modular rendering system with dedicated UI components
+- **UCI Engine Architecture**: Separate analysis engine subsystem with process management
+- **Move Validation System**: Comprehensive validation layer with multiple validator types
+- **Game State Management**: Sophisticated state tracking with position history
+- **Configuration Management**: Namespace-organized configuration with compile-time constants
+- **Texture Management**: Centralized resource management for graphical assets
+- **Input Processing**: Dedicated input handling with drag-and-drop support
 
 ## 🛠 Technical Stack
 
 - **Language**: C++17
 - **Graphics Library**: Raylib
+- **Chess Engine**: Stockfish (embedded via UCI protocol)
 - **Build System**: MinGW-w64 GCC
-- **Architecture**: Object-Oriented Programming (OOP) with Controller Pattern
-- **Design Patterns**: Model-View-Controller (MVC), Separation of Concerns
+- **Architecture**: Component-Based Design with MVC principles
+- **Communication**: UCI (Universal Chess Interface) protocol
+- **Design Patterns**: Component Architecture, Observer Pattern, Strategy Pattern
 
 ## 📁 Project Structure
 
 ```
 src/
-├── main.cpp                         # Application entry point
-├── application/                     # Main application coordination layer
-│   ├── chess_analysis_program.h     # Enhanced MVC Controller with move validation
+├── main.cpp                                    # Application entry point
+├── analysis_engine/                          # UCI chess engine subsystem
+│   ├── stockfish.exe                         # Embedded Stockfish chess engine
+│   ├── uci_engine.h/.cpp                     # Main UCI engine management
+│   ├── uci_communication.h/.cpp              # UCI protocol communication
+│   ├── uci_process.h/.cpp                    # Process management for engine
+│   └── uci_analysis_parser.h/.cpp            # Engine output parsing and analysis
+├── application/                               # Main application coordination layer
+│   ├── chess_analysis_program.h              # Primary controller with engine integration
 │   └── chess_analysis_program.cpp
-├── core/                           # Game logic and validation systems
-│   ├── chess_logic.h              # Game state management with position tracking
-│   ├── chess_logic.cpp
-│   ├── chess_move_validator.h      # Comprehensive move validation system
-│   ├── chess_move_validator.cpp
-│   ├── chess_game_state_analyzer.h # Game ending detection (checkmate, stalemate, draws)
-│   └── chess_game_state_analyzer.cpp
-├── rendering/                      # User interface and rendering layer
-│   ├── chess_gui.h                # Graphics and visual presentation (View)
-│   └── chess_gui.cpp
-├── input/                          # Input handling and processing
-│   ├── chess_input_handler.h      # Controller-integrated input processing
-│   └── chess_input_handler.cpp
-├── config/                         # Configuration management
-│   └── config.h                    # Centralized configuration constants
-└── assets/                         # Game resources and textures
-    ├── board.png                   # Chess board texture
-    └── chess_pieces/               # Individual piece sprites
+├── core/                                     # Game logic and validation systems
+│   ├── chess_move.h/.cpp                     # Move representation and utilities
+│   ├── chess_move_validator.h/.cpp           # Comprehensive move validation system
+│   ├── fen_loader.h/.cpp                     # FEN string parsing and position loading
+│   ├── board/
+│   │   ├── chess_board.h/.cpp                # Board state and piece management
+│   ├── game_state/
+│   │   ├── chess_game_state.h/.cpp           # Current game state tracking
+│   │   ├── chess_game_state_analyzer.h/.cpp  # Game ending detection
+│   │   └── fen_position_tracker.h/.cpp       # Position history and FEN tracking
+│   └── validators/                           # Specialized move validation components
+│       ├── basic_move_validator.h/.cpp       # Basic move rules
+│       ├── check_validator.h/.cpp            # Check and checkmate validation
+│       ├── piece_movement_validator.h/.cpp   # Piece-specific movement rules
+│       └── special_move_validator.h/.cpp     # Castling, en passant, promotion
+├── rendering/                                # User interface and rendering layer
+│   ├── chess_gui.h/.cpp                      # Main GUI coordinator
+│   └── components/                           # Modular UI rendering components
+│       ├── board_comp.h/.cpp                 # Board rendering component
+│       ├── board_renderer.h/.cpp             # Core board drawing logic
+│       ├── piece_renderer.h/.cpp             # Piece drawing and positioning
+│       ├── coordinate_renderer.h/.cpp        # Board coordinate labels
+│       ├── captured_pieces_renderer.h/.cpp   # Captured pieces display
+│       ├── stats_panel.h/.cpp                # Game statistics panel
+│       ├── moves_comp.h/.cpp                 # Move history display
+│       ├── controls_comp.h/.cpp              # Control instructions panel
+│       ├── engine_comp.h/.cpp                # Engine analysis display
+│       ├── game_overlay.h/.cpp               # Game over overlays
+│       ├── texture_manager.h/.cpp            # Resource and texture management
+│       └── ui_renderer.h/.cpp                # General UI rendering utilities
+├── input/                                    # Input handling and processing
+│   ├── chess_input_handler.h/.cpp            # Mouse and keyboard input processing
+├── config/                                   # Configuration management
+│   └── config.h                              # Namespace-organized configuration constants
+└── assets/                                   # Game resources and textures
+    ├── board.png                             # Chess board texture
+    └── chess_pieces/                         # Individual piece sprites
         ├── wb.png, wk.png, wn.png, wp.png, wq.png, wr.png  # White pieces
         └── bb.png, bk.png, bn.png, bp.png, bq.png, br.png  # Black pieces
 ```
 
 ## 🏗 Architecture
 
-The application implements a **Model-View-Controller (MVC)** architecture with clear separation of concerns:
+The application implements a **Component-Based Architecture** with MVC principles and external process integration:
 
 ### Core Components
 
-1. **ChessAnalysisProgram** (Controller): Orchestrates all game components and coordinates gameplay
-2. **ChessLogic** (Model): Game state management with position history tracking for threefold repetition
-3. **ChessMoveValidator**: Advanced validation system supporting all chess rules (castling, en passant, promotion)
-4. **ChessGameStateAnalyzer**: Dedicated game ending detection (checkmate, stalemate, draws)
-5. **ChessGUI** (View): Professional rendering with statistics display and game over screens
-6. **ChessInputHandler**: Sophisticated input processing with drag-and-drop support
-7. **Config Namespace**: Centralized configuration management for all components
+1. **ChessAnalysisProgram** (Controller): Orchestrates all game components and manages UCI engine integration
+2. **ChessBoard** (Model): Board state and piece management with captured piece tracking
+3. **ChessGameState**: Current game state with castling rights, en passant, and move counters
+4. **FENPositionTracker**: Position history management with undo/redo capabilities
+5. **ChessMoveValidator**: Advanced validation system with specialized validator components
+6. **ChessGameStateAnalyzer**: Dedicated game ending detection (checkmate, stalemate, draws)
+7. **UCIEngine**: Chess engine management with Stockfish integration and analysis parsing
+8. **Component-Based GUI**: Modular rendering system with specialized UI components
+9. **ChessInputHandler**: Sophisticated input processing with drag-and-drop support
+10. **Config Namespace**: Centralized configuration management with namespace organization
+
+### UCI Engine Integration
+
+- **UCIEngine**: Main engine coordinator and analysis manager
+- **UCICommunication**: Protocol-level communication with chess engines
+- **UCIProcess**: Process management and lifecycle control for external engines
+- **UCIAnalysisParser**: Engine output parsing and evaluation extraction
+
+### Modular UI Components
+
+- **BoardRenderer**: Core board and piece drawing logic
+- **CoordinateRenderer**: Board coordinate labels and annotations
+- **CapturedPiecesRenderer**: Visual display of captured pieces
+- **StatsPanel**: Game statistics and position information
+- **MovesComponent**: Move history with navigation support
+- **EngineComponent**: Real-time engine analysis display
+- **ControlsComponent**: User interface instructions
+- **GameOverlay**: Game ending notifications and overlays
+- **TextureManager**: Centralized resource and asset management
 
 ### Architectural Benefits
 
-- **No Circular Dependencies**: Clean, one-way dependency flow
-- **Single Responsibility**: Each component has one clear purpose
-- **Loose Coupling**: Components can be modified independently
-- **High Cohesion**: Related functionality grouped logically
-- **Easy Testing**: Each layer can be unit tested in isolation
+- **Component Isolation**: Each UI component is self-contained and reusable
+- **Engine Abstraction**: UCI protocol abstraction allows different engine integration
+- **Clear Separation**: Game logic, rendering, and analysis are completely separate
+- **Extensible Validation**: Multiple validator types for different rule categories
+- **Resource Management**: Centralized texture and asset management
+- **State Management**: Comprehensive position tracking with history support
 
 ### Advanced Data Flow
 
 ```
-User Input → InputHandler → Controller → MoveValidator → ChessLogic
-                ↓              ↓            ↓            ↓
-           Controller → GameStateAnalyzer → View → Screen Output
-                ↓              ↓            ↓
-         Position History → Threefold → Game Over Detection
+User Input → InputHandler → Controller → MoveValidator → Board/GameState
+                ↓              ↓            ↓              ↓
+           Controller → GameStateAnalyzer → GUI Components → Screen Output
+                ↓              ↓                ↓
+         UCI Engine → Analysis Parser → Engine Component
+                ↓              ↓                ↓
+      Position History → FEN Tracker → Stats Panel
                 ↓
            Config System → All Components
 ```
 
 ### Key Design Features
 
-- **Enhanced Controller Pattern**: Coordinates validation, state, and presentation
-- **Centralized Configuration**: Namespace-based config with compile-time constants
-- **Move Validation Architecture**: Extensible validation system with clear error reporting
-- **Type Aliases**: Clean code with `using` declarations for complex types
-- **Namespace Aliases**: Shortened syntax while maintaining clarity
-- **RAII**: Proper resource management with constructors/destructors
-- **Reference Semantics**: Efficient object passing without unnecessary copies
-- **Template Usage**: Type-safe containers (std::array, std::vector)
-- **Modern C++**: Move semantics, constexpr, and smart memory management
-- **Modular Design**: Organized folder structure for maintainability
+- **Component Architecture**: Modular, reusable UI components with clear responsibilities
+- **UCI Integration**: Full Universal Chess Interface protocol implementation
+- **Process Management**: External chess engine lifecycle and communication control
+- **Advanced Validation**: Multiple specialized validator types for different rule categories
+- **Position Tracking**: Complete game history with FEN-based position management
+- **Resource Management**: Centralized texture loading and caching system
+- **Configuration System**: Namespace-organized compile-time constants
+- **Modern C++ Features**: Smart pointers, RAII, move semantics, and template usage
+- **Clean Dependencies**: Unidirectional dependency flow with no circular references
 
 ## 🚀 Getting Started
 
@@ -149,7 +212,7 @@ Ctrl+Shift+P → "Tasks: Run Build Task"
 
 Or via command line:
 ```bash
-g++ -fdiagnostics-color=always -g src/main.cpp src/application/chess_analysis_program.cpp src/core/chess_logic.cpp src/core/chess_move_validator.cpp src/rendering/chess_gui.cpp src/input/chess_input_handler.cpp -o main.exe -I C:/raylib/include -L C:/raylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
+g++ -fdiagnostics-color=always -g src/main.cpp src/analysis_engine/*.cpp src/application/chess_analysis_program.cpp src/core/board/chess_board.cpp src/core/game_state/*.cpp src/core/*.cpp src/core/validators/*.cpp src/rendering/chess_gui.cpp src/rendering/components/*.cpp src/input/chess_input_handler.cpp -o main.exe -I C:/raylib/include -L C:/raylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
 ```
 
 ### Running the Application
@@ -164,53 +227,72 @@ g++ -fdiagnostics-color=always -g src/main.cpp src/application/chess_analysis_pr
 2. **Make Moves**: Click and drag pieces to move them (drag-and-drop interface)
 3. **Rule Validation**: All chess rules are enforced (legal moves, turn order, check prevention)
 4. **Special Moves**: Castling, en passant, and pawn promotion are fully supported
-5. **Game Statistics**: View half-move clock and current board position (FEN notation)
-6. **Game Endings**: The game automatically detects and displays:
-   - Checkmate (winner declared)
-   - Stalemate (draw)
-   - 50-move rule (draw)
-   - Threefold repetition (draw)
-   - Insufficient material (draw)
-7. **Visual Feedback**: Captured pieces are displayed, game over screens show results
+5. **Engine Analysis**: Toggle Stockfish engine analysis for position evaluation and move suggestions
+6. **Move History**: View complete game notation with navigation through move history
+7. **Undo/Redo**: Navigate through game history with full position restoration
+8. **Board Flip**: Toggle board orientation to play from different perspectives
+9. **Game Statistics**: View half-move clock, current board position (FEN notation), and captured pieces
+10. **Game Endings**: The game automatically detects and displays:
+    - Checkmate (winner declared)
+    - Stalemate (draw)
+    - 50-move rule (draw)
+    - Threefold repetition (draw)
+    - Insufficient material (draw)
+11. **Visual Feedback**: Coordinate labels, captured pieces display, game over screens, and engine analysis
+
+### **Keyboard Controls**
+- **X**: Toggle Stockfish engine analysis on/off
+- **F**: Flip board orientation
+- **R**: Reset game to starting position
+- **LEFT**: Undo last move
+- **RIGHT**: Redo move (if available)
+- **ESC**: Exit application
 
 ## 🧠 Learning Outcomes
 
 This project demonstrates proficiency in:
 
 ### C++ Programming Concepts
-- Object-Oriented Programming (OOP)
-- Design Patterns (Enhanced Model-View-Controller)
-- Memory management and RAII
-- STL containers and algorithms (std::array, std::vector, std::string)
-- Move semantics and copy constructors
+- Object-Oriented Programming (OOP) with component-based design
+- Design Patterns (Component Architecture, Observer, Strategy)
+- Advanced memory management with smart pointers and RAII
+- STL containers and algorithms (std::array, std::vector, std::unordered_map)
+- Move semantics, perfect forwarding, and copy constructors
 - Template programming and type traits
-- Namespace management and aliases
-- Type aliases with `using` declarations
-- Compile-time constants with `constexpr`
-- Header/implementation file organization
-- Forward declarations and dependency management
+- Namespace management with organized configuration system
+- Type aliases and using declarations for clean code
+- Compile-time constants with constexpr and template metaprogramming
+- Header/implementation file organization with forward declarations
+- Process management and inter-process communication
+- External library integration and API abstraction
 
 ### Software Engineering Practices
-- Enhanced modular design with clear separation of concerns
-- Clean architecture principles with validation layer
-- Configuration management and centralized constants
-- Dependency inversion and loose coupling
-- Single Responsibility Principle (SRP)
-- Extensible architecture for future enhancements
-- Professional error handling and validation
-- Code documentation and commenting
-- Version control with Git
-- Build automation and project structure organization
-- Cross-platform considerations
+- Component-based architecture with modular, reusable components
+- Clean architecture principles with clear abstraction layers
+- External process integration and lifecycle management
+- Protocol implementation (UCI - Universal Chess Interface)
+- Configuration management with namespace organization
+- Dependency injection and inversion principles
+- Single Responsibility Principle (SRP) across all components
+- Extensible architecture supporting multiple chess engines
+- Professional error handling and robust validation systems
+- Resource management and texture caching systems
+- Code documentation and comprehensive commenting
+- Version control with Git and build automation
+- Cross-platform considerations and portability
 
 ### Game Development & Algorithms
-- Advanced game logic implementation (chess rules)
-- Complex state management with position history
-- Algorithmic game analysis (checkmate detection, move generation)
-- Graphics programming with Raylib
-- Event handling and sophisticated user input processing
-- Hash-based position tracking for game analysis
-- Performance optimization for real-time gameplay
+- Advanced game logic implementation with complete chess rule compliance
+- Complex state management with position history and undo/redo systems
+- Algorithmic game analysis (checkmate detection, legal move generation)
+- Chess engine communication and UCI protocol implementation
+- External process management and inter-process communication
+- Graphics programming with component-based rendering system
+- Event handling and sophisticated drag-and-drop input processing
+- Hash-based position tracking with FEN string management
+- Real-time analysis integration with chess engine evaluation
+- Performance optimization for real-time gameplay and engine communication
+- Resource management with texture caching and loading systems
 
 ## �️ Architecture Highlights
 
@@ -228,46 +310,92 @@ namespace WinCfg = Config::Window;
 InitWindow(WinCfg::WIDTH, WinCfg::HEIGHT, WinCfg::TITLE);
 ```
 
-### Advanced Chess Implementation
+### UCI Engine Integration
 ```cpp
-// Complete move validation with special move support
-bool attemptMove(int srcRank, int srcFile, int destRank, int destFile) {
-    MoveResult validationResult = moveValidator.validateMove(logic, srcRank, srcFile, destRank, destFile);
-    
-    if (isValidMoveResult(validationResult)) {
-        // Handle special moves
-        if (validationResult == MoveResult::VALID_CASTLE_KINGSIDE || 
-            validationResult == MoveResult::VALID_CASTLE_QUEENSIDE) {
-            logic.executeCastling(srcRank, srcFile, destRank, destFile);
-        } else if (validationResult == MoveResult::VALID_EN_PASSANT) {
-            logic.executeEnPassant(srcRank, srcFile, destRank, destFile);
-        } else if (validationResult == MoveResult::VALID_PROMOTION) {
-            logic.executePromotion(srcRank, srcFile, destRank, destFile);
-        } else {
-            logic.executeMove(srcRank, srcFile, destRank, destFile);
-        }
-        
-        // Analyze game state after move
-        currentGameState = gameStateAnalyzer.analyzeGameState(logic);
-        return true;
+// UCI chess engine communication and analysis
+class UCIEngine {
+public:
+    void enable() { isEnabled = true; startEngine(); }
+    void disable() { isEnabled = false; stopEngine(); }
+    void setPosition(const std::string& fenString) {
+        communication.sendCommand("position fen " + fenString);
     }
-    return false;
-}
-
-// Threefold repetition detection using position hashing
-bool hasThreefoldRepetition() const {
-    for (const auto& [position, count] : positionOccurrances) {
-        if (count >= 3) return true;
+    EngineAnalysis pollAnalysis() const {
+        return analysisParser.parseLatestAnalysis();
     }
-    return false;
-}
+private:
+    UCIProcess engineProcess;
+    UCICommunication communication;
+    UCIAnalysisParser analysisParser;
+    bool isEnabled = false;
+};
 ```
 
-### Enhanced MVC Pattern
-- **Controller**: Orchestrates validation and state management
-- **Model**: Pure state with utility methods for validation queries  
-- **View**: Configuration-driven rendering with namespace aliases
-- **Validator**: Dedicated validation component with extensible architecture
+### Component-Based Rendering System
+```cpp
+// Modular UI component architecture
+class ChessGUI {
+public:
+    void render(const ChessAnalysisProgram& app) {
+        boardComp.render(app);
+        capturedPiecesRenderer.render(app);
+        statsPanel.render(app);
+        movesComp.render(app);
+        engineComp.render(app);
+        controlsComp.render(app);
+        gameOverlay.render(app);
+    }
+private:
+    BoardComp boardComp;
+    CapturedPiecesRenderer capturedPiecesRenderer;
+    StatsPanel statsPanel;
+    MovesComp movesComp;
+    EngineComp engineComp;
+    ControlsComp controlsComp;
+    GameOverlay gameOverlay;
+    TextureManager textureManager;
+};
+```
+
+### Advanced Position History System
+```cpp
+// Complete undo/redo system with position state tracking
+class FENPositionTracker {
+public:
+    void savePosition(const PositionState& state) {
+        positionHistory.push_back(state);
+        redoPositions.clear(); // Clear redo stack when new move is made
+    }
+    
+    bool undoMove() {
+        if (positionHistory.size() > 1) {
+            redoPositions.push_back(positionHistory.back());
+            positionHistory.pop_back();
+            return true;
+        }
+        return false;
+    }
+    
+    bool redoMove() {
+        if (!redoPositions.empty()) {
+            positionHistory.push_back(redoPositions.back());
+            redoPositions.pop_back();
+            return true;
+        }
+        return false;
+    }
+private:
+    std::vector<PositionState> positionHistory;
+    std::vector<PositionState> redoPositions;
+};
+```
+
+### Component-Based Architecture Pattern
+- **Controller**: Orchestrates game logic, engine communication, and UI coordination
+- **Model Components**: ChessBoard, ChessGameState, FENPositionTracker for state management
+- **View Components**: Modular rendering components with specialized responsibilities
+- **Engine Integration**: UCI protocol abstraction with process management
+- **Validator Architecture**: Multiple specialized validators for different rule categories
 
 ## 🏆 Academic Context
 
@@ -285,14 +413,20 @@ bool hasThreefoldRepetition() const {
 - **Hash-based Tracking**: Performance-optimized position history management
 
 ### **Professional Software Architecture**
-- **MVC Pattern**: Complete separation with dedicated validation and analysis layers
+- **Component-Based Design**: Modular, reusable UI components with clear interfaces
+- **UCI Protocol Implementation**: Full chess engine communication standard
+- **Process Management**: External engine lifecycle and inter-process communication
 - **Single Responsibility**: Each component has one clear, well-defined purpose
-- **SOLID Principles**: Well-designed interfaces and dependency management
-- **Configuration Management**: Centralized system with compile-time constants
-- **No Circular Dependencies**: Clean, maintainable component relationships
+- **SOLID Principles**: Well-designed interfaces with dependency injection
+- **Configuration Management**: Namespace-organized system with compile-time constants
+- **Clean Dependencies**: Unidirectional dependency flow with no circular references
 
 ### **Modern C++ Implementation**
 - **STL Mastery**: Advanced use of containers, algorithms, and iterators
+- **Smart Pointers**: std::unique_ptr for engine and GUI resource management
+- **Process Management**: External executable integration with proper lifecycle control
+- **Template Programming**: Type-safe generic programming and template specialization
+- **Modern Features**: constexpr, auto, structured bindings, and range-based for loops
 - **Type Safety**: Comprehensive enums, type aliases, and strong typing
 - **Memory Management**: RAII principles with proper resource cleanup
 - **Modern Features**: `constexpr`, structured bindings, namespace aliases
@@ -308,39 +442,69 @@ bool hasThreefoldRepetition() const {
 - [x] **Draw Conditions**: 50-move rule, threefold repetition, insufficient material
 - [x] **Position Tracking**: FEN-based position hashing for repetition detection
 - [x] **Move Validation**: Comprehensive validation preventing illegal moves and self-check
+- [x] **Undo/Redo System**: Full position history with move reversal capabilities
 
-### **Professional Architecture** ✅ **COMPLETE**
-- [x] **MVC Pattern**: Clean separation of Model, View, and Controller
-- [x] **Configuration System**: Centralized config management with namespaces
-- [x] **Game State Analyzer**: Dedicated component for end-game detection
-- [x] **Modular Design**: No circular dependencies, clear component relationships
-- [x] **Advanced UI**: Statistics display, game over screens, captured pieces tracking
+### **UCI Chess Engine Integration** ✅ **COMPLETE**
+- [x] **Stockfish Integration**: Embedded chess engine with UCI protocol communication
+- [x] **Real-time Analysis**: Live position evaluation and move suggestions
+- [x] **Engine Management**: Start, stop, and configure engine analysis
+- [x] **Process Control**: External engine lifecycle and communication management
+- [x] **Analysis Parser**: Engine output parsing and evaluation extraction
+
+### **Component-Based Architecture** ✅ **COMPLETE**
+- [x] **Modular UI System**: Component-based rendering with specialized UI elements
+- [x] **Configuration System**: Namespace-organized centralized config management
+- [x] **Resource Management**: Centralized texture loading and caching system
+- [x] **Input Processing**: Advanced drag-and-drop with mouse input handling
+- [x] **Game State Management**: Sophisticated state tracking with history support
+- [x] **Clean Dependencies**: Unidirectional dependency flow with no circular references
+
+### **Professional User Interface** ✅ **COMPLETE**
+- [x] **Interactive Chess Board**: High-quality board with coordinate labels and piece textures
+- [x] **Move History Panel**: Complete game notation with navigation support
+- [x] **Engine Analysis Display**: Real-time Stockfish evaluation and move suggestions
+- [x] **Statistics Panel**: Game state, FEN notation, and move counters
+- [x] **Captured Pieces Display**: Visual tracking with organized layout
+- [x] **Game Over Overlays**: Professional game ending notifications
+- [x] **Board Flip Feature**: Toggle orientation for different player perspectives
+- [x] **Controls Panel**: User interface instructions and keyboard shortcuts
 
 ## 🚧 Potential Future Enhancements
 
 ### Advanced Features
-- [ ] Move history with undo/redo functionality
+- [x] ~~Move history with undo/redo functionality~~ **COMPLETED**
+- [x] ~~Real-time chess engine analysis~~ **COMPLETED**  
 - [ ] Chess notation export (PGN format)
-- [ ] AI opponent with difficulty levels
-- [ ] Opening book and endgame tablebase
+- [ ] Multiple chess engine support (beyond Stockfish)
+- [ ] Opening book integration with engine analysis
+- [ ] Endgame tablebase integration
 - [ ] Network multiplayer support
 - [ ] Tournament management system
+- [ ] Position analysis with engine depth control
+- [ ] Move annotation and commentary system
 
 ### Technical Improvements
 - [ ] Unit testing framework integration
 - [ ] Performance profiling and optimization
 - [ ] Cross-platform build system (CMake)
 - [ ] Audio system for move feedback
-- [ ] Save/load game functionality
-- [ ] Logging system for game analysis
+- [ ] Save/load game functionality (PGN support)
+- [ ] Logging system for engine communication
+- [ ] Configuration file system for user preferences
+- [ ] Multiple UCI engine support and configuration
 
 ## 📊 Technical Specifications
 
 - **Resolution**: 1920x1080 (Full HD)
 - **Frame Rate**: 60 FPS target
-- **Board Size**: Scalable (currently 67.5% of texture size)
-- **Piece Assets**: 12 individual PNG sprites
-- **Memory Management**: Stack-based allocation with RAII
+- **Board Size**: Scalable (currently 50% of texture size)
+- **Piece Assets**: 12 individual PNG sprites with texture management
+- **Chess Engine**: Stockfish executable embedded in analysis_engine directory
+- **UCI Protocol**: Full Universal Chess Interface implementation
+- **Memory Management**: Smart pointers, RAII, and component-based allocation
+- **Configuration**: Namespace-organized compile-time constants
+- **Components**: 12+ modular UI rendering components
+- **Position History**: Complete FEN-based game state tracking with undo/redo
 
 ## 👥 Contributing
 
