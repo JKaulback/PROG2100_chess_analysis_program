@@ -208,4 +208,22 @@ namespace Config {
         constexpr int TITLE_HEIGHT = 36;
         constexpr const char* TITLE_TEXT = "MOVE HISTORY";
     }
+
+    namespace Fonts {
+        // Font file paths (relative to executable or absolute paths)
+        constexpr const char* MONOSPACE_FONT_PATH = "assets/fonts/monospace.ttf";
+        constexpr const char* FALLBACK_MONOSPACE_PATH = "C:/Windows/Fonts/consola.ttf"; // Windows Consolas
+        constexpr const char* FALLBACK_MONOSPACE_PATH_2 = "C:/Windows/Fonts/cour.ttf";   // Windows Courier New
+        
+        // Font sizes for different UI components
+        constexpr int BASE_FONT_SIZE = 48;      // Base size for font loading (higher quality)
+        constexpr int DEFAULT_UI_SIZE = 16;     // Default UI text size
+        constexpr int MONOSPACE_UI_SIZE = 14;   // Monospace text size
+        constexpr int TITLE_SIZE = 22;          // Panel titles
+        constexpr int SMALL_SIZE = 12;          // Small text
+        
+        // Font spacing
+        constexpr float MONOSPACE_SPACING = 1.0f;
+        constexpr float DEFAULT_SPACING = 1.0f;
+    }
 }

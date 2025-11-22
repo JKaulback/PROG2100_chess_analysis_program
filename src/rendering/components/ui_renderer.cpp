@@ -1,5 +1,50 @@
 #include "ui_renderer.h"
 
+// Initialize static members
+Font UIRenderer::monospaceFont = {0};
+bool UIRenderer::fontsLoaded = false;
+
+void UIRenderer::initializeFonts() {
+    if (fontsLoaded) return;
+    
+    // Try to load custom monospace font from config paths
+    monospaceFont = LoadFontEx(Config::Fonts::MONOSPACE_FONT_PATH, Config::Fonts::BASE_FONT_SIZE, 0, 0);
+    
+    // If loading fails, try fallback fonts
+    if (monospaceFont.texture.id == 0) {
+        monospaceFont = LoadFontEx(Config::Fonts::FALLBACK_MONOSPACE_PATH, Config::Fonts::BASE_FONT_SIZE, 0, 0);
+    }
+    
+    if (monospaceFont.texture.id == 0) {
+        monospaceFont = LoadFontEx(Config::Fonts::FALLBACK_MONOSPACE_PATH_2, Config::Fonts::BASE_FONT_SIZE, 0, 0);
+    }
+    
+    // If all fails, use default font
+    if (monospaceFont.texture.id == 0) {
+        monospaceFont = GetFontDefault();
+    }
+    
+    fontsLoaded = true;
+}
+
+void UIRenderer::cleanupFonts() {
+    if (fontsLoaded && monospaceFont.texture.id != GetFontDefault().texture.id) {
+        UnloadFont(monospaceFont);
+    }
+    fontsLoaded = false;
+}
+
+bool UIRenderer::areCustomFontsLoaded() {
+    return fontsLoaded;
+}
+
+Font UIRenderer::getMonospaceFont() {
+    if (!fontsLoaded) {
+        initializeFonts();
+    }
+    return monospaceFont;
+}
+
 void UIRenderer::drawPanelBackground(const Rectangle& bounds, PanelStyle style) {
     Color backgroundColor = getPanelBackgroundColor(style);
     DrawRectangle(bounds.x, bounds.y, bounds.width, bounds.height, backgroundColor);
@@ -53,9 +98,29 @@ void UIRenderer::drawPanelTitle(const Rectangle& bounds, const std::string& titl
 }
 
 void UIRenderer::drawTextWithShadow(const std::string& text, int x, int y, int fontSize, Color textColor) {
-    // Draw text with subtle shadow for better readability
-    DrawText(text.c_str(), x + 1, y + 1, fontSize, Color{0, 0, 0, 30});
-    DrawText(text.c_str(), x, y, fontSize, textColor);
+    Font font = getMonospaceFont();
+    float spacing = Config::Fonts::MONOSPACE_SPACING;
+    DrawTextEx( // Draw text with subtle shadow for better readability
+        font, 
+        text.c_str(), 
+        { static_cast<float>(x + 1), static_cast<float>(y + 1) }, 
+        static_cast<float>(fontSize), 
+        spacing,
+        Color{0, 0, 0, 30});
+    DrawTextEx(
+        font, 
+        text.c_str(), 
+        { static_cast<float>(x), static_cast<float>(y) },
+        static_cast<float>(fontSize), 
+        spacing, 
+        textColor);
+}
+
+int UIRenderer::measureMonospaceText(const std::string& text, int fontSize) {
+    Font font = getMonospaceFont();
+    float spacing = Config::Fonts::MONOSPACE_SPACING;
+    Vector2 textSize = MeasureTextEx(font, text.c_str(), static_cast<float>(fontSize), spacing);
+    return static_cast<int>(textSize.x);
 }
 
 Color UIRenderer::getPanelBackgroundColor(PanelStyle style) {

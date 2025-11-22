@@ -1,5 +1,6 @@
 #include "chess_gui.h"
 #include "../application/chess_analysis_program.h"
+#include "components/ui_renderer.h"
 
 namespace WinCfg = Config::Window;
 
@@ -15,11 +16,15 @@ ChessGUI::ChessGUI(const ChessAnalysisProgram& controller):
 
     SetTargetFPS(WinCfg::TARGET_FPS); // Set the desired frame rate
     
+    // Initialize custom fonts
+    UIRenderer::initializeFonts();
+    
     // Toggle full screen
     ToggleFullscreen();
 }
 
 ChessGUI::~ChessGUI() {
+    UIRenderer::cleanupFonts(); // Clean up custom fonts
     CloseWindow(); // Close window and OpenGL context
 }
 

@@ -97,7 +97,7 @@ void MovesComp::drawHistoricalMove(const Rectangle& panelBounds, const PositionS
             moveText, 
             textX, 
             textY, 
-            18, 
+            12, 
             moveColor);
 }
 
