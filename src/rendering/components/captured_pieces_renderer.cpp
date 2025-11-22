@@ -18,9 +18,9 @@ void CapturedPiecesRenderer::draw() const {
 }
 
 void CapturedPiecesRenderer::drawCapturedPieces() const {
-    // Calculate static dimensions for 8 pieces high, 2 columns wide
-    const float staticWidth = (2 * PieceCfg::CAPTURED_SIZE) + (PieceCfg::CAPTURED_SIZE * 0.1f) + (PieceCfg::CAPTURED_SIZE * 0.5f);
-    const float staticHeight = (8 * PieceCfg::CAPTURED_STEP) + (PieceCfg::CAPTURED_SIZE * 0.2f);
+    // Calculate static dimensions for 2 pieces high, 8 columns wide
+    const float staticWidth = (8 * PieceCfg::CAPTURED_SIZE) + (PieceCfg::CAPTURED_SIZE * 0.2f);
+    const float staticHeight = (2 * PieceCfg::CAPTURED_STEP) + (PieceCfg::CAPTURED_SIZE * 0.1f) + (PieceCfg::CAPTURED_SIZE * 0.5f);
     
     // Determine positions based on board flip state
     bool isFlipped = controller.getBoardFlipped();
@@ -62,8 +62,8 @@ void CapturedPiecesRenderer::drawCapturedPieces() const {
         std::string pieceString = controller.pieceToTextureString(piece);
         
         // Calculate column and row within the box
-        int col = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
-        int row = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? i : i - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
+        int row = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
+        int col = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? i : i - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
         
         // Position pieces relative to the white background box
         float xPos = whiteAreaX + (PieceCfg::CAPTURED_SIZE * 0.25f) + (col * PieceCfg::CAPTURED_STEP);
@@ -79,8 +79,8 @@ void CapturedPiecesRenderer::drawCapturedPieces() const {
         std::string pieceString = controller.pieceToTextureString(piece);
         
         // Calculate column and row within the box
-        int col = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
-        int row = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? i : i - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
+        int row = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? 0 : 1;
+        int col = (i <= PieceCfg::MAX_CAPTURED_IN_ROW) ? i : i - PieceCfg::MAX_CAPTURED_IN_ROW - 1;
         
         // Position pieces relative to the black background box
         float xPos = blackAreaX + (PieceCfg::CAPTURED_SIZE * 0.25f) + (col * PieceCfg::CAPTURED_STEP);

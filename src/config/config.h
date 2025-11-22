@@ -201,12 +201,13 @@ namespace Config {
     }
 
     namespace MovesPanel {
-        constexpr int PANEL_WIDTH = 425;
+        constexpr int PANEL_WIDTH = 550;
         constexpr int PANEL_HEIGHT = 450;
         constexpr int PANEL_PADDING = 20;
         constexpr int LINE_HEIGHT = 22;
         constexpr int TITLE_HEIGHT = 36;
         constexpr const char* TITLE_TEXT = "MOVE HISTORY";
+        constexpr int MOVE_FONT_SIZE = 18;
     }
 
     namespace Fonts {

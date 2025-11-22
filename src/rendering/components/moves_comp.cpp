@@ -31,7 +31,8 @@ void MovesComp::drawDialogTitle(const Rectangle& panelBounds) const {
 
 void MovesComp::drawMoves(const Rectangle& panelBounds) const {
     const std::vector<PositionState> positionHistory = controller.getPositionHistory();
-    if (positionHistory.size() < 2) {
+    const std::vector<PositionState> positionRedos = controller.getRedoPositions();
+    if (positionHistory.size() < 2 && positionRedos.empty()) {
         std::string text = "No moves yet!";
         
         int textX = panelBounds.x + MoveCFG::PANEL_PADDING;
@@ -58,34 +59,18 @@ void MovesComp::drawMoves(const Rectangle& panelBounds) const {
     for (int i = 1; i < positionHistory.size(); i++) {
         drawHistoricalMove(panelBounds, positionHistory.at(i), movesCount++, i >= currentSetStartIndex);
     }
+    if (!positionRedos.empty()) {
+        for (int i = positionRedos.size() - 1; i >= 0; i--) {
+            drawRedoMove(panelBounds, positionRedos.at(i), movesCount++);
+        }
+    }
 }
 
 void MovesComp::drawHistoricalMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount, const bool isCurrentSet) const {
-    // If white's move, add numeric identifier. Don't add for black
-    std::string moveText =
-        (moveData.movedBy == 'w') ?
-        "" :
-        std::to_string(movesCount / 2 + 1) + ". ";
-    // Get the rest of the move text
-    moveText += moveData.algebraicMove;
+    std::string moveText = getMoveText(moveData, movesCount);
 
-    // Determine x position of move in 6x8 grid (font size 18px) 
-    int movePerCol = 6;
-    int gridRows = 8;
-
-    // textX and textY were handwritten to test my understanding
-    int textX = 
-        panelBounds.x + MoveCFG::PANEL_PADDING + // First index can start here 
-        (movesCount % movePerCol) * // Index in the grid
-        (MoveCFG::PANEL_WIDTH - (2 * MoveCFG::PANEL_PADDING)) /  
-        movePerCol; // Break the drawable panel area into moves per col
-    
-    int textY = 
-        panelBounds.y + MoveCFG::PANEL_PADDING + MoveCFG::TITLE_HEIGHT + // First index can start here
-        (movesCount / movePerCol) * // Check index in the grid
-        (MoveCFG::PANEL_HEIGHT - (2 * MoveCFG::PANEL_PADDING) - MoveCFG::TITLE_HEIGHT) / 
-        gridRows; // Break the drawable panel area into number of rows
-
+    // Calculate x and y positions
+    Vector2 textPosition = calcMoveTextPos(panelBounds, moveText, movesCount, MoveCFG::MOVE_FONT_SIZE);
 
     // Determine color
     Color moveColor =
@@ -95,10 +80,25 @@ void MovesComp::drawHistoricalMove(const Rectangle& panelBounds, const PositionS
     // Draw the text
     UIRenderer::drawTextWithShadow(
             moveText, 
-            textX, 
-            textY, 
-            12, 
+            static_cast<int>(textPosition.x), 
+            static_cast<int>(textPosition.y), 
+            MoveCFG::MOVE_FONT_SIZE, 
             moveColor);
+}
+
+void MovesComp::drawRedoMove(const Rectangle& panelBounds, const PositionState& moveData, const int movesCount) const {
+    std::string moveText = getMoveText(moveData, movesCount);
+
+    // Calculate x and y positions
+    Vector2 textPosition = calcMoveTextPos(panelBounds, moveText, movesCount, MoveCFG::MOVE_FONT_SIZE);
+
+    // Draw the text
+    UIRenderer::drawTextWithShadow(
+        moveText,
+        static_cast<int>(textPosition.x),
+        static_cast<int>(textPosition.y),
+        MoveCFG::MOVE_FONT_SIZE,
+        Color{128, 128, 128, 255});
 }
 
 Rectangle MovesComp::getDialogBounds() const {
@@ -111,4 +111,36 @@ Rectangle MovesComp::getDialogBounds() const {
         MoveCFG::PANEL_WIDTH,
         MoveCFG::PANEL_HEIGHT
     };
+}
+
+Vector2 MovesComp::calcMoveTextPos(const Rectangle& panelBounds, const std::string& moveText, const int movesCount, const int fontSize) const {
+    int movePerCol = 6;
+    int gridRows = 8;
+
+    // Calculate grid cell dimensions
+    int cellWidth = (MoveCFG::PANEL_WIDTH - (2 * MoveCFG::PANEL_PADDING)) / movePerCol;
+    int cellHeight = (MoveCFG::PANEL_HEIGHT - (2 * MoveCFG::PANEL_PADDING) - MoveCFG::TITLE_HEIGHT) / gridRows;
+
+    // Calculate base position of the grid cell
+    int cellX = panelBounds.x + MoveCFG::PANEL_PADDING + (movesCount % movePerCol) * cellWidth;
+    int cellY = panelBounds.y + MoveCFG::PANEL_PADDING + MoveCFG::TITLE_HEIGHT + (movesCount / movePerCol) * cellHeight;
+
+    // Measure text width and center it within the cell
+    int textWidth = MeasureText(moveText.c_str(), fontSize);
+    int textX = cellX + (cellWidth - textWidth) / 2;  // Center horizontally in cell
+    int textY = cellY; // Keep vertical position at top of cell
+
+    return {textX, textY};
+}
+
+std::string MovesComp::getMoveText(const PositionState& moveData, const int movesCount) const {
+    // If white's move, add numeric identifier. Don't add for black
+    std::string moveText =
+        (moveData.movedBy == 'w') ?
+        "" :
+        std::to_string(movesCount / 2 + 1) + ". ";
+    // Get the rest of the move text
+    moveText += moveData.algebraicMove;
+
+    return moveText;
 }
