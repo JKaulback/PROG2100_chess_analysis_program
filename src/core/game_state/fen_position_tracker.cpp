@@ -126,7 +126,7 @@ const std::vector<PositionState>& FENPositionTracker::getRedoPositions() const {
 }
 
 void FENPositionTracker::setStartingPosition(const std::string& fen) {
-    positionHistory.clear();
+    clearHistory();
     // Starting position has no captured pieces and no move (empty string)
     PositionState startState(fen, {}, {}, "");
     positionHistory.push_back(startState);

@@ -67,7 +67,7 @@ void MovesComp::drawMoves(const Rectangle& panelBounds) const {
             int movesToSkip = totalMoves - MoveCFG::MAX_MOVES_DISPLAYED + 1;
             startIndex = 1 + movesToSkip;
             // Start on black's move (even indices are black moves)
-            if (positionHistory.at(startIndex).movedBy == 'w')
+            if (positionHistory.at(startIndex).movedBy == 'b')
                 startIndex += 1;
         // If there are redo moves, use pivot logic
         } else if (positionHistory.size() - 1 < MoveCFG::PIVOT_MOVE_INDEX + 2) {
@@ -77,14 +77,14 @@ void MovesComp::drawMoves(const Rectangle& panelBounds) const {
             // Redo fits after pivot, history will overflow
             isEllipsisBefore = true;
             startIndex = (positionHistory.size() - 1) - (MoveCFG::MAX_MOVES_DISPLAYED - positionRedos.size() - 1) + 1;
-            if (positionHistory.at(startIndex).movedBy == 'w')
+            if (positionHistory.at(startIndex).movedBy == 'b')
                 startIndex += 1;
         } else {
             // Both overflow, center around current position
             isEllipsisBefore = true;
             isEllipsisAfter = true;
             startIndex = positionHistory.size() - MoveCFG::PIVOT_MOVE_INDEX;
-            if (positionHistory.at(startIndex).movedBy == 'w')
+            if (positionHistory.at(startIndex).movedBy == 'b')
                 startIndex += 1;
         }
     }
@@ -227,8 +227,8 @@ std::string MovesComp::getMoveText(const PositionState& moveData, const int move
     // If white's move, add numeric identifier. Don't add for black
     std::string moveText =
         (moveData.movedBy == 'w') ?
-        std::to_string(index / 2 + 1) + ". " :
-        "";
+        "" :
+        std::to_string(index / 2 + 1) + ". " ;
     // Get the rest of the move text
     moveText += moveData.algebraicMove;
 
