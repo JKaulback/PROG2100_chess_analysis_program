@@ -53,12 +53,6 @@ void ControlsComp::drawControlsPanel() const {
         "X - Toggle engine analysis"
     }, currentY);
     
-    currentY += 4; // Reduced spacing between groups
-    
-    // View Controls
-    drawControlGroup("View Controls:", {
-        "F11 - Toggle fullscreen"
-    }, currentY);
 }
 
 void ControlsComp::drawPanelTitle() const {

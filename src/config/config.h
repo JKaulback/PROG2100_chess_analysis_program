@@ -148,7 +148,7 @@ namespace Config {
 
     namespace ControlsPanel {
         constexpr int PANEL_WIDTH = 450;
-        constexpr int PANEL_HEIGHT = 320;
+        constexpr int PANEL_HEIGHT = 260;
         constexpr int PANEL_PADDING = 20;
         constexpr int LINE_HEIGHT = 22;
         constexpr int TITLE_HEIGHT = 36;
